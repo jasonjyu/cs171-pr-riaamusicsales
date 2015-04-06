@@ -19,10 +19,16 @@ Dataset = function(_rows_units, _rows_dollarValue, _rows_inflatedDollarValue) {
  *     formatName: , // {string} (CD, cassette, vinyl, download single,
  *                   //           paid subscriptions, etc.)
  *     formatType: , // {string} (physical, digital, streaming)
- *     year: ,       // {number} year the metric value is for
- *     value: ,      // {number} value of the metric (units sold,
- *                               dollar value sold, dollar value adjusted
- *                               for inflation sold)
+ *     sales:        // {array}  array of sales objects
+ *     [
+ *         {
+ *             year: ,       // {number} year the sale metric value is for
+ *             value:        // {number} value of the sale metric (units sold,
+ *                           //          dollar value sold, dollar value
+ *                           //          adjusted for inflation sold)
+ *         },
+ *         ...
+ *     ]
  * }
  * @param {array} rows
  * @returns {array} array of objects containing the restructured data
@@ -31,16 +37,25 @@ Dataset.prototype.parseRows = function(rows) {
 
     var result = [];
     rows.forEach(function(row) {
-        for (var key in row) {
-            // if the key is a number type, then save the metric for that year
-            if (+key) {
-                result.push({
-                    formatName: row.formatName,
-                    formatType: row.formatType,
-                    year:       +key,
-                    value:      +row[key]
-                });
+        // check for valid data
+        if (row.formatName.trim() !== "" && row.formatType.trim() !== "") {
+            var sales = [];
+            for (var key in row) {
+                // if the key is a number type,
+                // then save the sales metric value for that year
+                if (+key) {
+                    sales.push({
+                        year:  +key,
+                        value: +row[key]
+                    });
+                }
             }
+
+            result.push({
+                formatName: row.formatName,
+                formatType: row.formatType,
+                sales:      sales
+            });
         }
     });
 
