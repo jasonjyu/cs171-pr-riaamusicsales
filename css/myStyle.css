@@ -21,6 +21,17 @@ body {
     shape-rendering: crispEdges;
 }
 
+.context {
+    fill: steelblue;
+    fill-opacity: .8;
+}
+
+.format path {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
 .boundingBox {
     cursor: pointer;
     fill: grey;
