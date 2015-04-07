@@ -19,13 +19,13 @@ Dataset = function(_rows_units, _rows_dollarValue, _rows_inflatedDollarValue) {
  *     formatName: , // {string} (CD, cassette, vinyl, download single,
  *                   //           paid subscriptions, etc.)
  *     formatType: , // {string} (physical, digital, streaming)
- *     sales:        // {array}  array of sales objects
+ *     sales:        // {array}  array of sale objects
  *     [
  *         {
- *             year: ,       // {number} year the sale metric value is for
- *             value:        // {number} value of the sale metric (units sold,
- *                           //          dollar value sold, dollar value
- *                           //          adjusted for inflation sold)
+ *             year: ,       // {number} year of the sales metric value
+ *             value:        // {number} value of the sales metric (units,
+ *                           //          dollar value, dollar value adjusted
+ *                           //          for inflation)
  *         },
  *         ...
  *     ]

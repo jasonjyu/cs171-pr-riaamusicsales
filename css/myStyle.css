@@ -29,7 +29,8 @@ body {
 }
 
 .brush {
-    fill: darkgrey;
+    fill: yellow;
     fill-opacity: .5;
+    stroke: white;
     pointer-events: none;
 }
