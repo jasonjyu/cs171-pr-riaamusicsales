@@ -14,8 +14,8 @@ FocusVis = function(_parentElement, _data, _eventHandler) {
     this.displayData = [];
 
     // define all "constants" here
-    this.margin = {top: 20, right: 0, bottom: 30, left: 100},
-    this.width = 800 - this.margin.left - this.margin.right,
+    this.margin = {top: 20, right: 90, bottom: 30, left: 60};
+    this.width = 800 - this.margin.left - this.margin.right;
     this.height = 350 - this.margin.top - this.margin.bottom;
 
     this.initVis();
@@ -79,6 +79,10 @@ FocusVis.prototype.initVis = function() {
     // filter, aggregate, modify data
     this.wrangleData();
 
+    // create the color scale after wrangling data
+    this.color = d3.scale.category20()
+        .domain(this.displayData.map(function(d) { return d.formatName; }));
+
     // call the update method
     this.updateVis();
 };
@@ -101,14 +105,30 @@ FocusVis.prototype.updateVis = function(){
     var that = this;
 
     // update scales
-    this.xScale.domain([d3.min(this.displayData, function(d) {
-        return d3.min(d.sales, function(s) { return s.year; });
-    }), d3.max(this.displayData, function(d) {
-        return d3.max(d.sales, function(s) { return s.year; });
-    })]);
-    this.yScale.domain([0, d3.max(this.displayData, function(d) {
-        return d3.max(d.sales, function(s) { return s.value; });
-    })]);
+    this.xScale.domain([
+        d3.min(this.displayData,
+            function(d) {
+                return d3.min(d.sales, function(s) { return s.year; });
+            }
+        ),
+        d3.max(this.displayData,
+            function(d) {
+                return d3.max(d.sales, function(s) { return s.year; });
+            }
+        )
+    ]);
+    this.yScale.domain([
+        Math.min(0, d3.min(this.displayData,
+            function(d) {
+                return d3.min(d.sales, function(s) { return s.value; });
+            }
+        )),
+        d3.max(this.displayData,
+            function(d) {
+                return d3.max(d.sales, function(s) { return s.value; });
+            }
+        )
+    ]);
 
     // update axis
     this.svg.select(".x.axis")
@@ -134,9 +154,16 @@ FocusVis.prototype.updateVis = function(){
 
     // update all inner paths and texts (both update and enter sets)
     formats.select("path")
-        .attr("d", function(d) { return that.line(d.sales); });
+        .attr("d", function(d) { return that.line(d.sales); })
+        .style("stroke", function(d) { return that.color(d.formatName); });
 
     formats.select("text")
+        .attr("transform", function(d) {
+            var lastDatum = d.sales[d.sales.length - 1];
+            return "translate(" + that.xScale(lastDatum.year) + "," +
+                that.yScale(lastDatum.value) + ")";
+        })
+        .attr("dy", ".35em")
         .text(function(d) { return d.formatName; });
 };
 
@@ -191,11 +218,11 @@ FocusVis.prototype.addSlider = function(svg) {
     var that = this;
 
     // the domain is the exponent value for the power scale
-    var sliderScale = d3.scale.linear().domain([.5, 1]).range([0, this.height]);
+    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, this.height]);
 
     var sliderDragged = function() {
 
-        var value = Math.max(0, Math.min(that.height,d3.event.y));
+        var value = Math.max(0, Math.min(that.height, d3.event.y));
         var sliderValue = sliderScale.invert(value);
 
         // update the slider position

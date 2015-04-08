@@ -22,21 +22,16 @@ body {
 }
 
 .context {
-    fill: steelblue;
-    fill-opacity: .8;
+    fill: grey;
 }
 
 .format path {
     fill: none;
-    stroke: steelblue;
-    stroke-width: 2px;
+    stroke-width: 1.5px;
 }
 
-.boundingBox {
-    cursor: pointer;
-    fill: grey;
-    fill-opacity: .3;
-    pointer-events: all;
+.format text {
+    font: 8px sans-serif;
 }
 
 .brush {
