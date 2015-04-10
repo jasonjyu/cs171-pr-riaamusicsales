@@ -4,12 +4,14 @@
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
  * @param {array} _data -- the array of data
+ * @param {object} _colorMap -- map of music formats to colors
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {FocusVis}
  */
-FocusVis = function(_parentElement, _data, _eventHandler) {
+FocusVis = function(_parentElement, _data, _colorMap, _eventHandler) {
     this.parentElement = _parentElement;
     this.data = _data;
+    this.colorMap = _colorMap;
     this.eventHandler = _eventHandler;
     this.displayData = [];
 
@@ -78,10 +80,6 @@ FocusVis.prototype.initVis = function() {
 
     // filter, aggregate, modify data
     this.wrangleData();
-
-    // create the color scale after wrangling data
-    this.color = d3.scale.category20()
-        .domain(this.displayData.map(function(d) { return d.format; }));
 
     // call the update method
     this.updateVis();
@@ -155,7 +153,7 @@ FocusVis.prototype.updateVis = function(){
     // update all inner paths and texts (both update and enter sets)
     formats.select("path")
         .attr("d", function(d) { return that.line(d.sales); })
-        .style("stroke", function(d) { return that.color(d.format); });
+        .style("stroke", function(d) { return that.colorMap[d.format]; });
 
     formats.select("text")
         .attr("transform", function(d) {
