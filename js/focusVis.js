@@ -81,7 +81,7 @@ FocusVis.prototype.initVis = function() {
 
     // create the color scale after wrangling data
     this.color = d3.scale.category20()
-        .domain(this.displayData.map(function(d) { return d.formatName; }));
+        .domain(this.displayData.map(function(d) { return d.format; }));
 
     // call the update method
     this.updateVis();
@@ -155,7 +155,7 @@ FocusVis.prototype.updateVis = function(){
     // update all inner paths and texts (both update and enter sets)
     formats.select("path")
         .attr("d", function(d) { return that.line(d.sales); })
-        .style("stroke", function(d) { return that.color(d.formatName); });
+        .style("stroke", function(d) { return that.color(d.format); });
 
     formats.select("text")
         .attr("transform", function(d) {
@@ -164,7 +164,7 @@ FocusVis.prototype.updateVis = function(){
                 that.yScale(lastDatum.value) + ")";
         })
         .attr("dy", ".35em")
-        .text(function(d) { return d.formatName; });
+        .text(function(d) { return d.format; });
 };
 
 /**
@@ -184,10 +184,10 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
 
     // aggregate the data
     var aggregatedDataMap = d3.nest().key(function(d) {
-        return d.formatName;
+        return d.format;
     }).rollup(function(leaves) {
         return {
-            formatName: leaves[0].formatName,
+            format: leaves[0].format,
             sales: leaves.map(function(d) {
                 return { year: new Date(d.year, 0), value: d.value };
             })
