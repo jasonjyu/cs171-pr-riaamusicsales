@@ -33,7 +33,7 @@ FocusVis.prototype.initVis = function() {
     // bind to the eventHandler
     $(this.eventHandler).bind("selectionChanged",
         function(event, selectStart, selectEnd) {
-            this.onSelectionChange(selectStart, selectEnd);
+            that.onSelectionChange(selectStart, selectEnd);
         }
     );
 
@@ -161,6 +161,7 @@ FocusVis.prototype.updateVis = function(){
             return "translate(" + that.xScale(lastDatum.year) + "," +
                 that.yScale(lastDatum.value) + ")";
         })
+        .attr("dx", ".35em")
         .attr("dy", ".35em")
         .text(function(d) { return d.format; });
 };
@@ -204,7 +205,12 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
  */
 FocusVis.prototype.onSelectionChange = function (selectStart, selectEnd) {
 
+    this.wrangleData(selectStart && selectEnd ? function(d) {
+        // filter for data within range
+        return selectStart <= d.year && d.year <= selectEnd;
+    } : null);
 
+    this.updateVis();
 };
 
 /**
