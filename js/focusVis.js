@@ -31,6 +31,13 @@ FocusVis.prototype.initVis = function() {
     var that = this;
 
     // bind to the eventHandler
+    $(this.eventHandler).bind("dataChanged",
+        function(event, newData) {
+            that.onDataChange(newData);
+        }
+    );
+
+    // bind to the eventHandler
     $(this.eventHandler).bind("selectionChanged",
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
@@ -198,12 +205,26 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
 };
 
 /**
+ * Gets called by the Event Handler on a "dataChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {array} newData
+ */
+FocusVis.prototype.onDataChange = function(newData) {
+
+    this.data = newData;
+    this.onSelectionChange(this.selectStart, this.selectEnd);
+};
+
+/**
  * Gets called by the Event Handler on a "selectionChanged" event,
  * re-wrangles the data, and updates the visualization.
  * @param {number} selectStart
  * @param {number} selectEnd
  */
-FocusVis.prototype.onSelectionChange = function (selectStart, selectEnd) {
+FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+
+    this.selectStart = selectStart;
+    this.selectEnd = selectEnd;
 
     this.wrangleData(selectStart && selectEnd ? function(d) {
         // filter for data within range

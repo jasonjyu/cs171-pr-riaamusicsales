@@ -166,7 +166,7 @@ ContextVis.prototype.filterAndAggregate = function(_filterFunction) {
  * re-wrangles the data, and updates the visualization.
  * @param {array} newData
  */
-ContextVis.prototype.onDataChange = function (newData) {
+ContextVis.prototype.onDataChange = function(newData) {
 
     this.data = newData;
     this.wrangleData();

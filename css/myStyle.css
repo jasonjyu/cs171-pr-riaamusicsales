@@ -1,13 +1,24 @@
 body {
-    font-family: 'PT Sans', sans-serif;
+    font-family: initial;
 }
 
 .chartTitle {
     background-color: lightgrey;
     color: black;
-    font-family: 'PT Sans', sans-serif;
-    font-size: 18px;
+    font: 18px monospace;
     padding: .25em 1em;
+}
+
+/* style the control option labels */
+.control {   
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.control .option {
+    border: 1px solid gray;
+    font-size: 12px;
+    padding-left: .5em;
 }
 
 .axis text {
