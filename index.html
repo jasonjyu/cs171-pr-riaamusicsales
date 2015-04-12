@@ -18,6 +18,7 @@
     <script src="js/metadata.js" type="text/javascript"></script>
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
+    <script src="js/paraVis.js" type="text/javascript"></script>
 
     <!-- Our Stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -33,6 +34,9 @@
 
         <div><span class="chartTitle">focus selections</span></div>
         <div id="focusVis1"></div>
+
+        <div><span class="chartTitle">parallel coordinates chart</span></div>
+        <div id="paraVis"></div>
     </div>
 
     <script>
@@ -72,10 +76,13 @@
             // call this function after data is loaded,
             // reformatted and bound to the variables
             var initVis = function() {
+
                 var myEventHandler = new Object();
                 var contextVis = new ContextVis(d3.select("#contextVis"),
                     dataset.units.data, myEventHandler);
                 var focusVis1 = new FocusVis(d3.select("#focusVis1"),
+                    dataset.units.data, metadata.colorMap, myEventHandler);
+                var paraVis = new ParaVis(d3.select("#paraVis"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
