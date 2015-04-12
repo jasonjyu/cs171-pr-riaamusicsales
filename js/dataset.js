@@ -8,10 +8,18 @@
  */
 Dataset = function(_rows_units, _rows_dollars, _rows_inflatedDollars) {
 
-    this.data_units = this.parseRows(_rows_units);
-    this.data_dollars = this.parseRows(_rows_dollars);
-    this.data_inflatedDollars = this.parseRows(_rows_inflatedDollars);
-    this.metadata_colorMap = this.generateColorMap(this.data_dollars);
+    this.units = {
+        name: "Units",
+        data: this.parseRows(_rows_units)
+    };
+    this.dollars = {
+        name: "Dollars",
+        data: this.parseRows(_rows_dollars)
+    };
+    this.inflatedDollars = {
+        name: "Dollars (inflated)",
+        data: this.parseRows(_rows_inflatedDollars)
+    };
 };
 
 /**
@@ -41,7 +49,7 @@ Dataset.prototype.parseRows = function(rows) {
                         format: row.format,
                         media:  row.media,
                         year:   +key,
-                        value:  +row[key]
+                        value:  +row[key]*1e6 // row value is stored in millions
                     });
                 }
             }
@@ -49,28 +57,4 @@ Dataset.prototype.parseRows = function(rows) {
     });
 
     return result;
-};
-
-/**
- * Generates a map of music formats to colors.
- * @param {array} data
- * @returns {object} map of formats to colors
- */
-Dataset.prototype.generateColorMap = function(data) {
-    // create an array of unique music format names
-    var formats = data.reduce(function(prev, curr) {
-        if (prev.indexOf(curr.format) < 0) {
-            prev.push(curr.format);
-        }
-        return prev;
-    }, []);
-    
-    // map the music format names to the color scale
-    var color = d3.scale.category20().domain(formats);
-    var colorMap = {};
-    formats.map(function(d) {
-        colorMap[d] = color(d);
-    });
-    
-    return colorMap;
 };

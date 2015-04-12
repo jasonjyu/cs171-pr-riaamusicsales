@@ -15,6 +15,7 @@
 
     <!-- Our JavaScript Files  -->
     <script src="js/dataset.js" type="text/javascript"></script>
+    <script src="js/metadata.js" type="text/javascript"></script>
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
 
@@ -38,8 +39,11 @@
         // this function is called after the HTML document is fully loaded
         $(function() {
 
-            // variable keeping global knowledge of the data types in the dataset
+            // keeps global knowledge of the data types in the dataset
             var dataset;
+
+            // keeps metadata about the dataset
+            var metadata;
 
             var bindControlsMetric = function(controlElement, eventHandler,
                 eventName) {
@@ -48,42 +52,21 @@
                     .attr("class", "control")
                     .text("Sales Metric:");
 
-                form.append("label").attr("class", "option").text(
-                    "Units ").append("input").attr(
-                        {
-                            type: "radio",
-                            name: "metric",
-                            value: "units",
-                            checked: "checked"
-                        }
-                    ).on("click", function() {
-                        $(eventHandler).trigger(eventName,
-                            [dataset.data_units]);
-                    });
-
-                form.append("label").attr("class", "option").text(
-                    "Dollars ").append("input").attr(
-                        {
-                            type: "radio",
-                            name: "metric",
-                            value: "dollars"
-                        }
-                    ).on("click", function() {
-                        $(eventHandler).trigger(eventName,
-                            [dataset.data_dollars]);
-                    });
-
-                form.append("label").attr("class", "option").text(
-                    "Dollars (inflated) ").append("input").attr(
-                        {
-                            type: "radio",
-                            name: "metric",
-                            value: "inflated_dollars"
-                        }
-                    ).on("click", function() {
-                        $(eventHandler).trigger(eventName,
-                            [dataset.data_inflatedDollars]);
-                    });
+                // create a radio button control for each metric
+                Object.keys(dataset).forEach(function(metric, i) {
+                    form.append("label").attr("class", "option").text(
+                        dataset[metric].name + " ").append("input").attr(
+                            {
+                                type: "radio",
+                                name: "metric",
+                                value: metric,
+                                checked: i === 0 ? "" : null
+                            }
+                        ).on("click", function() {
+                            $(eventHandler).trigger(eventName,
+                                [dataset[metric].data]);
+                        });
+                });
             };
 
             // call this function after data is loaded,
@@ -91,10 +74,9 @@
             var initVis = function() {
                 var myEventHandler = new Object();
                 var contextVis = new ContextVis(d3.select("#contextVis"),
-                    dataset.data_units, myEventHandler);
+                    dataset.units.data, myEventHandler);
                 var focusVis1 = new FocusVis(d3.select("#focusVis1"),
-                    dataset.data_units, dataset.metadata_colorMap,
-                    myEventHandler);
+                    dataset.units.data, metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl"), myEventHandler,
@@ -112,6 +94,7 @@
                         // process data if no error occurs
                         if (!error) {
                             dataset = new Dataset(rows1, rows2, rows3);
+                            metadata = new Metadata(dataset.dollars.data);
                             initVis();
                         }
                     });

@@ -57,7 +57,8 @@ FocusVis.prototype.initVis = function() {
 
     this.yAxis = d3.svg.axis()
         .scale(this.yScale)
-        .orient("left");
+        .orient("left")
+        .tickFormat(d3.format("s"));
 
     // create line chart object
     this.line = d3.svg.line()
