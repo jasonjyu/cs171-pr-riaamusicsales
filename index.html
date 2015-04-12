@@ -32,6 +32,9 @@
 
         <div><span class="chartTitle">focus selections</span></div>
         <div id="focusVis1"></div>
+		
+		<div><span class="chartTitle">parallel coordinates chart</span></div>
+        <div id="paraVis"></div>
     </div>
 
     <script>
@@ -85,6 +88,7 @@
                             [dataset.data_inflatedDollars]);
                     });
             };
+			
 
             // call this function after data is loaded,
             // reformatted and bound to the variables
@@ -93,6 +97,9 @@
                 var contextVis = new ContextVis(d3.select("#contextVis"),
                     dataset.data_units, myEventHandler);
                 var focusVis1 = new FocusVis(d3.select("#focusVis1"),
+                    dataset.data_units, dataset.metadata_colorMap,
+                    myEventHandler);
+				var paraVis = new ParaVis(d3.select("#paraVis"),
                     dataset.data_units, dataset.metadata_colorMap,
                     myEventHandler);
 
