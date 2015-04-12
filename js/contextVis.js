@@ -86,7 +86,7 @@ ContextVis.prototype.initVis = function() {
 
 /**
  * Method to wrangle the data.
- * @param _filterFunction -- filter function to apply on the data
+ * @param {function} _filterFunction -- filter function to apply on the data
  */
 ContextVis.prototype.wrangleData = function(_filterFunction) {
 
@@ -96,8 +96,11 @@ ContextVis.prototype.wrangleData = function(_filterFunction) {
 
 /**
  * Method to update the visualization.
+ * @param {object} _options -- update option parameters
  */
-ContextVis.prototype.updateVis = function(){
+ContextVis.prototype.updateVis = function(_options){
+
+    var tDuration = _options ? _options.tDuration : 0;
 
     // update scales
     this.xScale.domain(d3.extent(this.displayData,
@@ -117,7 +120,8 @@ ContextVis.prototype.updateVis = function(){
     path.enter().insert("path", ".axis")
         .attr("class", "context");
 
-    path.attr("d", this.area);
+    path.transition().duration(tDuration)
+        .attr("d", this.area);
 
     path.exit()
         .remove();
@@ -133,7 +137,7 @@ ContextVis.prototype.updateVis = function(){
 /**
  * Filters the data based on the specified _filter and returns an array of
  * aggregated data.
- * @param _filterFunction -- filter function to apply on the data
+ * @param {function} _filterFunction -- filter function to apply on the data
  * @returns {array}
  */
 ContextVis.prototype.filterAndAggregate = function(_filterFunction) {
@@ -170,7 +174,7 @@ ContextVis.prototype.onDataChange = function(newData) {
 
     this.data = newData;
     this.wrangleData();
-    this.updateVis();
+    this.updateVis({tDuration: 500});
 };
 
 /**

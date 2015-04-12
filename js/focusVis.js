@@ -94,7 +94,7 @@ FocusVis.prototype.initVis = function() {
 
 /**
  * Method to wrangle the data.
- * @param _filterFunction -- filter function to apply on the data
+ * @param {function} _filterFunction -- filter function to apply on the data
  */
 FocusVis.prototype.wrangleData = function(_filterFunction) {
 
@@ -104,8 +104,11 @@ FocusVis.prototype.wrangleData = function(_filterFunction) {
 
 /**
  * Method to update the visualization.
+ * @param {object} _options -- update option parameters
  */
-FocusVis.prototype.updateVis = function(){
+FocusVis.prototype.updateVis = function(_options){
+
+    var tDuration = _options ? _options.tDuration : 0;
 
     var that = this;
 
@@ -137,9 +140,11 @@ FocusVis.prototype.updateVis = function(){
 
     // update axis
     this.svg.select(".x.axis")
+        .transition().duration(tDuration)
         .call(this.xAxis);
 
     this.svg.select(".y.axis")
+        .transition().duration(tDuration)
         .call(this.yAxis);
 
     // update graph
@@ -152,17 +157,24 @@ FocusVis.prototype.updateVis = function(){
 
     // append a path and a text only for the Enter set (new g)
     formatsEnter.append("path");
-    formatsEnter.append("text");
+    formatsEnter.append("text")
+        .attr("transform", function(d) {
+            var lastDatum = d.sales[d.sales.length - 1];
+            return "translate(" + that.xScale(lastDatum.year) + "," +
+                that.yScale(lastDatum.value) + ")";
+        });
 
     formats.exit()
         .remove();
 
     // update all inner paths and texts (both update and enter sets)
     formats.select("path")
+        .transition().duration(tDuration)
         .attr("d", function(d) { return that.line(d.sales); })
         .style("stroke", function(d) { return that.colorMap[d.format]; });
 
     formats.select("text")
+        .transition().duration(tDuration)
         .attr("transform", function(d) {
             var lastDatum = d.sales[d.sales.length - 1];
             return "translate(" + that.xScale(lastDatum.year) + "," +
@@ -176,7 +188,7 @@ FocusVis.prototype.updateVis = function(){
 /**
  * Filters the data based on the specified _filter and returns an array of
  * aggregated data.
- * @param _filterFunction -- filter function to apply on the data
+ * @param {function} _filterFunction -- filter function to apply on the data
  * @returns {array}
  */
 FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
@@ -212,7 +224,15 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
 FocusVis.prototype.onDataChange = function(newData) {
 
     this.data = newData;
-    this.onSelectionChange(this.selectStart, this.selectEnd);
+
+    var selectStart = this.selectStart;
+    var selectEnd = this.selectEnd;
+    this.wrangleData(selectStart && selectEnd ? function(d) {
+        // filter for data within range
+        return selectStart <= d.year && d.year <= selectEnd;
+    } : null);
+
+    this.updateVis({tDuration: 500});
 };
 
 /**
