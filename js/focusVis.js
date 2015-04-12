@@ -150,7 +150,7 @@ FocusVis.prototype.updateVis = function(_options){
 
     // update graph
     var formats = this.svg.selectAll(".format")
-        .data(this.displayData);
+        .data(this.displayData, function(d) { return d.format; });
 
     // implement update graphs (D3: update, enter, exit)
     var formatsEnter = formats.enter().insert("g", ".axis")
