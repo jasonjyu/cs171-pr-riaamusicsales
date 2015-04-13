@@ -1,10 +1,14 @@
 body {
-    font-family: initial;
+    font-family: sans-serif;
+}
+
+h1 {
+    font-family: fantasy;
 }
 
 .chartTitle {
-    background-color: lightgrey;
-    color: black;
+    background-color: black;
+    color: white;
     font: 18px monospace;
     padding: .25em 1em;
 }
@@ -28,12 +32,8 @@ body {
 .axis line,
 .axis path {
     fill: none;
-    stroke: #000;
+    stroke: black;
     shape-rendering: crispEdges;
-}
-
-.context {
-    fill: grey;
 }
 
 .format {

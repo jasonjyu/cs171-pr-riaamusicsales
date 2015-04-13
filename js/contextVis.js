@@ -63,7 +63,11 @@ ContextVis.prototype.initVis = function() {
         .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + this.margin.left + "," +
-                this.margin.top + ")");
+            this.margin.top + ")");
+
+    // add brush element
+    this.svg.append("g")
+        .attr("class", "brush");
 
     // add axes visual elements
     this.svg.append("g")
@@ -72,10 +76,6 @@ ContextVis.prototype.initVis = function() {
 
     this.svg.append("g")
         .attr("class", "y axis");
-
-    // add brush element
-    this.svg.append("g")
-        .attr("class", "brush");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -117,7 +117,7 @@ ContextVis.prototype.updateVis = function(_options){
         .data([this.displayData]);
 
     // implement update graphs (D3: update, enter, exit)
-    path.enter().insert("path", ".axis")
+    path.enter().insert("path", "g") // insert 'path' behind other elements
         .attr("class", "context");
 
     path.transition().duration(tDuration)
