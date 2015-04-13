@@ -36,11 +36,14 @@ FocusVis.prototype.initVis = function() {
             that.onDataChange(newData);
         }
     );
-
-    // bind to the eventHandler
     $(this.eventHandler).bind("selectionChanged",
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
+        }
+    );
+    $(this.eventHandler).bind("highlightChanged",
+        function(event, highlight) {
+            that.onHighlightChange(highlight);
         }
     );
 
@@ -165,6 +168,16 @@ FocusVis.prototype.updateVis = function(_options){
                 that.yScale(lastDatum.value) + ")";
         });
 
+    // add mouse over and out controls to highlight and fade the chart elements
+    formatsEnter.on("mouseover", function(d) {
+        // trigger highlightChanged event
+        $(that.eventHandler).trigger("highlightChanged", d.format);
+    });
+    formatsEnter.on("mouseout", function(d) {
+        // trigger highlightChanged event with no arguments to clear highlight
+        $(that.eventHandler).trigger("highlightChanged");
+    });
+
     formats.exit()
         .remove();
 
@@ -253,6 +266,17 @@ FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
     } : null);
 
     this.updateVis();
+};
+
+FocusVis.prototype.onHighlightChange = function(highlight) {
+
+    var formats = this.svg.selectAll(".format");
+    formats.classed("faded", function(d) {
+        return highlight && d.format !== highlight;
+    });
+    formats.classed("highlighted", function(d) {
+        return highlight && d.format === highlight;
+    });
 };
 
 /**

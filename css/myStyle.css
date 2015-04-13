@@ -36,6 +36,10 @@ body {
     fill: grey;
 }
 
+.format {
+    cursor: pointer;
+}
+
 .format path {
     fill: none;
     stroke-width: 1.5px;
@@ -50,4 +54,28 @@ body {
     fill-opacity: .5;
     stroke: white;
     pointer-events: none;
+}
+
+/* style the highlighted chart elements */
+.highlighted path
+{
+    stroke-width: 3px;
+}
+.highlighted text
+{
+    font-weight: bolder;
+}
+
+/* style the faded chart elements */
+.faded
+{
+    opacity: .3;
+}
+.faded path
+{
+    stroke-width: 1px;
+}
+.faded text
+{
+    opacity: .1;
 }
