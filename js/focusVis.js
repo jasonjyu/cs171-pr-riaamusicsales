@@ -75,6 +75,7 @@ FocusVis.prototype.initVis = function() {
             .attr("width", this.width + this.margin.left + this.margin.right)
             .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
+            .attr("class", "focus")
             .attr("transform", "translate(" + this.margin.left + "," +
                 this.margin.top + ")");
 
@@ -151,22 +152,33 @@ FocusVis.prototype.updateVis = function(_options){
         .transition().duration(tDuration)
         .call(this.yAxis);
 
-    // update graph
+    // bind data
     var formats = this.svg.selectAll(".format")
         .data(this.displayData, function(d) { return d.format; });
 
-    // implement update graphs (D3: update, enter, exit)
+    /*
+     * DATA ENTER
+     */
     var formatsEnter = formats.enter().insert("g", ".axis")
         .attr("class", "format");
 
-    // append a path and a text only for the Enter set (new g)
-    formatsEnter.append("path");
-    formatsEnter.append("text")
-        .attr("transform", function(d) {
-            var lastDatum = d.sales[d.sales.length - 1];
-            return "translate(" + that.xScale(lastDatum.year) + "," +
-                that.yScale(lastDatum.value) + ")";
-        });
+    // append a path, circle, and text only for the Enter set (new g)
+    formatsEnter.append("path")
+        .style("stroke", function(d) { return that.colorMap[d.format]; });
+    var endpointEnter = formatsEnter.append("g")
+        .attr("class", "endpoint");
+    endpointEnter.append("circle")
+        .attr("r", 2)
+        .style("fill", function(d) { return that.colorMap[d.format]; });
+    endpointEnter.append("text")
+        .attr("dx", ".35em")
+        .attr("dy", ".35em")
+        .text(function(d) { return d.format; });
+    endpointEnter.attr("transform", function(d) {
+        var lastDatum = d.sales[d.sales.length - 1];
+        return "translate(" + that.xScale(lastDatum.year) + "," +
+            that.yScale(lastDatum.value) + ")";
+    });
 
     // add mouse over and out controls to highlight and fade the chart elements
     formatsEnter.on("mouseover", function(d) {
@@ -178,25 +190,27 @@ FocusVis.prototype.updateVis = function(_options){
         $(that.eventHandler).trigger("highlightChanged");
     });
 
-    formats.exit()
-        .remove();
-
-    // update all inner paths and texts (both update and enter sets)
+    /*
+     * DATA UPDATE
+     */
+    // update all inner paths and circles (both update and enter sets)
     formats.select("path")
         .transition().duration(tDuration)
-        .attr("d", function(d) { return that.line(d.sales); })
-        .style("stroke", function(d) { return that.colorMap[d.format]; });
+        .attr("d", function(d) { return that.line(d.sales); });
 
-    formats.select("text")
+    formats.select(".endpoint")
         .transition().duration(tDuration)
         .attr("transform", function(d) {
             var lastDatum = d.sales[d.sales.length - 1];
             return "translate(" + that.xScale(lastDatum.year) + "," +
                 that.yScale(lastDatum.value) + ")";
-        })
-        .attr("dx", ".35em")
-        .attr("dy", ".35em")
-        .text(function(d) { return d.format; });
+        });
+
+    /*
+     * DATA EXIT
+     */
+    // remove unbounded elements
+    formats.exit().remove();
 };
 
 /**
@@ -257,6 +271,7 @@ FocusVis.prototype.onDataChange = function(newData) {
  */
 FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 
+    // save off selection range
     this.selectStart = selectStart;
     this.selectEnd = selectEnd;
 
