@@ -15,7 +15,7 @@ ContextVis = function(_parentElement, _data, _eventHandler) {
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
-    this.width = 800 - this.margin.left - this.margin.right;
+    this.width = 1170 - this.margin.left - this.margin.right;
     this.height = 100 - this.margin.top - this.margin.bottom;
 
     this.initVis();

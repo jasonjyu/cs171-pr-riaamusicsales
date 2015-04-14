@@ -27,16 +27,36 @@
     <div class="container">
         <h1>RIAA Music Sales</h1>
 
-        <div id="metricControl"></div><br>
+        <div class="row">
+            <div class="col-md-12 text-center" id="metricControl1"></div>
+        </div>
 
-        <div><span class="chartTitle">context overview</span></div>
-        <div id="contextVis"></div>
+        <br><br>
 
-        <div><span class="chartTitle">focus selections</span></div>
-        <div id="focusVis1"></div>
+        <div class="row">
+            <div class="col-md-12 text-center" id="contextVis">
+                <span class="chartTitle">context overview</span>
+            </div>
+        </div>
 
-        <div><span class="chartTitle">parallel coordinates chart</span></div>
-        <div id="paraVis"></div>
+        <br><br>
+
+        <div class="row">
+            <div class="col-md-7 text-center" id="focusVis1">
+                <span class="chartTitle">focus selections</span>
+            </div>
+            <div class="col-md-5 text-center" id="rankingVis1">
+                <span class="chartTitle">rankings</span>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <div class="col-md-12 text-center" id="paraVis">
+                <span class="chartTitle">parallel coordinates chart</span>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -86,7 +106,7 @@
                     dataset.units.data, metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
-                bindControlsMetric(d3.select("#metricControl"), myEventHandler,
+                bindControlsMetric(d3.select("#metricControl1"), myEventHandler,
                     "dataChanged");
             };
 
