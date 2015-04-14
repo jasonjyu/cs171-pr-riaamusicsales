@@ -36,6 +36,7 @@
         <div class="row">
             <div class="col-md-12 text-center" id="contextVis">
                 <span class="chartTitle">context overview</span>
+                <br>
             </div>
         </div>
 
@@ -44,9 +45,11 @@
         <div class="row">
             <div class="col-md-7 text-center" id="focusVis1">
                 <span class="chartTitle">focus selections</span>
+                <br>
             </div>
             <div class="col-md-5 text-center" id="rankingVis1">
                 <span class="chartTitle">rankings</span>
+                <br>
             </div>
         </div>
 
@@ -55,6 +58,7 @@
         <div class="row">
             <div class="col-md-12 text-center" id="paraVis">
                 <span class="chartTitle">parallel coordinates chart</span>
+                <br>
             </div>
         </div>
     </div>
@@ -129,6 +133,15 @@
 
             startHere();
         });
+
+        /**
+         * Helper function that gets the width of a D3 element
+         */
+        var getInnerWidth = function(element) {
+            var style = window.getComputedStyle(element.node(), null);
+
+            return parseInt(style.getPropertyValue('width'));
+        };
     </script>
 </body>
 </html>
