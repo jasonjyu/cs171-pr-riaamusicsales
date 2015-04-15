@@ -7,17 +7,19 @@
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {ContextVis}
  */
-ContextVis = function(_parentElement, _data, _eventHandler) {
+ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
     this.parentElement = _parentElement;
     this.data = _data;
+    this.data2 = _data2;
     this.eventHandler = _eventHandler;
     this.displayData = [];
+    this.displayData2 = [];
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
-    this.height = 100 - this.margin.top - this.margin.bottom;
+    this.height = 150 - this.margin.top - this.margin.bottom;
 
     this.initVis();
 };
@@ -29,13 +31,6 @@ ContextVis.prototype.initVis = function() {
 
     var that = this;
 
-    // bind to the eventHandler
-    $(this.eventHandler).bind("dataChanged",
-        function(event, newData) {
-            that.onDataChange(newData);
-        }
-    );
-
     // create scales and axis
     this.xScale = d3.time.scale()
         .range([0, this.width]);
@@ -43,28 +38,46 @@ ContextVis.prototype.initVis = function() {
     this.yScale = d3.scale.linear()
         .range([this.height, 0]);
 
+    this.yScale2 = d3.scale.linear()
+        .range([this.height, 0]);
+
     this.xAxis = d3.svg.axis()
         .scale(this.xScale)
         .orient("bottom");
 
-    // create area chart object
-    this.area = d3.svg.area()
+    this.yAxis = d3.svg.axis()
+        .scale(this.yScale)
+        .orient("left")
+        .tickFormat(d3.format("s"));
+
+    this.yAxis2 = d3.svg.axis()
+        .scale(this.yScale2)
+        .orient("right")
+        .tickFormat(d3.format("s"));
+
+    // create line chart object
+    this.line = d3.svg.line()
         .interpolate("monotone")
         .x(function(d) { return that.xScale(d.year); })
-        .y0(this.height)
-        .y1(function(d) { return that.yScale(d.value); });
+        .y(function(d) { return that.yScale(d.value); });
+    this.line2 = d3.svg.line()
+        .interpolate("monotone")
+        .x(function(d) { return that.xScale(d.year); })
+        .y(function(d) { return that.yScale2(d.value); });
 
     // create chart brush object
     this.brush = d3.svg.brush()
         .on("brush", this.brushed(this));
 
     // append an SVG and group element
-    this.svg = this.parentElement.append("svg")
-        .attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom)
+    this.svg = this.parentElement
+        .append("svg")
+            .attr("width", this.width + this.margin.left + this.margin.right)
+            .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + this.margin.left + "," +
-            this.margin.top + ")");
+            .attr("class", "context")
+            .attr("transform", "translate(" + this.margin.left + "," +
+                this.margin.top + ")");
 
     // add brush element
     this.svg.append("g")
@@ -76,7 +89,21 @@ ContextVis.prototype.initVis = function() {
         .attr("transform", "translate(0," + this.height + ")");
 
     this.svg.append("g")
-        .attr("class", "y axis");
+        .attr("class", "y axis left")
+        .append("g")
+        .attr("class", "label")
+        .attr("transform", "translate(" + -this.margin.left + "," + this.height/2 + ") rotate(90)")
+        .append("text")
+        .style("text-anchor", "middle");
+
+    this.svg.append("g")
+        .attr("class", "y axis right")
+        .attr("transform", "translate(" + this.width + ",0)")
+        .append("g")
+        .attr("class", "label")
+        .attr("transform", "translate(" + this.margin.right/2 + "," + this.height/2 + ") rotate(90)")
+        .append("text")
+        .style("text-anchor", "middle");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -91,8 +118,21 @@ ContextVis.prototype.initVis = function() {
  */
 ContextVis.prototype.wrangleData = function(_filterFunction) {
 
+    var that = this;
+
     // displayData holds the data which is visualized
-    this.displayData = this.filterAndAggregate(_filterFunction);
+    this.displayData = this.data.map(function(d) {
+        return {
+            metric: d.name,
+            sales: that.filterAndAggregate(d.data, _filterFunction)
+        };
+    });
+    this.displayData2 = this.data2.map(function(d) {
+        return {
+            metric: d.name,
+            sales: that.filterAndAggregate(d.data, _filterFunction)
+        };
+    });
 };
 
 /**
@@ -103,29 +143,98 @@ ContextVis.prototype.updateVis = function(_options){
 
     var tDuration = _options ? _options.tDuration : 0;
 
+    var that = this;
+
     // update scales
-    this.xScale.domain(d3.extent(this.displayData,
-        function(d) { return d.year; }));
-    this.yScale.domain([0, d3.max(this.displayData,
-        function(d) { return d.value; })]);
+    this.xScale.domain([
+        d3.min(this.displayData,
+            function(d) {
+                return d3.min(d.sales, function(s) { return s.year; });
+            }
+        ),
+        d3.max(this.displayData,
+            function(d) {
+                return d3.max(d.sales, function(s) { return s.year; });
+            }
+        )
+    ]);
+    this.yScale.domain([
+        Math.min(0, d3.min(this.displayData,
+            function(d) {
+                return d3.min(d.sales, function(s) { return s.value; });
+            }
+        )),
+        d3.max(this.displayData,
+            function(d) {
+                return d3.max(d.sales, function(s) { return s.value; });
+            }
+        )
+    ]);
+    this.yScale2.domain([
+        Math.min(0, d3.min(this.displayData2,
+            function(d) {
+                return d3.min(d.sales, function(s) { return s.value; });
+            }
+        )),
+        d3.max(this.displayData2,
+            function(d) {
+                return d3.max(d.sales, function(s) { return s.value; });
+            }
+        )
+    ]);
 
     // update axis
     this.svg.select(".x.axis")
         .call(this.xAxis);
 
-    // update graph
-    var path = this.svg.selectAll(".context")
-        .data([this.displayData]);
+    this.svg.select(".y.axis.left")
+        .transition().duration(tDuration)
+        .call(this.yAxis)
+        .select(".label text")
+        .text(this.displayData[0].metric);
 
-    // implement update graphs (D3: update, enter, exit)
-    path.enter().insert("path", "g") // insert 'path' behind other elements
-        .attr("class", "context");
+    this.svg.select(".y.axis.right")
+        .transition().duration(tDuration)
+        .call(this.yAxis2)
+        .select(".label text")
+        .text(this.displayData2[0].metric);
 
-    path.transition().duration(tDuration)
-        .attr("d", this.area);
+    // bind data
+    var metrics = this.svg.selectAll(".metric")
+        .data(this.displayData, function(d) { return d.metric; });
+    var metrics2 = this.svg.selectAll(".metric2")
+        .data(this.displayData2, function(d) { return d.metric; });
 
-    path.exit()
-        .remove();
+    /*
+     * DATA ENTER
+     */
+    // insert behind other elements
+    var metricsEnter = metrics.enter().insert("g", "g")
+        .attr("class", "metric");
+    var metricsEnter2 = metrics2.enter().insert("g", "g")
+        .attr("class", "metric2");
+
+    // append a path for the Enter set (new g)
+    metricsEnter.append("path");
+    metricsEnter2.append("path");
+
+    /*
+     * DATA UPDATE
+     */
+    // update all inner paths (both update and enter sets)
+    metrics.select("path")
+        .transition().duration(tDuration)
+        .attr("d", function(d) { return that.line(d.sales); });
+    metrics2.select("path")
+        .transition().duration(tDuration)
+        .attr("d", function(d) { return that.line2(d.sales); });
+
+    /*
+     * DATA EXIT
+     */
+    // remove unbounded elements
+    metrics.exit().remove();
+    metrics2.exit().remove();
 
     // update brush element
     this.brush.x(this.xScale);
@@ -138,17 +247,18 @@ ContextVis.prototype.updateVis = function(_options){
 /**
  * Filters the data based on the specified _filter and returns an array of
  * aggregated data.
+ * @param {array} _data -- the data to process
  * @param {function} _filterFunction -- filter function to apply on the data
  * @returns {array}
  */
-ContextVis.prototype.filterAndAggregate = function(_filterFunction) {
+ContextVis.prototype.filterAndAggregate = function(_data, _filterFunction) {
 
     // set filterFunction to a function that accepts all items
     // ONLY if the parameter _filterFunction is null
     var filterFunction = _filterFunction || function() { return true; };
 
     // filter the data
-    var filteredData = this.data.filter(filterFunction);
+    var filteredData = _data.filter(filterFunction);
 
     // aggregate the data
     var aggregatedDataMap = d3.nest().key(function(d) {
@@ -164,18 +274,6 @@ ContextVis.prototype.filterAndAggregate = function(_filterFunction) {
 
     // return an array of filtered and aggregated data
     return d3.values(aggregatedDataMap);
-};
-
-/**
- * Gets called by the Event Handler on a "dataChanged" event,
- * re-wrangles the data, and updates the visualization.
- * @param {array} newData
- */
-ContextVis.prototype.onDataChange = function(newData) {
-
-    this.data = newData;
-    this.wrangleData();
-    this.updateVis({tDuration: 500});
 };
 
 /**

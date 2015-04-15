@@ -27,10 +27,6 @@
     <div class="container">
         <h1>RIAA Music Sales</h1>
 
-        <div class="row">
-            <div class="col-md-12 text-center" id="metricControl1"></div>
-        </div>
-
         <br><br>
 
         <div class="row">
@@ -51,6 +47,9 @@
                 <span class="chartTitle">rankings</span>
                 <br>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center" id="metricControl1"></div>
         </div>
 
         <br><br>
@@ -103,7 +102,7 @@
 
                 var myEventHandler = new Object();
                 var contextVis = new ContextVis(d3.select("#contextVis"),
-                    dataset.units.data, myEventHandler);
+                    [dataset.units], [dataset.dollars], myEventHandler);
                 var focusVis1 = new FocusVis(d3.select("#focusVis1"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var paraVis = new ParaVis(d3.select("#paraVis"),
@@ -135,7 +134,8 @@
         });
 
         /**
-         * Helper function that gets the width of a D3 element
+         * Helper function that gets the width of a DOM element
+         * @param {object} element
          */
         var getInnerWidth = function(element) {
             var style = window.getComputedStyle(element.node(), null);
