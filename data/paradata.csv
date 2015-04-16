@@ -1,0 +1,320 @@
+format,year,media,units,dollars,dollars (inflation)
+CD,1983,physical,0.8,17.2,40.9
+CD,1984,physical,5.8,103.3,235.4
+CD,1985,physical,22.6,389.5,857
+CD,1986,physical,53,930.1,2009
+CD,1987,physical,102.1,1593.6,3321
+CD,1988,physical,149.7,2089.9,4182.2
+CD,1989,physical,207.2,2587.7,4940.3
+CD,1990,physical,286.5,3451.6,6251.9
+CD,1991,physical,333.3,4337.7,7539.6
+CD,1992,physical,407.5,5326.5,8987.7
+CD,1993,physical,495.4,6511.4,10667.7
+CD,1994,physical,662.1,8464.5,13521.3
+CD,1995,physical,722.9,9377.4,14566.7
+CD,1996,physical,778.9,9934.7,14989.8
+CD,1997,physical,753.1,9915.1,14624.7
+CD,1998,physical,847,11416,16580.2
+CD,1999,physical,938.9,12816.3,18211.8
+CD,2000,physical,942.5,13214.5,18166.9
+CD,2001,physical,881.9,12909.4,17256.5
+CD,2002,physical,803.3,12044.1,15849.2
+CD,2003,physical,746,11232.9,14452.3
+CD,2004,physical,767,11446.5,14345.1
+CD,2005,physical,705.4,10520.2,12752.2
+CD,2006,physical,619.7,9372.6,11006.1
+CD,2007,physical,499.7,7452.3,8508.8
+CD,2008,physical,368.4,5471.3,6016
+CD,2009,physical,296.6,4318.8,4765.7
+CD,2010,physical,253,3389.4,3679.8
+CD,2011,physical,240.8,3100.7,3263.3
+CD,2012,physical,198.2,2485.6,2562.9
+CD,2013,physical,172.2,2123.5,2157.9
+CD,2014,physical,144.1,1854.1,1854.1
+CD Single,1988,physical,1.6,9.8,19.6
+CD Single,1990,physical,1.1,6,10.9
+CD Single,1991,physical,5.7,35.1,61
+CD Single,1992,physical,7.3,45.1,76.1
+CD Single,1993,physical,7.8,45.8,75
+CD Single,1994,physical,9.3,56.1,89.6
+CD Single,1995,physical,21.5,110.9,172.3
+CD Single,1996,physical,43.2,184.1,277.8
+CD Single,1997,physical,66.7,272.7,402.2
+CD Single,1998,physical,56,213.2,309.6
+CD Single,1999,physical,55.9,222.4,316
+CD Single,2000,physical,34.2,142.7,196.2
+CD Single,2001,physical,17.3,79.4,106.1
+CD Single,2002,physical,4.5,19.6,25.8
+CD Single,2003,physical,8.3,36,46.3
+CD Single,2004,physical,3.1,15,18.8
+CD Single,2005,physical,2.8,10.9,13.2
+CD Single,2006,physical,1.7,7.7,9
+CD Single,2007,physical,2.6,12.2,13.9
+CD Single,2008,physical,0.7,3.5,3.8
+CD Single,2009,physical,0.9,3.1,3.4
+CD Single,2010,physical,1,2.9,3.1
+CD Single,2011,physical,1.3,3.5,3.7
+CD Single,2012,physical,1.1,3.2,3.3
+CD Single,2013,physical,0.6,2.4,2.4
+CD Single,2014,physical,1,3.8,3.8
+Vinyl Single,1973,physical,228,190,1013.1
+Vinyl Single,1974,physical,204,194,931.6
+Vinyl Single,1975,physical,164,211.5,930.7
+Vinyl Single,1976,physical,190,245.1,1019.8
+Vinyl Single,1977,physical,190,245.1,957.5
+Vinyl Single,1978,physical,190,260.3,945.1
+Vinyl Single,1979,physical,212,353.6,1153
+Vinyl Single,1980,physical,157,250,718.3
+Vinyl Single,1981,physical,154.7,256.4,667.8
+Vinyl Single,1982,physical,137.2,283,694.3
+Vinyl Single,1983,physical,124.8,269.3,640.1
+Vinyl Single,1984,physical,131.5,298.7,680.6
+Vinyl Single,1985,physical,120.7,281,618.2
+Vinyl Single,1986,physical,93.9,228.1,492.7
+Vinyl Single,1987,physical,82,203.3,423.7
+Vinyl Single,1988,physical,65.6,180.4,361
+Vinyl Single,1989,physical,36.6,116.4,222.2
+Vinyl Single,1990,physical,27.6,94.4,171
+Vinyl Single,1991,physical,22,63.9,111.1
+Vinyl Single,1992,physical,19.8,66.4,112
+Vinyl Single,1993,physical,15.1,51.2,83.9
+Vinyl Single,1994,physical,11.7,47.2,75.4
+Vinyl Single,1995,physical,10.2,46.7,72.5
+Vinyl Single,1996,physical,10.1,47.5,71.7
+Vinyl Single,1997,physical,7.5,35.6,52.5
+Vinyl Single,1998,physical,5.4,25.7,37.3
+Vinyl Single,1999,physical,5.3,27.9,39.6
+Vinyl Single,2000,physical,4.8,26.3,36.2
+Vinyl Single,2001,physical,5.5,31.4,42
+Vinyl Single,2002,physical,4.4,24.9,32.8
+Vinyl Single,2003,physical,3.8,21.5,27.7
+Vinyl Single,2004,physical,3.5,19.9,24.9
+Vinyl Single,2005,physical,2.3,13.2,16
+Vinyl Single,2006,physical,1.5,9.9,11.6
+Vinyl Single,2007,physical,0.6,4,4.6
+Vinyl Single,2008,physical,0.4,2.9,3.2
+Vinyl Single,2009,physical,0.3,2.5,2.8
+Vinyl Single,2010,physical,0.3,2.3,2.5
+Vinyl Single,2011,physical,0.4,4.6,4.8
+Vinyl Single,2012,physical,0.4,4.7,4.8
+Vinyl Single,2013,physical,0.3,3,3
+Vinyl Single,2014,physical,0.5,5.9,5.9
+Cassette,1973,physical,15,76,405.2
+Cassette,1974,physical,15.3,87.2,418.7
+Cassette,1975,physical,16.2,98.8,434.7
+Cassette,1976,physical,21.8,145.7,606.2
+Cassette,1977,physical,36.9,249.6,975.1
+Cassette,1978,physical,61.3,449.8,1633.2
+Cassette,1979,physical,78.5,580.6,1893.2
+Cassette,1980,physical,99,705,2025.5
+Cassette,1981,physical,124,1062.8,2767.9
+Cassette,1982,physical,183.2,1384.5,3396.5
+Cassette,1983,physical,236.8,1810.9,4304.3
+Cassette,1984,physical,332,2383.9,5431.7
+Cassette,1985,physical,339.1,2411.5,5305.7
+Cassette,1986,physical,344.5,2499.5,5398.9
+Cassette,1987,physical,410,2959.7,6167.8
+Cassette,1988,physical,450.1,3385.1,6774.1
+Cassette,1989,physical,446.2,3345.8,6387.7
+Cassette,1990,physical,442.2,3472.4,6289.5
+Cassette,1991,physical,360.1,3019.6,5248.5
+Cassette,1992,physical,366.4,3116.3,5258.3
+Cassette,1993,physical,339.5,2915.8,4777
+Cassette,1994,physical,345.4,2976.4,4754.5
+Cassette,1995,physical,272.6,2303.6,3578.4
+Cassette,1996,physical,225.3,1905.3,2874.8
+Cassette,1997,physical,172.6,1522.7,2246
+Cassette,1998,physical,158.5,1419.9,2062.2
+Cassette,1999,physical,123.6,1061.6,1508.5
+Cassette,2000,physical,76,626,860.6
+Cassette,2001,physical,45,363.4,485.8
+Cassette,2002,physical,31.1,209.8,276.1
+Cassette,2003,physical,17.2,108.1,139.1
+Cassette,2004,physical,5.2,23.7,29.7
+Cassette,2005,physical,2.5,13.1,15.9
+Cassette,2006,physical,0.7,3.7,4.3
+Cassette,2007,physical,0.4,3,3.4
+Cassette,2008,physical,0.1,0.9,1
+Cassette Single,1987,physical,5.1,14.3,29.8
+Cassette Single,1988,physical,22.5,57.3,114.7
+Cassette Single,1989,physical,76.2,194.6,371.5
+Cassette Single,1990,physical,87.4,257.9,467.1
+Cassette Single,1991,physical,69,230.4,400.5
+Cassette Single,1992,physical,84.6,298.8,504.2
+Cassette Single,1993,physical,85.6,298.5,489
+Cassette Single,1994,physical,81.1,274.9,439.1
+Cassette Single,1995,physical,70.7,236.3,367.1
+Cassette Single,1996,physical,59.9,189.3,285.6
+Cassette Single,1997,physical,42.2,133.5,196.9
+Cassette Single,1998,physical,26.4,94.4,137.1
+Cassette Single,1999,physical,14.2,48,68.2
+Cassette Single,2000,physical,1.3,4.6,6.3
+LP/EP,1973,physical,280,1246,6643.5
+LP/EP,1974,physical,276,1356,6511.4
+LP/EP,1975,physical,257,1485,6534.4
+LP/EP,1976,physical,273,1663,6919
+LP/EP,1977,physical,344,2195.1,8575.2
+LP/EP,1978,physical,341.3,2473.3,8980.4
+LP/EP,1979,physical,290,2057,6707.5
+LP/EP,1980,physical,308,2200,6320.6
+LP/EP,1981,physical,295.2,2341.7,6098.6
+LP/EP,1982,physical,243.9,1925.1,4722.7
+LP/EP,1983,physical,209.6,1689,4014.5
+LP/EP,1984,physical,204.6,1548.8,3528.9
+LP/EP,1985,physical,167,1280.5,2817.3
+LP/EP,1986,physical,125.2,983,2123.3
+LP/EP,1987,physical,107,793.1,1652.8
+LP/EP,1988,physical,72.4,532.2,1065
+LP/EP,1989,physical,34.6,220.3,420.6
+LP/EP,1990,physical,11.7,86.5,156.7
+LP/EP,1991,physical,4.8,29.4,51.1
+LP/EP,1992,physical,2.3,13.5,22.8
+LP/EP,1993,physical,1.2,10.6,17.4
+LP/EP,1994,physical,1.9,17.8,28.4
+LP/EP,1995,physical,2.2,25.1,39
+LP/EP,1996,physical,2.9,36.8,55.5
+LP/EP,1997,physical,2.7,33.3,49.1
+LP/EP,1998,physical,3.4,34,49.4
+LP/EP,1999,physical,2.9,31.8,45.2
+LP/EP,2000,physical,2.2,27.7,38.1
+LP/EP,2001,physical,2.3,27.4,36.6
+LP/EP,2002,physical,1.7,20.5,27
+LP/EP,2003,physical,1.5,21.7,27.9
+LP/EP,2004,physical,1.4,19.3,24.2
+LP/EP,2005,physical,1,14.2,17.2
+LP/EP,2006,physical,0.9,15.7,18.4
+LP/EP,2007,physical,1.3,22.9,26.1
+LP/EP,2008,physical,2.9,56.7,62.3
+LP/EP,2009,physical,3.5,63.8,70.4
+LP/EP,2010,physical,4.2,88.9,96.5
+LP/EP,2011,physical,5.5,119.4,125.7
+LP/EP,2012,physical,6.9,160.7,165.7
+LP/EP,2013,physical,9.4,210.7,214.2
+LP/EP,2014,physical,13.2,314.9,314.9
+Music Video,1989,physical,6.1,115.4,220.3
+Music Video,1990,physical,9.2,172.3,312.1
+Music Video,1991,physical,6.1,118.1,205.3
+Music Video,1992,physical,7.6,157.4,265.6
+Music Video,1993,physical,11,213.3,349.5
+Music Video,1994,physical,11.2,231.1,369.2
+Music Video,1995,physical,12.6,220.3,342.2
+Music Video,1996,physical,16.9,236.1,356.2
+Music Video,1997,physical,18.6,323.9,477.7
+Music Video,1998,physical,27.2,508,737.8
+Music Video,1999,physical,19.8,376.7,535.3
+Music Video,2000,physical,18.2,281.9,387.5
+Music Video,2001,physical,17.7,329.2,440.1
+Music Video,2002,physical,14.7,288.4,379.5
+Music Video,2003,physical,19.9,399.9,514.5
+Music Video,2004,physical,32.8,607.2,761
+Music Video,2005,physical,33.8,602.2,730
+Music Video,2006,physical,23.2,451.1,529.7
+Music Video,2007,physical,27.5,484.9,553.6
+Music Video,2008,physical,13.2,227.3,249.9
+Music Video,2009,physical,11.6,209.6,231.3
+Music Video,2010,physical,9.1,177.6,192.8
+Music Video,2011,physical,7.7,151,158.9
+Music Video,2012,physical,6,116.6,120.2
+Music Video,2013,physical,4.7,104.7,106.4
+Music Video,2014,physical,4.1,90.5,90.5
+DVD Audio,2001,physical,0.3,6,8
+DVD Audio,2002,physical,0.4,8.5,11.2
+DVD Audio,2003,physical,0.4,8,10.3
+DVD Audio,2004,physical,0.3,6.5,8.1
+DVD Audio,2005,physical,0.5,11.2,13.6
+DVD Audio,2006,physical,0.1,2.4,2.8
+DVD Audio,2007,physical,0.2,2.8,3.2
+DVD Audio,2008,physical,0.04,1.2,1.3
+DVD Audio,2009,physical,0.1,1.6,1.8
+DVD Audio,2010,physical,0.04,0.9,1
+DVD Audio,2011,physical,0.01,0.3,0.3
+DVD Audio,2012,physical,0.01,0.2,0.2
+DVD Audio,2014,physical,0.07,2.14,2.1
+8 - Track,1973,physical,91,489,2607.3
+8 - Track,1974,physical,96.7,549.2,2637.2
+8 - Track,1975,physical,94.6,583,2565.4
+8 - Track,1976,physical,106.1,678.2,2821.7
+8 - Track,1977,physical,127.3,811,3168.2
+8 - Track,1978,physical,133.6,948,3442.1
+8 - Track,1979,physical,102.3,684.3,2231.4
+8 - Track,1980,physical,85,527,1514.1
+8 - Track,1981,physical,50,313,815.2
+8 - Track,1982,physical,13.7,36,88.3
+SACD,2003,physical,1.3,26.3,33.8
+SACD,2004,physical,0.8,16.6,20.8
+SACD,2005,physical,0.5,10,12.1
+SACD,2006,physical,0.3,5.5,6.5
+SACD,2007,physical,0.2,3.6,4.1
+SACD,2008,physical,0.1,3.1,3.4
+SACD,2009,physical,0.1,2.4,2.6
+SACD,2010,physical,0.1,1.7,1.8
+SACD,2011,physical,0.1,1.5,1.6
+SACD,2012,physical,0.065,1.3,1.3
+SACD,2013,physical,0.045,1,1
+SACD,2014,physical,0.03,0.8,0.8
+Other Tapes,1973,physical,2.2,15.6,83.2
+Other Tapes,1974,physical,1.9,13.3,63.9
+Other Tapes,1975,physical,1.5,10.2,44.9
+Other Tapes,1976,physical,0.7,5.1,21.2
+Download Single,2004,digital,139.4,138,172.9
+Download Single,2005,digital,366.9,363.3,440.4
+Download Single,2006,digital,586.4,580.6,681.8
+Download Single,2007,digital,819.4,811,926
+Download Single,2008,digital,1042.7,1032.2,1135
+Download Single,2009,digital,1124.4,1172,1293.3
+Download Single,2010,digital,1177.4,1336.4,1450.9
+Download Single,2011,digital,1332.3,1522.4,1602.2
+Download Single,2012,digital,1392.2,1623.6,1674.1
+Download Single,2013,digital,1327.9,1567.6,1593
+Download Single,2014,digital,1200.4,1409.6,1409.6
+Download Album,2004,digital,4.6,45.5,57
+Download Album,2005,digital,13.6,135.7,164.5
+Download Album,2006,digital,27.6,275.9,324
+Download Album,2007,digital,49.8,497.4,567.9
+Download Album,2008,digital,63.6,635.3,698.5
+Download Album,2009,digital,74.5,744.3,821.3
+Download Album,2010,digital,85.8,872.4,947.1
+Download Album,2011,digital,103.9,1070.8,1127
+Download Album,2012,digital,116.7,1204.8,1242.3
+Download Album,2013,digital,118,1232.1,1252.1
+Download Album,2014,digital,117.6,1150.8,1150.8
+Kiosk,2005,digital,0.7,1,1.2
+Kiosk,2006,digital,1.4,1.9,2.2
+Kiosk,2007,digital,1.8,2.6,3
+Kiosk,2008,digital,1.6,2.6,2.9
+Kiosk,2009,digital,1.7,6.3,7
+Kiosk,2010,digital,1.7,6.4,6.9
+Kiosk,2011,digital,1.3,2.7,2.8
+Kiosk,2012,digital,2,3.7,3.8
+Kiosk,2013,digital,3.7,6.2,6.3
+Kiosk,2014,digital,1.6,2.6,2.6
+Download Music Video,2005,digital,1.9,3.7,4.5
+Download Music Video,2006,digital,9.9,19.7,23.1
+Download Music Video,2007,digital,14.2,28.2,32.2
+Download Music Video,2008,digital,20.8,41.3,45.4
+Download Music Video,2009,digital,20.5,40.9,45.1
+Download Music Video,2010,digital,18.4,36.6,39.7
+Download Music Video,2011,digital,16.3,32.4,34.1
+Download Music Video,2012,digital,10.5,20.8,21.4
+Download Music Video,2013,digital,8.4,16.7,17
+Download Music Video,2014,digital,6.8,13.6,13.6
+Ringtones & Ringbacks,2005,digital,170,421.6,511
+Ringtones & Ringbacks,2006,digital,315,773.8,908.7
+Ringtones & Ringbacks,2007,digital,433.8,1055.8,1205.5
+Ringtones & Ringbacks,2008,digital,405.1,977.1,1074.4
+Ringtones & Ringbacks,2009,digital,294.3,702.8,775.5
+Ringtones & Ringbacks,2010,digital,188.5,448,486.4
+Ringtones & Ringbacks,2011,digital,115.4,276.2,290.7
+Ringtones & Ringbacks,2012,digital,69.3,166.9,172.1
+Ringtones & Ringbacks,2013,digital,39.4,98,99.6
+Ringtones & Ringbacks,2014,digital,26.7,66.5,66.5
+Paid Subscriptions,2005,streaming,1.3,149.2,180.9
+Paid Subscriptions,2006,streaming,1.7,206.2,242.1
+Paid Subscriptions,2007,streaming,1.8,234,267.2
+Paid Subscriptions,2008,streaming,1.6,221.4,243.4
+Paid Subscriptions,2009,streaming,1.2,206.2,227.5
+Paid Subscriptions,2010,streaming,1.5,212.4,230.6
+Paid Subscriptions,2011,streaming,1.8,247.8,260.8
+Paid Subscriptions,2012,streaming,3.4,399.9,412.3
+Paid Subscriptions,2013,streaming,6.2,639.2,649.6
+Paid Subscriptions,2014,streaming,7.7,799.1,799.1

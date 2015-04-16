@@ -9,16 +9,17 @@
     <script src="libs/d3/queue.min.js" charset="utf-8"></script>
     <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="libs/d3/d3.parcoords.js" charset="utf-8"></script>
 
     <!-- Stylesheets -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/d3.parcoords.css">
 
     <!-- Our JavaScript Files  -->
     <script src="js/dataset.js" type="text/javascript"></script>
     <script src="js/metadata.js" type="text/javascript"></script>
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
-    <script src="js/paraVis.js" type="text/javascript"></script>
 
     <!-- Our Stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -53,14 +54,34 @@
         </div>
 
         <br><br>
-
-        <div class="row">
-            <div class="col-md-12 text-center" id="paraVis">
-                <span class="chartTitle">parallel coordinates chart</span>
-                <br>
-            </div>
-        </div>
+		<span class="chartTitle">parallel coordinates chart</span>
     </div>
+<div id="paraVis" class="parcoords" style="width:1300px;margin-left:0px;height:270px;"></div>
+
+	<script>// Loads data and creates the parallel coordinates chart
+		var colors = d3.scale.category20b(); 
+		d3.csv('data/paradata.csv', function(data) {
+		var colorgen = d3.scale.ordinal()
+			.range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
+				"#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
+				"#cab2d6","#6a3d9a","#ffff99","#b15928"]);
+
+		var color = function(d) {return colors(d.format);};
+
+		var parcoords = d3.parcoords()("#paraVis")
+			.data(data)
+			.color(color)
+			.alpha(0.25)
+			.composite("darken")
+			.margin({ top: 24, left: 150, bottom: 12, right: 0 })
+			.mode("queue")
+			.render()
+			.brushMode("1D-axes");  // enable brushing
+
+		parcoords.svg.selectAll("text")
+		.style("font", "10px sans-serif");
+		});
+	</script>
 
     <script>
         // this function is called after the HTML document is fully loaded
@@ -104,8 +125,6 @@
                 var contextVis = new ContextVis(d3.select("#contextVis"),
                     [dataset.units], [dataset.dollars], myEventHandler);
                 var focusVis1 = new FocusVis(d3.select("#focusVis1"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
-                var paraVis = new ParaVis(d3.select("#paraVis"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
