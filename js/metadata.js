@@ -1,12 +1,19 @@
 /**
  * Metadata object for the music sales dataset.
  * @constructor
- * @param {array} _data
+ * @param {array} _metricsData
+ * @param {array} _milestonesData
  * @returns {undefined}
  */
-Metadata = function(_data) {
+Metadata = function(_metricsData, _milestonesData) {
 
-    this.colorMap = this.generateColorMap(_data);
+    this.colorMap = this.generateColorMap(_metricsData);
+    this.milestones = _milestonesData.map(function(d) {
+        return {
+            year: +d.year,
+            milestone: d.milestone
+        };
+    });
 };
 
 /**

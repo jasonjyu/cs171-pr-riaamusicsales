@@ -120,11 +120,13 @@
                     .defer(d3.csv, "data/RIAADATA_units.csv")
                     .defer(d3.csv, "data/RIAADATA_value.csv")
                     .defer(d3.csv, "data/RIAADATA_value_inflation_adjusted.csv")
-                    .await(function(error, rows1, rows2, rows3) {
+                    .defer(d3.csv, "data/milestones.csv")
+                    .await(function(error, rows1, rows2, rows3, rows4) {
                         // process data if no error occurs
                         if (!error) {
                             dataset = new Dataset(rows1, rows2, rows3);
-                            metadata = new Metadata(dataset.dollars.data);
+                            metadata = new Metadata(dataset.dollars.data,
+                                rows4);
                             initVis();
                         }
                     });

@@ -3,7 +3,8 @@
  * @constructor
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
- * @param {array} _data -- the array of data
+ * @param {array} _data -- the primary array of data
+ * @param {array} _data2 -- the secondary array of data
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {ContextVis}
  */
@@ -92,7 +93,8 @@ ContextVis.prototype.initVis = function() {
         .attr("class", "y axis left")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(" + -this.margin.left + "," + this.height/2 + ") rotate(90)")
+        .attr("transform", "translate(" + -this.margin.left + "," +
+            this.height/2 + ") rotate(90)")
         .append("text")
         .style("text-anchor", "middle");
 
@@ -101,7 +103,8 @@ ContextVis.prototype.initVis = function() {
         .attr("transform", "translate(" + this.width + ",0)")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(" + this.margin.right/2 + "," + this.height/2 + ") rotate(90)")
+        .attr("transform", "translate(" + this.margin.right/2 + "," +
+            this.height/2 + ") rotate(90)")
         .append("text")
         .style("text-anchor", "middle");
 
