@@ -74,30 +74,6 @@
         <span class="chartTitle">parallel coordinates chart</span>
         <div id="paraVis" class="parcoords" style="width:1300px;margin-left:0px;height:270px;"></div>
     </div>
-    <script>// Loads data and creates the parallel coordinates chart
-		var colors = d3.scale.category20b();
-		d3.csv('data/paradata.csv', function(data) {
-		var colorgen = d3.scale.ordinal()
-			.range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
-				"#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
-				"#cab2d6","#6a3d9a","#ffff99","#b15928"]);
-
-		var color = function(d) {return colors(d.format);};
-
-		var parcoords = d3.parcoords()("#paraVis")
-			.data(data)
-			.color(color)
-			.alpha(0.25)
-			.composite("darken")
-			.margin({ top: 24, left: 150, bottom: 12, right: 0 })
-			.mode("queue")
-			.render()
-			.brushMode("1D-axes");  // enable brushing
-
-		parcoords.svg.selectAll("text")
-		.style("font", "10px sans-serif");
-		});
-    </script>
     <script>
         // this function is called after the HTML document is fully loaded
         $(function() {
@@ -143,7 +119,7 @@
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
-
+				
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
                     "Sales Metric #1:", myEventHandler, "dataChanged1");
@@ -171,6 +147,29 @@
             };
 
             startHere();
+			
+			
+			// Loads data and creates the parallel coordinates chart
+			var colors = function(d){return metadata.colorMap[d]};
+			d3.csv('data/paradata.csv', function(data) {
+
+
+			var color = function(d) {return colors(d.format);};
+
+			var parcoords = d3.parcoords()("#paraVis")
+				.data(data)
+				.color(color)
+				.alpha(0.25)
+				.composite("darken")
+				.margin({ top: 24, left: 150, bottom: 12, right: 0 })
+				.mode("queue")
+				.render()
+				.brushMode("1D-axes");  // enable brushing
+
+			parcoords.svg.selectAll("text")
+				.style("font", "10px sans-serif");
+			});
+		
         });
 
         /**
