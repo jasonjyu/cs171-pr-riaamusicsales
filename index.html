@@ -164,7 +164,8 @@
 				.margin({ top: 24, left: 150, bottom: 12, right: 0 })
 				.mode("queue")
 				.render()
-				.brushMode("1D-axes");  // enable brushing
+				.brushMode("1D-axes")  
+				.reorderable();
 
 			parcoords.svg.selectAll("text")
 				.style("font", "10px sans-serif");
