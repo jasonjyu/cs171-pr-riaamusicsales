@@ -20,7 +20,7 @@ ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
-    this.height = 150 - this.margin.top - this.margin.bottom;
+    this.height = 100 - this.margin.top - this.margin.bottom;
 
     this.initVis();
 };
@@ -49,12 +49,14 @@ ContextVis.prototype.initVis = function() {
     this.yAxis = d3.svg.axis()
         .scale(this.yScale)
         .orient("left")
-        .tickFormat(d3.format("s"));
+        .tickFormat(d3.format("s"))
+        .ticks(5);
 
     this.yAxis2 = d3.svg.axis()
         .scale(this.yScale2)
         .orient("right")
-        .tickFormat(d3.format("s"));
+        .tickFormat(d3.format("s"))
+        .ticks(5);
 
     // create line chart object
     this.line = d3.svg.line()

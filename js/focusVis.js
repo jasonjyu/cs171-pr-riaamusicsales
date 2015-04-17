@@ -1,6 +1,7 @@
 /**
  * FocusVis object for the Sales Focus Chart visualization.
  * @constructor
+ * @param {number} _visId -- the ID for this visualization instantiation
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
  * @param {array} _data -- the array of data
@@ -8,7 +9,8 @@
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {FocusVis}
  */
-FocusVis = function(_parentElement, _data, _colorMap, _eventHandler) {
+FocusVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
+    this.visId = _visId;
     this.parentElement = _parentElement;
     this.data = _data;
     this.colorMap = _colorMap;
@@ -19,7 +21,7 @@ FocusVis = function(_parentElement, _data, _colorMap, _eventHandler) {
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
-    this.height = 350 - this.margin.top - this.margin.bottom;
+    this.height = 250 - this.margin.top - this.margin.bottom;
 
     this.initVis();
 };
@@ -32,7 +34,7 @@ FocusVis.prototype.initVis = function() {
     var that = this;
 
     // bind to the eventHandler
-    $(this.eventHandler).bind("dataChanged",
+    $(this.eventHandler).bind("dataChanged" + this.visId,
         function(event, newData) {
             that.onDataChange(newData);
         }
