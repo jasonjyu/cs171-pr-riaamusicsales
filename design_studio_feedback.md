@@ -1,5 +1,7 @@
 Notes from Final Project Design Studio on 4/14/2015
 
+Feedback from Team Datahub: Alexandra Smith, Niamh Durfee, Dayne Davis
+
 After sharing our project design on the sale of music formats over time with another group, we received feedback 
 and a couple suggestions on how we couple improve our design. The other group found our topic to be interesting,
 and certainly worthy of being visualized, but thought we should add a couple things:
