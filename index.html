@@ -29,10 +29,8 @@
         <h1>RIAA Music Sales</h1>
 
         <div class="row">
-            <div class="col-md-12 text-center" id="metricControl1"></div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center" id="metricControl2"></div>
+            <div class="col-md-6 text-center" id="metricControl1"></div>
+            <div class="col-md-6 text-center" id="metricControl2"></div>
         </div>
 
         <br>
@@ -92,19 +90,19 @@
                     .attr("class", "control")
                     .text(controlTitle);
 
-                // create a radio button control for each metric
+                var dropdown = form.append("select")
+                    .attr("class", "option")
+                    .attr("name", "metric")
+                    .on("change", function() {
+                        $(eventHandler).trigger(eventName, dataset[this.value]);
+                    });
+
+                // create a dropdown menu option for each metric
                 Object.keys(dataset).forEach(function(metric, i) {
-                    form.append("label").attr("class", "option").text(
-                        dataset[metric].name + " ").append("input").attr(
-                            {
-                                type: "radio",
-                                name: "metric",
-                                value: metric,
-                                checked: i === defaultCheckedIndex ? "" : null
-                            }
-                        ).on("click", function() {
-                            $(eventHandler).trigger(eventName, dataset[metric]);
-                        });
+                    dropdown.append("option")
+                        .attr("value", metric)
+                        .attr("selected", i === defaultCheckedIndex ? "" : null)
+                        .text(dataset[metric].name);
                 });
             };
 
