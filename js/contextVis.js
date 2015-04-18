@@ -17,7 +17,7 @@ ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
     this.displayData2 = [];
 
     // define all "constants" here
-    this.margin = {top: 20, right: 90, bottom: 30, left: 60};
+    this.margin = {top: 20, right: 80, bottom: 30, left: 80};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
     this.height = 100 - this.margin.top - this.margin.bottom;
@@ -31,6 +31,18 @@ ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
 ContextVis.prototype.initVis = function() {
 
     var that = this;
+
+    // bind to the eventHandler
+    $(this.eventHandler).bind("dataChanged1",
+        function(event, dataObject) {
+            that.onDataChange([dataObject], that.data2);
+        }
+    );
+    $(this.eventHandler).bind("dataChanged2",
+        function(event, dataObject) {
+            that.onDataChange(that.data, [dataObject]);
+        }
+    );
 
     // create scales and axis
     this.xScale = d3.time.scale()
@@ -95,20 +107,16 @@ ContextVis.prototype.initVis = function() {
         .attr("class", "y axis left")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(" + -this.margin.left + "," +
-            this.height/2 + ") rotate(90)")
-        .append("text")
-        .style("text-anchor", "middle");
+        .attr("transform", "translate(0," + -this.margin.top/2 + ")")
+        .append("text");
 
     this.svg.append("g")
         .attr("class", "y axis right")
         .attr("transform", "translate(" + this.width + ",0)")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(" + this.margin.right/2 + "," +
-            this.height/2 + ") rotate(90)")
-        .append("text")
-        .style("text-anchor", "middle");
+        .attr("transform", "translate(0," + -this.margin.top/2 + ")")
+        .append("text");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -206,9 +214,9 @@ ContextVis.prototype.updateVis = function(_options){
 
     // bind data
     var metrics = this.svg.selectAll(".metric")
-        .data(this.displayData, function(d) { return d.metric; });
+        .data(this.displayData);
     var metrics2 = this.svg.selectAll(".metric2")
-        .data(this.displayData2, function(d) { return d.metric; });
+        .data(this.displayData2);
 
     /*
      * DATA ENTER
@@ -279,6 +287,20 @@ ContextVis.prototype.filterAndAggregate = function(_data, _filterFunction) {
 
     // return an array of filtered and aggregated data
     return d3.values(aggregatedDataMap);
+};
+
+/**
+ * Gets called by the Event Handler on a "dataChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {array} newData
+ * @param {array} newData2
+ */
+ContextVis.prototype.onDataChange = function(newData, newData2) {
+
+    this.data = newData;
+    this.data2 = newData2;
+    this.wrangleData();
+    this.updateVis({tDuration: 500});
 };
 
 /**

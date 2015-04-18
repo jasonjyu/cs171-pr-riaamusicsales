@@ -28,7 +28,14 @@
     <div class="container">
         <h1>RIAA Music Sales</h1>
 
-        <br><br>
+        <div class="row">
+            <div class="col-md-12 text-center" id="metricControl1"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center" id="metricControl2"></div>
+        </div>
+
+        <br>
 
         <div class="row">
             <div class="col-md-12 text-center" id="contextVis">
@@ -49,9 +56,6 @@
                 <br>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 text-center" id="metricControl1"></div>
-        </div>
 
         <br><br>
 
@@ -64,9 +68,6 @@
                 <span class="chartTitle">rankings #2</span>
                 <br>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center" id="metricControl2"></div>
         </div>
 
         <br><br>
@@ -85,7 +86,7 @@
             var metadata;
 
             var bindControlsMetric = function(controlElement, controlTitle,
-                eventHandler, eventName) {
+                defaultCheckedIndex, eventHandler, eventName) {
 
                 var form = controlElement.append("form")
                     .attr("class", "control")
@@ -99,13 +100,36 @@
                                 type: "radio",
                                 name: "metric",
                                 value: metric,
-                                checked: i === 0 ? "" : null
+                                checked: i === defaultCheckedIndex ? "" : null
                             }
                         ).on("click", function() {
-                            $(eventHandler).trigger(eventName,
-                                [dataset[metric].data]);
+                            $(eventHandler).trigger(eventName, dataset[metric]);
                         });
                 });
+            };
+
+			// Loads data and creates the parallel coordinates chart
+			var createParaVis = function() {
+
+    			var colors = function(d){return metadata.colorMap[d]};
+    			d3.csv('data/paradata.csv', function(data) {
+
+        			var color = function(d) {return colors(d.format);};
+
+        			var parcoords = d3.parcoords()("#paraVis")
+        				.data(data)
+        				.color(color)
+        				.alpha(0.25)
+        				.composite("darken")
+        				.margin({ top: 24, left: 150, bottom: 12, right: 0 })
+        				.mode("queue")
+        				.render()
+        				.brushMode("1D-axes")
+        				.reorderable();
+
+        			parcoords.svg.selectAll("text")
+        				.style("font", "10px sans-serif");
+    			});
             };
 
             // call this function after data is loaded,
@@ -118,13 +142,14 @@
                 var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
-				
+                    dataset.dollars.data, metadata.colorMap, myEventHandler);
+                createParaVis();
+
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
-                    "Sales Metric #1:", myEventHandler, "dataChanged1");
+                    "Sales Metric #1:", 0, myEventHandler, "dataChanged1");
                 bindControlsMetric(d3.select("#metricControl2"),
-                    "Sales Metric #2:", myEventHandler, "dataChanged2");
+                    "Sales Metric #2:", 1, myEventHandler, "dataChanged2");
             };
 
             var startHere = function() {
@@ -147,30 +172,6 @@
             };
 
             startHere();
-			
-			
-			// Loads data and creates the parallel coordinates chart
-			var colors = function(d){return metadata.colorMap[d]};
-			d3.csv('data/paradata.csv', function(data) {
-
-
-			var color = function(d) {return colors(d.format);};
-
-			var parcoords = d3.parcoords()("#paraVis")
-				.data(data)
-				.color(color)
-				.alpha(0.25)
-				.composite("darken")
-				.margin({ top: 24, left: 150, bottom: 12, right: 0 })
-				.mode("queue")
-				.render()
-				.brushMode("1D-axes")  
-				.reorderable();
-
-			parcoords.svg.selectAll("text")
-				.style("font", "10px sans-serif");
-			});
-		
         });
 
         /**

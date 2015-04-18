@@ -35,8 +35,8 @@ FocusVis.prototype.initVis = function() {
 
     // bind to the eventHandler
     $(this.eventHandler).bind("dataChanged" + this.visId,
-        function(event, newData) {
-            that.onDataChange(newData);
+        function(event, dataObject) {
+            that.onDataChange(dataObject.data);
         }
     );
     $(this.eventHandler).bind("selectionChanged",
