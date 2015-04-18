@@ -20,6 +20,8 @@
     <script src="js/metadata.js" type="text/javascript"></script>
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
+    <script src="js/rankingVis.js" type="text/javascript"></script>
+
 
     <!-- Our Stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -119,7 +121,11 @@
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
-				
+                var rankingVis1 = new RankingVis(1, d3.select("#rankingVis1"),
+                    dataset.units.data, metadata.colorMap, myEventHandler);
+                // var rankingVis2 = new RankingVis2(d3.select("#rankingVis2") 
+                //     dataset.units.data, metadata.colorMap, myEventHandler);
+			
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
                     "Sales Metric #1:", myEventHandler, "dataChanged1");
