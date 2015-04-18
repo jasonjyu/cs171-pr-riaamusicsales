@@ -14,6 +14,8 @@ RankingVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
     this.parentElement = _parentElement;
     this.data = _data;
     this.colorMap = _colorMap;
+    var colors = d3.scale.category20();
+    this.colorMap2 = {"physical": colors[0],"digital": colors[1], "streaming": colors[2]}
     this.eventHandler = _eventHandler;
     this.displayData = [];
 
@@ -159,18 +161,23 @@ RankingVis.prototype.updateVis = function(_options){
     var tDuration = _options ? _options.tDuration : 0;
 
     var that = this;
-
     // update scales
-    this.xScale.domain(d3.range(this.displayData.length))  
-
-    this.yScale.domain([
-       d3.min(this.displayData, function(d){
-        return d.value;
-       }),
-       d3.max(this.displayData, function(d){
+    if(this.visId == 1){
+        this.xScale.domain(d3.range(this.displayData.length))  
+    }
+    else{
+        this.xScale.domain(d3.keys(this.colorMap2))
+        } 
+    yMin = d3.min(this.displayData, function(d){
         return d.value;
        })
-    ]);
+    yMax = d3.max(this.displayData, function(d){
+        return d.value;
+       });
+    if (yMin == yMax) {
+        yMin = 0
+    }
+    this.yScale.domain([yMin, yMax]);
 
     // update axis
     this.svg.select(".x.axis")
@@ -182,14 +189,15 @@ RankingVis.prototype.updateVis = function(_options){
         .call(this.yAxis);
 
 
-d3.selectAll(".bar").remove();
+this.svg.selectAll(".bar").remove();
  // Remove the extra bars
 // Data join
  var bar = that.svg.selectAll(".bar")
  .data(this.displayData); // BOUND COUNT DATA IS CORRECTLY FILTERED HERE AFTER BRUSH
  
 // Append new bar groups, if required
-  bar.enter().append("g")
+bar.enter().append("g")
+ .attr("class", "bar")
 // Append a rect and a text only for the Enter set (new g)
  
  .append("rect")
@@ -197,96 +205,39 @@ d3.selectAll(".bar").remove();
  // .attr("transform", function(d, i) { return "translate(0," + that.yScale(d) + ")"; })
 
  // Add attributes (position) to all bars
- .attr("class", "bar")
  
 // Update all inner rects and texts (both update and enter sets)
   .attr("x", function(d,i){
-    return that.xScale(i);
+    if (that.visId == 1) {
+        x = that.xScale(i);
+    }
+    else {
+        x = that.xScale(d.key)
+    }
+    return x;
   })
 
  .attr("y", function(d) {
  return that.yScale(d.value);})
  .attr("width", that.xScale.rangeBand())
  .style("fill", function(d,i) {
- 
- return that.colorMap[d.key]
- })
- 
+ if (that.visId == 1) {
+    color = that.colorMap[d.key]
+ }
+ else{
+ color = that.colorMap2[d.key]
+ }
+ return color;
+})
 
  .attr("height", function(d) {
  var barheight = that.height-that.yScale(d.value);
  return barheight;
  })
+
+ debugger
 }
 
-
-    // bind data
-    // var formats = this.svg.selectAll(".format")
-    //     .data(this.displayData, function(d) { return d.format; });
-
-    /*
-     * DATA ENTER
-     */
-    // var formatsEnter = formats.enter().insert("g", ".axis")
-    //     .attr("class", "format");
-
-    // append a path, circle, and text only for the Enter set (new g)
-    // formatsEnter.append("path")
-    //     .style("stroke", function(d) { return that.colorMap[d.format]; });
-    // var endpointEnter = formatsEnter.append("g")
-    //     .attr("class", "endpoint");
-    // endpointEnter.append("circle")
-    //     .attr("r", 2)
-    //     .style("fill", function(d) { return that.colorMap[d.format]; });
-    // endpointEnter.append("text")
-    //     .attr("dx", ".35em")
-    //     .attr("dy", ".35em")
-    //     .text(function(d) { return d.format; });
-    // endpointEnter.attr("transform", function(d) {
-    //     var lastDatum = d.sales[d.sales.length - 1];
-    //     return "translate(" + that.xScale(lastDatum.year) + "," +
-    //         that.yScale(lastDatum.value) + ")";
-    // });
-
-    // add mouse over and out controls to highlight and fade the chart elements
-    // formatsEnter.on("mouseover", function(d) {
-        // trigger highlightChanged event
-    //     // $(that.eventHandler).trigger("highlightChanged", d.format);
-    // });
-    // formatsEnter.on("mouseout", function(d) {
-    //     // trigger highlightChanged event with no arguments to clear highlight
-    //     $(that.eventHandler).trigger("highlightChanged");
-    // });
-
-    /*
-     * DATA UPDATE
-     */
-    // update all inner paths and circles (both update and enter sets)
-//     formats.select("path")
-//         .transition().duration(tDuration)
-//         .attr("d", function(d) { return that.line(d.sales); });
-
-//     formats.select(".endpoint")
-//         .transition().duration(tDuration)
-//         .attr("transform", function(d) {
-//             var lastDatum = d.sales[d.sales.length - 1];
-//             return "translate(" + that.xScale(lastDatum.year) + "," +
-//                 that.yScale(lastDatum.value) + ")";
-//         });
-
-//     /*
-//      * DATA EXIT
-//      */
-//     // remove unbounded elements
-//     formats.exit().remove();
-// };
-
-/**
- * Filters the data based on the specified _filter and returns an array of
- * aggregated data.
- * @param {function} _filterFunction -- filter function to apply on the data
- * @returns {array}
- */
 RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
 
     // set filterFunction to a function that accepts all items
@@ -298,15 +249,25 @@ RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
 
     // aggregate the data
     var aggregatedData = {}
-    filteredData.forEach(function(d){
+    if(this.visId == 1)
+        {filteredData.forEach(function(d){
         if (!(d.format in aggregatedData)){
             aggregatedData[d.format] = 0;
         }
         aggregatedData[d.format] += d.value;
-    })
+    })}
+    else{
+     filteredData.forEach(function(d){
+        if (!(d.media in aggregatedData)){
+            aggregatedData[d.media] = 0;
+        }
+        aggregatedData[d.media] += d.value;
+    })   
+    }
 
     aggregatedData = d3.entries(aggregatedData);
     
+    if(this.visId ==1 ){
     aggregatedData.sort(function(a,b){
         if(a.value > b.value){
             return 1;
@@ -316,7 +277,7 @@ RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
         }
         return 0;
     })
-    
+    }
     // return an array of filtered and aggregated data
     return (aggregatedData);
 };
@@ -371,60 +332,3 @@ RankingVis.prototype.onHighlightChange = function(highlight) {
     });
 };
 
-/**
- * Creates the y-axis slider
- * @param {object} svg -- the svg element
- */
-RankingVis.prototype.addSlider = function(svg) {
-
-    var that = this;
-
-    // the domain is the exponent value for the power scale
-    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, this.height]);
-
-    var sliderDragged = function() {
-
-        var value = Math.max(0, Math.min(that.height, d3.event.y));
-        var sliderValue = sliderScale.invert(value);
-
-        // update the slider position
-        d3.select(this).attr("y", value);
-
-        // deform the y scale
-        that.yScale.exponent(sliderValue);
-
-        that.updateVis();
-    };
-
-    var sliderDragBehaviour = d3.behavior.drag().on("drag", sliderDragged);
-
-    var sliderGroup = svg.append("g").attr({
-        class: "sliderGroup",
-        transform: "translate(" + -this.margin.left + ",0)"
-    });
-
-    sliderGroup.append("rect")
-        .attr({
-            class: "sliderBg",
-            x: 5,
-            width: 10,
-            height: this.height
-        })
-        .style({
-            fill: "lightgray"
-        });
-
-    sliderGroup.append("rect")
-        .attr({
-            class: "sliderHandle",
-            y: this.height,
-            width: 20,
-            height: 10,
-            rx: 2,
-            ry: 2
-        })
-        .style({
-            fill: "#333333"
-        })
-        .call(sliderDragBehaviour);
-};
