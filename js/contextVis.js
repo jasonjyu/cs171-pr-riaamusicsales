@@ -43,6 +43,11 @@ ContextVis.prototype.initVis = function() {
             that.onDataChange(that.data, [dataObject]);
         }
     );
+    $(this.eventHandler).bind("milestoneChanged",
+        function(event, year) {
+            that.onMilestoneChange(year);
+        }
+    );
 
     // create scales and axis
     this.xScale = d3.time.scale()
@@ -301,6 +306,23 @@ ContextVis.prototype.onDataChange = function(newData, newData2) {
     this.data2 = newData2;
     this.wrangleData();
     this.updateVis({tDuration: 500});
+};
+
+/**
+ * Gets called by the Event Handler on a "milestoneChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {number} year - the year of the milestone currently set
+ */
+ContextVis.prototype.onMilestoneChange = function(year) {
+
+    // determine year extent for milestone
+    var startYear = Math.max(this.xScale.domain()[0].getFullYear(), year - 2);
+    var endYear = Math.min(this.xScale.domain()[1].getFullYear(), year + 2);
+    this.brush.extent([new Date(startYear, 0), new Date(endYear, 0)]);
+
+    // update the visualization and trigger the brushing event
+    this.updateVis();
+    this.brushed(this)();
 };
 
 /**

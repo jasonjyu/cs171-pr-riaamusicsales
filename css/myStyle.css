@@ -13,6 +13,12 @@ h1 {
     padding: .25em 1em;
 }
 
+.description {
+    font-style: italic;
+    margin-top: 6px;
+    margin-bottom: 0px;
+}
+
 /* style the control option labels */
 .control {   
     font-family: monospace;
