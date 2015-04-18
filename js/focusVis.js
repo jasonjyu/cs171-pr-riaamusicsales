@@ -40,8 +40,8 @@ FocusVis.prototype.initVis = function() {
         }
     );
     $(this.eventHandler).bind("selectionChanged",
-        function(event, selectStart, selectEnd) {
-            that.onSelectionChange(selectStart, selectEnd);
+        function(event, selectStart, selectEnd, transition) {
+            that.onSelectionChange(selectStart, selectEnd, transition);
         }
     );
     $(this.eventHandler).bind("highlightChanged",
@@ -271,8 +271,10 @@ FocusVis.prototype.onDataChange = function(newData) {
  * re-wrangles the data, and updates the visualization.
  * @param {number} selectStart
  * @param {number} selectEnd
+ * @param {boolean} transition -- indicates whether a transition should occur
  */
-FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd,
+    transition) {
 
     // save off selection range
     this.selectStart = selectStart;
@@ -283,7 +285,7 @@ FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
         return selectStart <= d.year && d.year <= selectEnd;
     } : null);
 
-    this.updateVis();
+    this.updateVis(transition ? {tDuration: 500} : null);
 };
 
 FocusVis.prototype.onHighlightChange = function(highlight) {

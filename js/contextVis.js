@@ -322,7 +322,8 @@ ContextVis.prototype.onMilestoneChange = function(year) {
 
     // update the visualization and trigger the brushing event
     this.updateVis();
-    this.brushed(this)();
+    $(this.eventHandler).trigger("selectionChanged",
+        [startYear, endYear, true]);
 };
 
 /**
