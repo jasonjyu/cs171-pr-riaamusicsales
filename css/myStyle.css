@@ -1,0 +1,112 @@
+body {
+    font-family: sans-serif;
+}
+
+h1 {
+    font-family: 'Impact', sans-serif;
+}
+
+.chartTitle {
+    background-color: black;
+    color: white;
+    font: 18px monospace;
+    padding: .25em 1em;
+}
+
+.description {
+    font-style: italic;
+    margin-top: 6px;
+    margin-bottom: 0px;
+}
+
+/* style the control option labels */
+.control {   
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.control .option {
+    border: 1px solid gray;
+    font-size: 12px;
+    padding-left: .5em;
+}
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis line,
+.axis path {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.y.axis .label text
+{
+    font-size: 12px;
+    font-weight: bolder;
+    text-anchor: middle;
+}
+.y.axis.left text {
+    fill: navy;
+}
+.y.axis.right text {
+    fill: firebrick;
+}
+
+.metric path {
+    fill: none;
+    stroke: navy;
+    stroke-width: 3px;
+}
+
+.metric2 path {
+    fill: none;
+    stroke: firebrick;
+    stroke-width: 3px;
+}
+
+.format {
+    cursor: pointer;
+}
+
+.format path {
+    fill: none;
+    stroke-width: 1.5px;
+}
+
+.format text {
+    font: 8px sans-serif;
+}
+
+.brush {
+    fill: yellow;
+    fill-opacity: .5;
+    stroke: white;
+    pointer-events: none;
+}
+
+/* style the highlighted chart elements */
+.highlighted path
+{
+    stroke-width: 3px;
+}
+.highlighted text
+{
+    font-weight: bolder;
+}
+
+/* style the faded chart elements */
+.faded
+{
+    opacity: .3;
+}
+.faded path
+{
+    stroke-width: 1px;
+}
+.faded text
+{
+    opacity: .1;
+}
