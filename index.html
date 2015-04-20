@@ -12,6 +12,7 @@
     <script src="libs/d3/d3.parcoords.js" charset="utf-8"></script>
 
     <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/d3.parcoords.css">
 
@@ -27,8 +28,14 @@
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
 </head>
 <body>
-    <div class="container">
+    <header>
+      <div class="inner">
         <h1>RIAA Music Sales</h1>
+        <a href="https://github.com/jasonjyu/cs171-pr-riaamusicsales"
+           class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+    <div class="container">
 
         <div class="row">
             <div class="col-md-12 text-center" id="milestoneVis">
@@ -53,7 +60,8 @@
                 <span class="chartTitle">context overview</span>
                 <br>
                 <p class="description">
-                    Brush the chart to select a time interval, then drag the selection.
+                    Brush the chart to select a time interval,
+                    then drag the selection.
                 </p>
             </div>
         </div>
@@ -124,8 +132,8 @@
             var bindControlsMetric = function(controlElement, controlTitle,
                 defaultCheckedIndex, eventHandler, eventName) {
 
-                var form = controlElement.append("form")
-                    .attr("class", "control")
+                var form = controlElement
+                    .classed("control", true)
                     .text(controlTitle);
 
                 var dropdown = form.append("select")
