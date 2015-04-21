@@ -16,6 +16,16 @@ FocusVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
     this.colorMap = _colorMap;
     this.eventHandler = _eventHandler;
     this.displayData = [];
+    this.chartData = [{
+        title: "Actual Value vs Time",
+        yKey: "value"
+    }, {
+        title: "Value Change vs Time",
+        yKey: "valueChange"
+    }, {
+        title: "Value Change (normalized) vs Time",
+        yKey: "valueChangeNorm"
+    }];
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -50,6 +60,9 @@ FocusVis.prototype.initVis = function() {
         }
     );
 
+    // initialize chart data index
+    this.chartDataIndex = 0;
+
     // create scales and axis
     this.xScale = d3.time.scale()
         .range([0, this.width]);
@@ -64,13 +77,16 @@ FocusVis.prototype.initVis = function() {
     this.yAxis = d3.svg.axis()
         .scale(this.yScale)
         .orient("left")
-        .tickFormat(d3.format("s"));
+        .tickFormat(function(d) {
+            var d_abs = Math.abs(d);
+            return 0 < d_abs && d_abs < 1 ?
+                d3.format(".1f")(d) : d3.format(".2s")(d);
+        });
 
     // create line chart object
     this.line = d3.svg.line()
         .interpolate("monotone")
-        .x(function(d) { return that.xScale(d.year); })
-        .y(function(d) { return that.yScale(d.value); });
+        .x(function(d) { return that.xScale(d.year); });
 
     // append an SVG and group element
     this.svg = this.parentElement
@@ -89,6 +105,20 @@ FocusVis.prototype.initVis = function() {
 
     this.svg.append("g")
         .attr("class", "y axis");
+
+    // add chart title
+    this.svg.append("g")
+        .attr("class", "title")
+        .attr("transform", "translate(" + this.width/2 + "," +
+            -this.margin.top/2 + ")")
+        // add mouse click control to toggle the y-value encoding key
+        .on("mousedown", function(d) {
+            if (++that.chartDataIndex >= that.chartData.length) {
+                that.chartDataIndex = 0;
+            }
+            that.updateVis({tDuration: 500});
+        })
+        .append("text");
 
     // implement the slider
     this.addSlider(this.svg);
@@ -116,9 +146,13 @@ FocusVis.prototype.wrangleData = function(_filterFunction) {
  */
 FocusVis.prototype.updateVis = function(_options){
 
-    var tDuration = _options ? _options.tDuration : 0;
+    // transition duration
+    var tDuration = _options && _options.tDuration ? _options.tDuration : 0;
 
     var that = this;
+
+    // y-value encoding key
+    var yKey = this.chartData[this.chartDataIndex].yKey;
 
     // update scales
     this.xScale.domain([
@@ -136,12 +170,12 @@ FocusVis.prototype.updateVis = function(_options){
     this.yScale.domain([
         Math.min(0, d3.min(this.displayData,
             function(d) {
-                return d3.min(d.sales, function(s) { return s.value; });
+                return d3.min(d.sales, function(s) { return s[yKey]; });
             }
         )),
         d3.max(this.displayData,
             function(d) {
-                return d3.max(d.sales, function(s) { return s.value; });
+                return d3.max(d.sales, function(s) { return s[yKey]; });
             }
         )
     ]);
@@ -154,6 +188,13 @@ FocusVis.prototype.updateVis = function(_options){
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
         .call(this.yAxis);
+
+    // update chart title
+    this.svg.select(".title text")
+        .text(this.chartData[this.chartDataIndex].title);
+
+    // update line chart
+    this.line.y(function(d) { return that.yScale(d[yKey]); });
 
     // bind data
     var formats = this.svg.selectAll(".format")
@@ -180,7 +221,7 @@ FocusVis.prototype.updateVis = function(_options){
     endpointEnter.attr("transform", function(d) {
         var lastDatum = d.sales[d.sales.length - 1];
         return "translate(" + that.xScale(lastDatum.year) + "," +
-            that.yScale(lastDatum.value) + ")";
+            that.yScale(lastDatum[yKey]) + ")";
     });
 
     // add mouse over and out controls to highlight and fade the chart elements
@@ -206,7 +247,7 @@ FocusVis.prototype.updateVis = function(_options){
         .attr("transform", function(d) {
             var lastDatum = d.sales[d.sales.length - 1];
             return "translate(" + that.xScale(lastDatum.year) + "," +
-                that.yScale(lastDatum.value) + ")";
+                that.yScale(lastDatum[yKey]) + ")";
         });
 
     /*
@@ -237,8 +278,13 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
     }).rollup(function(leaves) {
         return {
             format: leaves[0].format,
-            sales: leaves.map(function(d) {
-                return { year: new Date(d.year, 0), value: d.value };
+            sales: leaves.map(function(d, i) {
+                return {
+                    year: new Date(d.year, 0),
+                    value: d.value,
+                    valueChange: d.valueChange,
+                    valueChangeNorm: d.valueChangeNorm
+                };
             })
         };
     }).map(filteredData);
@@ -285,9 +331,14 @@ FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd,
         return selectStart <= d.year && d.year <= selectEnd;
     } : null);
 
-    this.updateVis(transition ? {tDuration: 500} : null);
+    this.updateVis(transition ? {tDuration: 500} : {});
 };
 
+/**
+ * Gets called by the Event Handler on a "highlightChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {number} highlight -- the format to highlight
+ */
 FocusVis.prototype.onHighlightChange = function(highlight) {
 
     var formats = this.svg.selectAll(".format");

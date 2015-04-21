@@ -10,23 +10,25 @@ Dataset = function(_rows_units, _rows_dollars, _rows_inflatedDollars) {
 
     this.units = {
         name: "Units",
-        data: this.parseRows(_rows_units)
+        data: this.deriveValueChangeData(this.parseRows(_rows_units))
     };
     this.dollars = {
         name: "Dollars",
-        data: this.parseRows(_rows_dollars)
+        data: this.deriveValueChangeData(this.parseRows(_rows_dollars))
     };
     this.inflatedDollars = {
         name: "Dollars (inflated)",
-        data: this.parseRows(_rows_inflatedDollars)
+        data: this.deriveValueChangeData(this.parseRows(_rows_inflatedDollars))
     };
     this.prices = {
         name: "Price Per Unit",
-        data: this.derivePricesData(this.units.data, this.dollars.data)
+        data: this.deriveValueChangeData(this.derivePricesData(this.units.data,
+            this.dollars.data))
     };
     this.inflatedPrices = {
         name: "Price Per Unit (inflated)",
-        data: this.derivePricesData(this.units.data, this.inflatedDollars.data)
+        data: this.deriveValueChangeData(this.derivePricesData(this.units.data,
+            this.inflatedDollars.data))
     };
 };
 
@@ -78,17 +80,39 @@ Dataset.prototype.derivePricesData = function(unitsData, dollarsData) {
     var that = this;
 
     var result = [];
-    unitsData.forEach(function(d) {
+    unitsData.forEach(function(unitsDatum) {
         // find corresponding dollar value in order to calculate price
-        var dollarsDatum = that.findDataItem(dollarsData, d.format, d.year);
+        var dollarsDatum = that.findDataItem(dollarsData, unitsDatum.format,
+            unitsDatum.year);
         if (dollarsDatum) {
-            result.push({
-                format: d.format,
-                media:  d.media,
-                year:   d.year,
-                value:  dollarsDatum.value/d.value
-            });
+            var deriviedDatum = that.cloneObject(unitsDatum);
+            deriviedDatum.value = dollarsDatum.value/unitsDatum.value;
+            result.push(deriviedDatum);
         }
+    });
+
+    return result;
+};
+
+/**
+ * Generates an array appended with value change data.
+ * @param {type} data -- the data to append to
+ * @returns {array} appended array of data
+ */
+Dataset.prototype.deriveValueChangeData = function(data) {
+
+    var that = this;
+
+    var result = [];
+    data.forEach(function(d) {
+        // find prior year data item to calculate value change
+        var priorYearDatum = that.findDataItem(data, d.format, d.year - 1);
+        var valueChangeDatum = that.cloneObject(d);
+        valueChangeDatum.valueChange = priorYearDatum ?
+            d.value - priorYearDatum.value : 0;
+        valueChangeDatum.valueChangeNorm = priorYearDatum ?
+            valueChangeDatum.valueChange / priorYearDatum.value : 0;
+        result.push(valueChangeDatum);
     });
 
     return result;
@@ -106,4 +130,23 @@ Dataset.prototype.findDataItem = function(data, format, year) {
     return data.filter(function(d) {
         return d.format === format && d.year === year;
     })[0];
+};
+
+/**
+ * Creates a new copy of a specified object.
+ * @param {object} obj -- the object to clone
+ * @returns {object} the cloned object
+ */
+Dataset.prototype.cloneObject = function(obj) {
+
+    if (typeof obj !== "object" || obj === null) {
+        return obj;
+    }
+
+    var cloneObj = obj.constructor();
+    for (var key in obj) {
+        cloneObj[key] = this.cloneObject(obj[key]);
+    };
+
+    return cloneObj;
 };
