@@ -31,6 +31,18 @@ h1 {
     padding-left: .5em;
 }
 
+.title text
+{
+    font-weight: bold;
+    text-anchor: middle;
+    text-decoration: underline;
+}
+
+.focus .title
+{
+    cursor: pointer;
+}
+
 .axis text {
     font: 10px sans-serif;
 }
