@@ -42,6 +42,8 @@
         </div>
         <div class="text-center" id="metricControl1"></div>
         <div class="text-center" id="metricControl2"></div>
+        <br>
+        <div class="text-center" id="formatControl"></div>
 
         <br><br>
 
@@ -146,6 +148,36 @@
                 });
             };
 
+            var bindControlsFormat = function(controlElement, controlTitle,
+                eventHandler, eventName) {
+
+                var form = controlElement
+                    .classed("control", true)
+                    .text(controlTitle);
+
+                var dropdown = form.append("select")
+                    .attr("class", "option")
+                    .attr("name", "format")
+                    .attr("multiple", "")
+                    .style("height", "305px")
+                    .style("width", "200px")
+                    .on("change", function() {
+                        $(eventHandler).trigger(eventName, [$(this).val()]);
+                    });
+
+                // generate an array of unique formats
+                var formats = Object.keys(d3.nest().key(function(d) {
+                    return d.format;
+                }).map(dataset.dollars.data));
+
+                // create a dropdown menu option for each format
+                formats.forEach(function(format) {
+                    dropdown.append("option")
+                        .attr("value", format)
+                        .text(format);
+                });
+            };
+
             var bindControlsMilestone = function(controlElement,
                 controlHtmlText, controlFunction) {
 
@@ -161,21 +193,21 @@
                 var colors = function(d){return metadata.colorMap[d]};
                 d3.csv('data/paradata.csv', function(data) {
 
-                    var color = function(d) {return colors(d.format);};
+                        var color = function(d) {return colors(d.format);};
 
-                    var parcoords = d3.parcoords()("#paraVis")
-                        .data(data)
-                        .color(color)
-                        .alpha(0.25)
-                        .composite("darken")
-                        .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                        .mode("queue")
-                        .render()
-                        .brushMode("1D-axes")
-                        .reorderable();
+                        var parcoords = d3.parcoords()("#paraVis")
+                                .data(data)
+                                .color(color)
+                                .alpha(0.25)
+                                .composite("darken")
+                                .margin({ top: 24, left: 50, bottom: 12, right: 0 })
+                                .mode("queue")
+                                .render()
+                                .brushMode("1D-axes")
+                                .reorderable();
 
-                    parcoords.svg.selectAll("text")
-                        .style("font", "10px sans-serif");
+                        parcoords.svg.selectAll("text")
+                                .style("font", "10px sans-serif");
                 });
             };
 
@@ -203,6 +235,10 @@
                     "Sales Metric #1:", 0, myEventHandler, "dataChanged1");
                 bindControlsMetric(d3.select("#metricControl2"),
                     "Sales Metric #2:", 1, myEventHandler, "dataChanged2");
+
+                // bind music format controls
+                bindControlsFormat(d3.select("#formatControl"),
+                    "Music Format Filter:", myEventHandler, "formatsChanged");
 
                 // bind milestone controls
                 bindControlsMilestone(d3.select("#milestoneControl"), "&laquo",

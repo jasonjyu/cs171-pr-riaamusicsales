@@ -26,6 +26,7 @@ FocusVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
         title: "Value Change (normalized) vs Time",
         yKey: "valueChangeNorm"
     }];
+    this.filterOptions = {};
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -52,6 +53,11 @@ FocusVis.prototype.initVis = function() {
     $(this.eventHandler).bind("selectionChanged",
         function(event, selectStart, selectEnd, transition) {
             that.onSelectionChange(selectStart, selectEnd, transition);
+        }
+    );
+    $(this.eventHandler).bind("formatsChanged",
+        function(event, formats) {
+            that.onFormatsChange(formats);
         }
     );
     $(this.eventHandler).bind("highlightChanged",
@@ -132,12 +138,22 @@ FocusVis.prototype.initVis = function() {
 
 /**
  * Method to wrangle the data.
- * @param {function} _filterFunction -- filter function to apply on the data
  */
-FocusVis.prototype.wrangleData = function(_filterFunction) {
+FocusVis.prototype.wrangleData = function() {
+
+    // generate filter function based on filter options
+    var selectStart = this.filterOptions.selectStart;
+    var selectEnd = this.filterOptions.selectEnd;
+    var formats = this.filterOptions.formats;
+    var filterFunction = function(d) {
+        // filter for data within range and contained in formats
+        return (selectStart ? selectStart <= d.year : true) &&
+            (selectEnd ? d.year <= selectEnd : true) &&
+            (formats && formats.length ? formats.indexOf(d.format) >= 0 : true);
+    };
 
     // displayData holds the data which is visualized
-    this.displayData = this.filterAndAggregate(_filterFunction);
+    this.displayData = this.filterAndAggregate(filterFunction);
 };
 
 /**
@@ -301,14 +317,7 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
 FocusVis.prototype.onDataChange = function(newData) {
 
     this.data = newData;
-
-    var selectStart = this.selectStart;
-    var selectEnd = this.selectEnd;
-    this.wrangleData(selectStart && selectEnd ? function(d) {
-        // filter for data within range
-        return selectStart <= d.year && d.year <= selectEnd;
-    } : null);
-
+    this.wrangleData();
     this.updateVis({tDuration: 500});
 };
 
@@ -322,16 +331,26 @@ FocusVis.prototype.onDataChange = function(newData) {
 FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd,
     transition) {
 
-    // save off selection range
-    this.selectStart = selectStart;
-    this.selectEnd = selectEnd;
-
-    this.wrangleData(selectStart && selectEnd ? function(d) {
-        // filter for data within range
-        return selectStart <= d.year && d.year <= selectEnd;
-    } : null);
+    // set selection range filter options and wrangle data
+    this.filterOptions.selectStart = selectStart;
+    this.filterOptions.selectEnd = selectEnd;
+    this.wrangleData();
 
     this.updateVis(transition ? {tDuration: 500} : {});
+};
+
+/**
+ * Gets called by the Event Handler on a "formatsChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {number} formats -- array of formats to filter
+ */
+FocusVis.prototype.onFormatsChange = function(formats) {
+
+    // set format filter options and wrangle data
+    this.filterOptions.formats = formats;
+    this.wrangleData();
+
+    this.updateVis({tDuration: 500});
 };
 
 /**
