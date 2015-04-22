@@ -20,27 +20,26 @@ h1 {
 }
 
 /* style the control option labels */
-.control {   
+.control {
     font-family: monospace;
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 0px;
 }
 
-.control .option {
+.control .option,
+.ui-widget {
     font-size: 12px;
     padding-left: .5em;
 }
 
-.title text
-{
+.title text {
     font-weight: bold;
     text-anchor: middle;
     text-decoration: underline;
 }
 
-.focus .title
-{
+.focus .title {
     cursor: pointer;
 }
 
@@ -55,8 +54,7 @@ h1 {
     shape-rendering: crispEdges;
 }
 
-.y.axis .label text
-{
+.y.axis .label text {
     font-size: 12px;
     font-weight: bolder;
     text-anchor: middle;
@@ -101,25 +99,20 @@ h1 {
 }
 
 /* style the highlighted chart elements */
-.highlighted path
-{
+.highlighted path {
     stroke-width: 3px;
 }
-.highlighted text
-{
+.highlighted text {
     font-weight: bolder;
 }
 
 /* style the faded chart elements */
-.faded
-{
+.faded {
     opacity: .3;
 }
-.faded path
-{
+.faded path {
     stroke-width: 1px;
 }
-.faded text
-{
+.faded text {
     opacity: .1;
 }
