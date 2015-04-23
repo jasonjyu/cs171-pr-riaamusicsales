@@ -66,6 +66,10 @@ h1 {
     fill: firebrick;
 }
 
+.y0.axis line {
+    stroke-dasharray: 5,5;
+}
+
 .metric path {
     fill: none;
     stroke: navy;

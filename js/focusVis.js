@@ -112,6 +112,12 @@ FocusVis.prototype.initVis = function() {
     this.svg.append("g")
         .attr("class", "y axis");
 
+     // add zero line
+    this.svg.append("g")
+        .attr("class", "y0 axis")
+        .append("line")
+        .attr("x2", this.width);
+
     // add chart title
     this.svg.append("g")
         .attr("class", "title")
@@ -205,6 +211,13 @@ FocusVis.prototype.updateVis = function(_options){
         .transition().duration(tDuration)
         .call(this.yAxis);
 
+    this.svg.select(".y0.axis line")
+        .transition().duration(tDuration)
+        .attr({
+            y1: this.yScale(0),
+            y2: this.yScale(0)
+        });
+
     // update chart title
     this.svg.select(".title text")
         .text(this.chartData[this.chartDataIndex].title);
@@ -219,7 +232,7 @@ FocusVis.prototype.updateVis = function(_options){
     /*
      * DATA ENTER
      */
-    var formatsEnter = formats.enter().insert("g", ".axis")
+    var formatsEnter = formats.enter().append("g")
         .attr("class", "format");
 
     // append a path, circle, and text only for the Enter set (new g)
