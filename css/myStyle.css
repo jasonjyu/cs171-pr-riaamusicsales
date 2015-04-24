@@ -1,9 +1,22 @@
+header {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+header h1 {
+    font-family: 'Impact', sans-serif;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 500px;
+}
+
 body {
     font-family: sans-serif;
 }
 
-h1 {
-    font-family: 'Impact', sans-serif;
+a.button {
+  width: 220px;
+  height: 70px;
 }
 
 .chartTitle {
