@@ -96,9 +96,9 @@ h1 {
 }
 
 .brush {
-    fill: yellow;
+    fill: gray;
     fill-opacity: .5;
-    stroke: white;
+    stroke: black;
     pointer-events: none;
 }
 
