@@ -43,13 +43,13 @@
         </div>
     </header>
     <div class="container col-xs-2">
-        <div class="text-center">
+        <div>
             <span class="chartTitle">controls</span>
         </div>
-        <div class="text-center" id="metricControl1"></div>
-        <div class="text-center" id="metricControl2"></div>
+        <div id="metricControl1"></div>
+        <div id="metricControl2"></div>
         <br>
-        <div class="text-center" id="formatControl"></div>
+        <div id="formatControl"></div>
 
         <br><br>
 
@@ -158,6 +158,7 @@
                 var form = controlElement
                     .classed("control", true)
                     .text(controlTitle);
+                form.append("br");
 
                 var dropdown = form.append("select")
                     .attr("class", "option")
@@ -173,6 +174,21 @@
                         .attr("selected", i === defaultCheckedIndex ? "" : null)
                         .text(dataset[metric].name);
                 });
+
+                // transform dropdown menu into a dropdown radio list
+                $(dropdown).dropdownchecklist({
+                    closeRadioOnClick: true,
+                    icon: {
+                        placement: 'right',
+                        toClose: 'ui-icon-triangle-1-n',
+                        toOpen: 'ui-icon-triangle-1-s'
+                    },
+                    width: getInnerWidth(controlElement),
+                    onComplete: function(selector) {
+                        $(eventHandler).trigger(eventName,
+                            dataset[$(selector).val()]);
+                    }
+                });
             };
 
             var bindControlsFormat = function(controlElement, controlTitle,
@@ -181,38 +197,78 @@
                 var form = controlElement
                     .classed("control", true)
                     .text(controlTitle);
+                form.append("br");
 
                 var dropdown = form.append("select")
                     .attr("class", "option")
                     .attr("name", "format")
                     .attr("multiple", "")
-                    .style("height", "305px")
+                    .style("height", "350px")
                     .style("width", getInnerWidth(controlElement) + "px" )
                     .on("change", function() {
                         $(eventHandler).trigger(eventName, [$(this).val()]);
                     });
 
-                // generate an array of unique formats
-                var formats = Object.keys(d3.nest().key(function(d) {
-                    return d.format;
-                }).map(dataset.dollars.data));
+                // generate an array of unique formats nested by medium type
+                var media = d3.nest().key(function(d) {
+                    return d.medium;
+                }).rollup(function(leaves) {
+                    return Object.keys(d3.nest().key(function(e) {
+                        return e.format;
+                    }).map(leaves));
+                }).map(dataset.dollars.data);
 
                 // create a dropdown menu option for each format
-                dropdown.append("option").text("[ALL SELECTED]");
-                formats.forEach(function(format) {
-                    dropdown.append("option")
+                dropdown.append("option")
+                    .attr("value", "")
+                    .text("[ALL SELECTED]");
+                for (var medium in media) {
+                    var optgroup = dropdown.append("optgroup")
+                        .attr("label", medium);
+                    media[medium].forEach(function(format) {
+                        optgroup.append("option")
                         .attr("value", format)
+                        .style("color", metadata.colorMap[format])
+                        // add text outline
+                        .style("text-shadow", "-1px -1px black,"
+                            + "1px -1px black, -1px 1px black, 1px 1px black")
                         .text(format);
-                });
+                    });
+                };
 
                 // transform dropdown menu into a dropdown checklist
                 $(dropdown).dropdownchecklist({
                     emptyText: "[NONE SELECTED]",
                     firstItemChecksAll: true,
-                    maxDropHeight: 150,
-                    width: 200,
-                    onComplete: function(selector) {
-                        $(eventHandler).trigger(eventName, [$(selector).val()]);
+                    icon: {
+                        placement: 'right',
+                        toClose: 'ui-icon-triangle-1-n',
+                        toOpen: 'ui-icon-triangle-1-s'
+                    },
+                    width: getInnerWidth(controlElement),
+                    onItemClick: function(checkbox, selector) {
+                        var value = checkbox.val();
+                        var selections = $(selector).val() ?
+                            $(selector).val(): [];
+                        var index = selections.indexOf(value);
+
+                        // if value is not in current selections,
+                        // then it was checked, otherwise it was unchecked
+                        if (index < 0) {
+                            if (value) {
+                                // add checked value to current selections
+                                selections.push(value);
+                            }
+                            else {
+                                // clear current selections if value is empty
+                                selections.length = 0;
+                            }
+                        }
+                        else {
+                            // remove unchecked value from current selections
+                            selections.splice(index, 1);
+                        }
+                        $(eventHandler).trigger(eventName, [selections]);
                     }
                 });
             };
@@ -232,21 +288,21 @@
                 var colors = function(d){return metadata.colorMap[d]};
                 d3.csv('data/paradata.csv', function(data) {
 
-                        var color = function(d) {return colors(d.format);};
+                    var color = function(d) {return colors(d.format);};
 
-                        var parcoords = d3.parcoords()("#paraVis")
-                                .data(data)
-                                .color(color)
-                                .alpha(0.25)
-                                .composite("darken")
-                                .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                                .mode("queue")
-                                .render()
-                                .brushMode("1D-axes")
-                                .reorderable();
+                    var parcoords = d3.parcoords()("#paraVis")
+                            .data(data)
+                            .color(color)
+                            .alpha(0.25)
+                            .composite("darken")
+                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
+                            .mode("queue")
+                            .render()
+                            .brushMode("1D-axes")
+                            .reorderable();
 
-                        parcoords.svg.selectAll("text")
-                                .style("font", "10px sans-serif");
+                    parcoords.svg.selectAll("text")
+                            .style("font", "10px sans-serif");
                 });
             };
 
@@ -315,7 +371,7 @@
         var getInnerWidth = function(element) {
             var style = window.getComputedStyle(element.node(), null);
 
-            return parseInt(style.getPropertyValue('width'));
+            return parseInt(style.getPropertyValue('width')) - 10;
         };
     </script>
 </body>
