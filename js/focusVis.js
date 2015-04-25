@@ -214,8 +214,8 @@ FocusVis.prototype.updateVis = function(_options){
     this.svg.select(".y0.axis line")
         .transition().duration(tDuration)
         .attr({
-            y1: this.yScale(0),
-            y2: this.yScale(0)
+            y1: this.yScale(0) ? this.yScale(0) : this.yScale.range()[0],
+            y2: this.yScale(0) ? this.yScale(0) : this.yScale.range()[0]
         });
 
     // update chart title
