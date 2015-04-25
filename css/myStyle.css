@@ -46,6 +46,15 @@ a.button {
     padding-left: .5em;
 }
 
+#metricControl1 .ui-dropdownchecklist-item {
+    color: gray;
+}
+
+#metricControl2 .ui-dropdownchecklist-item {
+    color: black;
+}
+
+/* style the chart elements */
 .title text {
     font-weight: bold;
     text-anchor: middle;
@@ -73,10 +82,10 @@ a.button {
     text-anchor: middle;
 }
 .y.axis.left text {
-    fill: navy;
+    fill: gray;
 }
 .y.axis.right text {
-    fill: firebrick;
+    fill: black;
 }
 
 .y0.axis line {
@@ -85,13 +94,14 @@ a.button {
 
 .metric path {
     fill: none;
-    stroke: navy;
+    stroke: gray;
     stroke-width: 3px;
 }
 
 .metric2 path {
     fill: none;
-    stroke: firebrick;
+    stroke: black;
+    stroke-dasharray: 10,10;
     stroke-width: 3px;
 }
 
@@ -110,7 +120,7 @@ a.button {
 
 .brush {
     fill: gray;
-    fill-opacity: .5;
+    fill-opacity: .2;
     stroke: black;
     pointer-events: none;
 }

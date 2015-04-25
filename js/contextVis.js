@@ -99,10 +99,6 @@ ContextVis.prototype.initVis = function() {
             .attr("transform", "translate(" + this.margin.left + "," +
                 this.margin.top + ")");
 
-    // add brush element
-    this.svg.append("g")
-        .attr("class", "brush");
-
     // add axes visual elements
     this.svg.append("g")
         .attr("class", "x axis")
@@ -122,6 +118,10 @@ ContextVis.prototype.initVis = function() {
         .attr("class", "label")
         .attr("transform", "translate(0," + -this.margin.top/2 + ")")
         .append("text");
+
+    // add brush element
+    this.svg.append("g")
+        .attr("class", "brush");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -226,10 +226,10 @@ ContextVis.prototype.updateVis = function(_options){
     /*
      * DATA ENTER
      */
-    // insert behind other elements
-    var metricsEnter = metrics.enter().insert("g", "g")
+    // insert behind brush element
+    var metricsEnter = metrics.enter().insert("g", ".brush")
         .attr("class", "metric");
-    var metricsEnter2 = metrics2.enter().insert("g", "g")
+    var metricsEnter2 = metrics2.enter().insert("g", ".brush")
         .attr("class", "metric2");
 
     // append a path for the Enter set (new g)

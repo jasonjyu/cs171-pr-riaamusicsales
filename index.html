@@ -177,16 +177,22 @@
 
                 // transform dropdown menu into a dropdown radio list
                 $(dropdown).dropdownchecklist({
-                    closeRadioOnClick: true,
                     icon: {
                         placement: 'right',
                         toClose: 'ui-icon-triangle-1-n',
                         toOpen: 'ui-icon-triangle-1-s'
                     },
                     width: getInnerWidth(controlElement),
-                    onComplete: function(selector) {
-                        $(eventHandler).trigger(eventName,
-                            dataset[$(selector).val()]);
+                    onItemClick: function(checkbox) {
+                        // if checkbox is checked, then fire event,
+                        // otherwise keep checkbox checked
+                        if (checkbox.prop("checked")) {
+                            $(eventHandler).trigger(eventName,
+                                dataset[checkbox.val()]);
+                        }
+                        else {
+                            checkbox.prop("checked", true);
+                        }
                     }
                 });
             };
@@ -285,7 +291,7 @@
             // Loads data and creates the parallel coordinates chart
             var createParaVis = function() {
 
-                var colors = function(d){return metadata.colorMap[d]};
+                var colors = function(d){return metadata.colorMap[d];};
                 d3.csv('data/paradata.csv', function(data) {
 
                     var color = function(d) {return colors(d.format);};
