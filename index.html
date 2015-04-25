@@ -179,7 +179,7 @@
                 $(dropdown).dropdownchecklist({
                     closeRadioOnClick: true,
                     icon: {
-                        placement: 'left',
+                        placement: 'right',
                         toClose: 'ui-icon-triangle-1-n',
                         toOpen: 'ui-icon-triangle-1-s'
                     },
@@ -203,34 +203,42 @@
                     .attr("class", "option")
                     .attr("name", "format")
                     .attr("multiple", "")
-                    .style("height", "305px")
+                    .style("height", "350px")
                     .style("width", getInnerWidth(controlElement) + "px" )
                     .on("change", function() {
                         $(eventHandler).trigger(eventName, [$(this).val()]);
                     });
 
-                // generate an array of unique formats
-                var formats = Object.keys(d3.nest().key(function(d) {
-                    return d.format;
-                }).map(dataset.dollars.data));
+                // generate an array of unique formats nested by medium type
+                var media = d3.nest().key(function(d) {
+                    return d.medium;
+                }).rollup(function(leaves) {
+                    return Object.keys(d3.nest().key(function(e) {
+                        return e.format;
+                    }).map(leaves));
+                }).map(dataset.dollars.data);
 
                 // create a dropdown menu option for each format
                 dropdown.append("option")
                     .attr("value", "")
                     .text("[ALL SELECTED]");
-                formats.forEach(function(format) {
-                    dropdown.append("option")
+                for (var medium in media) {
+                    var optgroup = dropdown.append("optgroup")
+                        .attr("label", medium);
+                    media[medium].forEach(function(format) {
+                        optgroup.append("option")
                         .attr("value", format)
                         .style("color", metadata.colorMap[format])
                         .text(format);
-                });
+                    });
+                };
 
                 // transform dropdown menu into a dropdown checklist
                 $(dropdown).dropdownchecklist({
                     emptyText: "[NONE SELECTED]",
                     firstItemChecksAll: true,
                     icon: {
-                        placement: 'left',
+                        placement: 'right',
                         toClose: 'ui-icon-triangle-1-n',
                         toOpen: 'ui-icon-triangle-1-s'
                     },
@@ -277,21 +285,21 @@
                 var colors = function(d){return metadata.colorMap[d]};
                 d3.csv('data/paradata.csv', function(data) {
 
-                        var color = function(d) {return colors(d.format);};
+                    var color = function(d) {return colors(d.format);};
 
-                        var parcoords = d3.parcoords()("#paraVis")
-                                .data(data)
-                                .color(color)
-                                .alpha(0.25)
-                                .composite("darken")
-                                .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                                .mode("queue")
-                                .render()
-                                .brushMode("1D-axes")
-                                .reorderable();
+                    var parcoords = d3.parcoords()("#paraVis")
+                            .data(data)
+                            .color(color)
+                            .alpha(0.25)
+                            .composite("darken")
+                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
+                            .mode("queue")
+                            .render()
+                            .brushMode("1D-axes")
+                            .reorderable();
 
-                        parcoords.svg.selectAll("text")
-                                .style("font", "10px sans-serif");
+                    parcoords.svg.selectAll("text")
+                            .style("font", "10px sans-serif");
                 });
             };
 
