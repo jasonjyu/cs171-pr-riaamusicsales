@@ -41,7 +41,7 @@ a.button {
 }
 
 .control .option,
-.ui-widget {
+.ui-dropdownchecklist-text {
     font-size: 12px;
     padding-left: .5em;
 }

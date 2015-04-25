@@ -229,6 +229,9 @@
                         optgroup.append("option")
                         .attr("value", format)
                         .style("color", metadata.colorMap[format])
+                        // add text outline
+                        .style("text-shadow", "-1px -1px black,"
+                            + "1px -1px black, -1px 1px black, 1px 1px black")
                         .text(format);
                     });
                 };
