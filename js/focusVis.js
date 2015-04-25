@@ -86,7 +86,7 @@ FocusVis.prototype.initVis = function() {
         .tickFormat(function(d) {
             var d_abs = Math.abs(d);
             return 0 < d_abs && d_abs < 1 ?
-                d3.format(".1f")(d) : d3.format(".2s")(d);
+                d3.format(".2f")(d) : d3.format(".2s")(d);
         });
 
     // create line chart object
