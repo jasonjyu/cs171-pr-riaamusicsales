@@ -215,7 +215,9 @@
                 }).map(dataset.dollars.data));
 
                 // create a dropdown menu option for each format
-                dropdown.append("option").text("[ALL SELECTED]");
+                dropdown.append("option")
+                    .attr("value", "")
+                    .text("[ALL SELECTED]");
                 formats.forEach(function(format) {
                     dropdown.append("option")
                         .attr("value", format)
@@ -233,8 +235,29 @@
                         toOpen: 'ui-icon-triangle-1-s'
                     },
                     width: getInnerWidth(controlElement),
-                    onComplete: function(selector) {
-                        $(eventHandler).trigger(eventName, [$(selector).val()]);
+                    onItemClick: function(checkbox, selector) {
+                        var value = checkbox.val();
+                        var selections = $(selector).val() ?
+                            $(selector).val(): [];
+                        var index = selections.indexOf(value);
+
+                        // if value is not in current selections,
+                        // then it was checked, otherwise it was unchecked
+                        if (index < 0) {
+                            if (value) {
+                                // add checked value to current selections
+                                selections.push(value);
+                            }
+                            else {
+                                // clear current selections if value is empty
+                                selections.length = 0;
+                            }
+                        }
+                        else {
+                            // remove unchecked value from current selections
+                            selections.splice(index, 1);
+                        }
+                        $(eventHandler).trigger(eventName, [selections]);
                     }
                 });
             };
