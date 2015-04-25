@@ -37,7 +37,7 @@ Dataset = function(_rows_units, _rows_dollars, _rows_inflatedDollars) {
  * {
  *     format: , // {string} (CD, cassette, vinyl, download single,
  *               //           paid subscriptions, etc.)
- *     media:  , // {string} (physical, digital, streaming)
+ *     medium: , // {string} (physical, digital, streaming)
  *     year:   , // {number} year of the sales metric value
  *     value:    // {number} value of the sales metric (units, dollars,
  *               //          dollars adjusted for inflation)
@@ -57,7 +57,7 @@ Dataset.prototype.parseRows = function(rows) {
                 if (+key && +row[key]) {
                     result.push({
                         format: row.format,
-                        media:  row.media,
+                        medium: row.medium,
                         year:   +key,
                         value:  +row[key]*1e6 // row value is stored in millions
                     });
