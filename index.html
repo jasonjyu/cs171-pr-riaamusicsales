@@ -43,13 +43,13 @@
         </div>
     </header>
     <div class="container col-xs-2">
-        <div class="text-center">
+        <div>
             <span class="chartTitle">controls</span>
         </div>
-        <div class="text-center" id="metricControl1"></div>
-        <div class="text-center" id="metricControl2"></div>
+        <div id="metricControl1"></div>
+        <div id="metricControl2"></div>
         <br>
-        <div class="text-center" id="formatControl"></div>
+        <div id="formatControl"></div>
 
         <br><br>
 
@@ -173,6 +173,21 @@
                         .attr("selected", i === defaultCheckedIndex ? "" : null)
                         .text(dataset[metric].name);
                 });
+
+                // transform dropdown menu into a dropdown radio list
+                $(dropdown).dropdownchecklist({
+                    closeRadioOnClick: true,
+                    icon: {
+                        placement: 'left',
+                        toClose: 'ui-icon-triangle-1-n',
+                        toOpen: 'ui-icon-triangle-1-s'
+                    },
+                    width: getInnerWidth(controlElement),
+                    onComplete: function(selector) {
+                        $(eventHandler).trigger(eventName,
+                            dataset[$(selector).val()]);
+                    }
+                });
             };
 
             var bindControlsFormat = function(controlElement, controlTitle,
@@ -210,8 +225,12 @@
                 $(dropdown).dropdownchecklist({
                     emptyText: "[NONE SELECTED]",
                     firstItemChecksAll: true,
-                    maxDropHeight: 150,
-                    width: 200,
+                    icon: {
+                        placement: 'left',
+                        toClose: 'ui-icon-triangle-1-n',
+                        toOpen: 'ui-icon-triangle-1-s'
+                    },
+                    width: getInnerWidth(controlElement),
                     onComplete: function(selector) {
                         $(eventHandler).trigger(eventName, [$(selector).val()]);
                     }
@@ -316,7 +335,7 @@
         var getInnerWidth = function(element) {
             var style = window.getComputedStyle(element.node(), null);
 
-            return parseInt(style.getPropertyValue('width'));
+            return parseInt(style.getPropertyValue('width')) - 10;
         };
     </script>
 </body>
