@@ -86,7 +86,7 @@ FocusVis.prototype.initVis = function() {
         .tickFormat(function(d) {
             var d_abs = Math.abs(d);
             return 0 < d_abs && d_abs < 1 ?
-                d3.format(".1f")(d) : d3.format(".2s")(d);
+                d3.format(".2f")(d) : d3.format(".2s")(d);
         });
 
     // create line chart object
@@ -253,6 +253,12 @@ FocusVis.prototype.updateVis = function(_options){
             that.yScale(lastDatum[yKey]) + ")";
     });
 
+    // append a second invisible thicker line for easier hovering
+    formatsEnter.append("path")
+        .style("stroke-width", "10px")
+        .style("stroke", 0)
+        .style("opacity", 0);
+
     // add mouse over and out controls to highlight and fade the chart elements
     formatsEnter.on("mouseover", function(d) {
         // trigger highlightChanged event
@@ -267,7 +273,7 @@ FocusVis.prototype.updateVis = function(_options){
      * DATA UPDATE
      */
     // update all inner paths and circles (both update and enter sets)
-    formats.select("path")
+    formats.selectAll("path")
         .transition().duration(tDuration)
         .attr("d", function(d) { return that.line(d.sales); });
 
