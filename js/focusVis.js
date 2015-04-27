@@ -256,7 +256,7 @@ FocusVis.prototype.updateVis = function(_options){
     // append a second invisible thicker line for easier hovering
     formatsEnter.append("path")
         .style("stroke-width", "10px")
-        .style("stroke", "#black")
+        .style("stroke", "black")
         .style("opacity", 0);
 
     // add mouse over and out controls to highlight and fade the chart elements
