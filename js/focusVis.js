@@ -255,6 +255,7 @@ FocusVis.prototype.updateVis = function(_options){
 
     // append a second invisible thicker line for easier hovering
     formatsEnter.append("path")
+        .attr("class", "hover")
         .style("stroke-width", "10px")
         .style("stroke", "black")
         .style("opacity", 0);
@@ -273,7 +274,7 @@ FocusVis.prototype.updateVis = function(_options){
      * DATA UPDATE
      */
     // update all inner paths and circles (both update and enter sets)
-    formats.selectAll("path")
+    formats.select("path")
         .transition().duration(tDuration)
         .attr("d", function(d) { return that.line(d.sales); });
 
@@ -284,6 +285,9 @@ FocusVis.prototype.updateVis = function(_options){
             return "translate(" + that.xScale(lastDatum.year) + "," +
                 that.yScale(lastDatum[yKey]) + ")";
         });
+
+    formats.select("path.hover")
+        .attr("d", function(d) { return that.line(d.sales); });
 
     /*
      * DATA EXIT
