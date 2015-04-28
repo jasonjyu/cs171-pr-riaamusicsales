@@ -66,8 +66,13 @@ MilestoneVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 
     // if selection is empty, then clear the image and paragraph and reset index
     if(!selectStart && !selectStart) {
-        this.img.attr("src", ".");
-        this.p.html("");
+        this.img.remove();
+        this.img = this.parentElement.append("img")
+            .attr("height", 100);
+
+        this.p.remove();
+        this.p = this.parentElement.append("p");
+
         this.displayDataIndex = -1;
     }
 };
