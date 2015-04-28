@@ -30,6 +30,7 @@
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
     <script src="js/rankingVis.js" type="text/javascript"></script>
+	<script src="js/paraVis.js" type="text/javascript"></script>
 
     <!-- Our Stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -342,29 +343,7 @@
                     .on("click", controlFunction);
             };
 
-            // Loads data and creates the parallel coordinates chart
-            var createParaVis = function() {
-
-                var colors = function(d){return metadata.colorMap[d];};
-                d3.csv('data/paradata.csv', function(data) {
-
-                    var color = function(d) {return colors(d.format);};
-
-                    var parcoords = d3.parcoords()("#paraVis")
-                            .data(data)
-                            .color(color)
-                            .alpha(0.25)
-                            .composite("darken")
-                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                            .mode("queue")
-                            .render()
-                            .brushMode("1D-axes")
-                            .reorderable();
-
-                    parcoords.svg.selectAll("text")
-                            .style("font", "10px sans-serif");
-                });
-            };
+          
 
             // call this function after data is loaded,
             // reformatted and bound to the variables
@@ -383,7 +362,9 @@
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
                     dataset.dollars.data, metadata.colorMap, myEventHandler);
-                createParaVis();
+				var paraVis = new ParaVis(d3.select("#paraVis"),
+					metadata.colorMap, myEventHandler);
+                
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
