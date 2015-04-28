@@ -11,7 +11,8 @@ Metadata = function(_metricsData, _milestonesData) {
     this.milestones = _milestonesData.map(function(d) {
         return {
             year: +d.year,
-            milestone: d.milestone
+            milestone: d.milestone,
+            image: d.image
         };
     });
 };
