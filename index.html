@@ -30,7 +30,7 @@
     <script src="js/contextVis.js" type="text/javascript"></script>
     <script src="js/focusVis.js" type="text/javascript"></script>
     <script src="js/rankingVis.js" type="text/javascript"></script>
-	<script src="js/paraVis.js" type="text/javascript"></script>
+    <script src="js/paraVis.js" type="text/javascript"></script>
 
     <!-- Our Stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -44,7 +44,7 @@
         </div>
     </header>
     <div class="container" style="position:absolute;width:270px">
-        <div class="text-center" id="milestoneVis" style="height:200px;">
+        <div class="text-center" id="milestoneVis" style="height:300px;">
             <span class="chartTitle">milestone guide</span>
             <br>
             <p class="description">
@@ -343,15 +343,13 @@
                     .on("click", controlFunction);
             };
 
-          
-
             // call this function after data is loaded,
             // reformatted and bound to the variables
             var initVis = function() {
 
                 var myEventHandler = new Object();
                 var milestoneVis = new MilestoneVis(d3.select("#milestoneVis"),
-                    metadata.milestones, myEventHandler);
+                    metadata.milestones, myEventHandler, "images/");
                 var contextVis = new ContextVis(d3.select("#contextVis"),
                     [dataset.units], [dataset.dollars], myEventHandler);
                 var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
@@ -362,9 +360,8 @@
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
                     dataset.dollars.data, metadata.colorMap, myEventHandler);
-				var paraVis = new ParaVis(d3.select("#paraVis"),
-					metadata.colorMap, myEventHandler);
-                
+                var paraVis = new ParaVis(d3.select("#paraVis"),
+                    metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),

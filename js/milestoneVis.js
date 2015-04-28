@@ -5,12 +5,14 @@
  *                                   this visualization object
  * @param {array} _data -- the array of data
  * @param {object} _eventHandler -- the Event Handling object to emit data to
+ * @param {string} _imageDir -- the directory containing the milestone images
  * @returns {MilestoneVis}
  */
-MilestoneVis = function(_parentElement, _data, _eventHandler) {
+MilestoneVis = function(_parentElement, _data, _eventHandler, _imageDir) {
     this.parentElement = _parentElement;
     this.data = _data;
     this.eventHandler = _eventHandler;
+    this.imageDir = _imageDir;
     this.displayDataIndex = -1;
 
     this.initVis();
@@ -21,9 +23,21 @@ MilestoneVis = function(_parentElement, _data, _eventHandler) {
  */
 MilestoneVis.prototype.initVis = function() {
 
+    var that = this;
+
+    // bind to the eventHandler
+    $(this.eventHandler).bind("selectionChanged",
+        function(event, selectStart, selectEnd) {
+            that.onSelectionChange(selectStart, selectEnd);
+        }
+    );
+
+    // append an img element to display the milestone images
+    this.img = this.parentElement.append("img")
+        .attr("height", 100);
+
     // append a paragraph element to display the data
-    this.p = this.parentElement.append("p")
-        .html("<br>");
+    this.p = this.parentElement.append("p");
 };
 
 /**
@@ -32,13 +46,32 @@ MilestoneVis.prototype.initVis = function() {
  */
 MilestoneVis.prototype.updateVis = function(_options){
 
-    // update paragraph with data
+    // update image and paragraph with data
     var milestoneInfo = this.data[this.displayDataIndex];
-    this.p.html("<b>" + milestoneInfo.year + ":</b> " + milestoneInfo.milestone);
+    this.img.attr("src", this.imageDir + "/" + milestoneInfo.image);
+    this.p.html("<b>" + milestoneInfo.year + ":</b> " +
+        milestoneInfo.milestone);
 
     // trigger milestoneChanged event
     $(this.eventHandler).trigger("milestoneChanged", milestoneInfo.year);
 };
+
+/**
+ * Gets called by the Event Handler on a "selectionChanged" event and
+ * clears the visualization if the selection is empty.
+ * @param {number} selectStart
+ * @param {number} selectEnd
+ */
+MilestoneVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+
+    // if selection is empty, then clear the image and paragraph and reset index
+    if(!selectStart && !selectStart) {
+        this.img.attr("src", ".");
+        this.p.html("");
+        this.displayDataIndex = -1;
+    }
+};
+
 
 /**
  * Returns a function that increments to next milestone in the data.
