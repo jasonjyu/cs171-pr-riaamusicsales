@@ -1,427 +1,427 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>RIAA Music Sales</title>
+<meta charset="UTF-8">
+	<title>RIAA Music Sales</title>
 
-    <!-- Libraries -->
-    <script src="libs/d3/d3.min.js" charset="utf-8"></script>
-    <script src="libs/d3/d3.parcoords.js" charset="utf-8"></script>
-    <script src="libs/d3/queue.min.js" charset="utf-8"></script>
-    <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
-    <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
-    <script src="libs/dropdown-check-list/src/jquery-ui-1.11.2.min.js"
-            charset="utf-8"></script>
-    <script src="libs/dropdown-check-list/js/ui.dropdownchecklist-1.5-min.js"
-            charset="utf-8"></script>
+	<!-- Libraries -->
+	<script src="libs/d3/d3.min.js" charset="utf-8"></script>
+	<script src="libs/d3/d3.parcoords.js" charset="utf-8"></script>
+	<script src="libs/d3/queue.min.js" charset="utf-8"></script>
+	<script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
+	<script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="libs/dropdown-check-list/src/jquery-ui-1.11.2.min.js"
+			charset="utf-8"></script>
+	<script src="libs/dropdown-check-list/js/ui.dropdownchecklist-1.5-min.js"
+			charset="utf-8"></script>
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" type="text/css" href="css/d3.parcoords.css">
-    <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-    <link rel="stylesheet" type="text/css"
-          href="libs/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="libs/dropdown-check-list/doc/smoothness-1.11.2/jquery-ui-1.11.2.custom.css">
+	<!-- Stylesheets -->
+	<link rel="stylesheet" type="text/css" href="css/d3.parcoords.css">
+	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+	<link rel="stylesheet" type="text/css"
+		  href="libs/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css"
+		  href="libs/dropdown-check-list/doc/smoothness-1.11.2/jquery-ui-1.11.2.custom.css">
 
-    <!-- Our JavaScript Files  -->
-    <script src="js/dataset.js" type="text/javascript"></script>
-    <script src="js/metadata.js" type="text/javascript"></script>
-    <script src="js/milestoneVis.js" type="text/javascript"></script>
-    <script src="js/contextVis.js" type="text/javascript"></script>
-    <script src="js/focusVis.js" type="text/javascript"></script>
-    <script src="js/rankingVis.js" type="text/javascript"></script>
-    <script src="js/paraVis.js" type="text/javascript"></script>
+	<!-- Our JavaScript Files  -->
+	<script src="js/dataset.js" type="text/javascript"></script>
+	<script src="js/metadata.js" type="text/javascript"></script>
+	<script src="js/milestoneVis.js" type="text/javascript"></script>
+	<script src="js/contextVis.js" type="text/javascript"></script>
+	<script src="js/focusVis.js" type="text/javascript"></script>
+	<script src="js/rankingVis.js" type="text/javascript"></script>
+	<script src="js/paraVis.js" type="text/javascript"></script>
 
-    <!-- Our Stylesheets -->
-    <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+	<!-- Our Stylesheets -->
+	<link rel="stylesheet" type="text/css" href="css/myStyle.css">
 </head>
 <body>
-    <header>
-        <div class="inner">
-            <h1>RIAA Music Sales</h1>
-            <a href="https://github.com/jasonjyu/cs171-pr-riaamusicsales"
-               class="button"><small>View project on</small> GitHub</a>
-        </div>
-    </header>
-    <div class="container" style="position:absolute;width:270px">
-        <div class="text-center" id="milestoneVis" style="height:300px;">
-            <span class="chartTitle">milestone guide</span>
-            <br>
-            <p class="description">
-                Click the buttons to toggle through some music milestones.
-            </p>
-            <div id="milestoneControl"></div>
-        </div>
+	<header>
+		<div class="inner">
+			<h1>RIAA Music Sales</h1>
+			<a href="https://github.com/jasonjyu/cs171-pr-riaamusicsales"
+			   class="button"><small>View project on</small> GitHub</a>
+		</div>
+	</header>
+	<div class="container" style="position:absolute;width:270px">
+		<div class="text-center" id="milestoneVis" style="height:300px;">
+			<span class="chartTitle">milestone guide</span>
+			<br>
+			<p class="description">
+				Click the buttons to toggle through some music milestones.
+			</p>
+			<div id="milestoneControl"></div>
+		</div>
 
-        <hr>
+		<hr>
 
-        <div id="controls">
-            <div class="text-center">
-                <span class="chartTitle">controls</span>
-            </div>
-            <div id="comparisonControl"></div>
-            <br>
-            <div id="formatControl"></div>
-            <br>
-            <div id="metricControl1"></div>
-            <div id="metricControl2"></div>
-        </div>
-    </div>
-    <div class="container" style="position:absolute;left:270px;width:1130px;">
-        <div class="row" id="overview">
-            <div class="col-xs-12 text-center" id="contextVis">
-                <span class="chartTitle">context overview</span>
-                <br>
-                <p class="description">
-                    Brush the chart to select a time interval,
-                    then drag the selection.
-                </p>
-            </div>
-        </div>
+		<div id="controls">
+			<div class="text-center">
+				<span class="chartTitle">controls</span>
+			</div>
+			<div id="comparisonControl"></div>
+			<br>
+			<div id="formatControl"></div>
+			<br>
+			<div id="metricControl1"></div>
+			<div id="metricControl2"></div>
+		</div>
+	</div>
+	<div class="container" style="position:absolute;left:270px;width:1130px;">
+		<div class="row" id="overview">
+			<div class="col-xs-12 text-center" id="contextVis">
+				<span class="chartTitle">context overview</span>
+				<br>
+				<p class="description">
+					Brush the chart to select a time interval,
+					then drag the selection.
+				</p>
+			</div>
+		</div>
 
-        <div class="row" id="primaryView">
-            <br>
-            <div class="col-xs-7 text-center" id="focusVis1">
-                <span class="chartTitle">focus selection #1</span>
-                <br>
-                <p class="description">
-                    Hover over a format to highlight.
-                    Drag side slider to rescale.
-                    Click on title to toggle the data view.
-                </p>
-            </div>
-            <div class="col-xs-5 text-center" id="rankingVis1">
-                <span class="chartTitle">rankings #1</span>
-                <br>
-            </div>
-        </div>
+		<div class="row" id="primaryView">
+			<br>
+			<div class="col-xs-7 text-center" id="focusVis1">
+				<span class="chartTitle">focus selection #1</span>
+				<br>
+				<p class="description">
+					Hover over a format to highlight.
+					Drag side slider to rescale.
+					Click on title to toggle the data view.
+				</p>
+			</div>
+			<div class="col-xs-5 text-center" id="rankingVis1">
+				<span class="chartTitle">rankings #1</span>
+				<br>
+			</div>
+		</div>
 
-        <div class="row" id="secondaryView">
-            <br>
-            <div class="col-xs-7 text-center" id="focusVis2">
-                <span class="chartTitle">focus selection #2</span>
-                <br>
-                <p class="description">
-                    Hover over a format to highlight.
-                    Drag side slider to rescale.
-                    Click on title to toggle the data view.
-                </p>
-            </div>
-            <div class="col-xs-5 text-center" id="rankingVis2">
-                <span class="chartTitle">rankings #2</span>
-                <br>
-            </div>
-        </div>
+		<div class="row" id="secondaryView">
+			<br>
+			<div class="col-xs-7 text-center" id="focusVis2">
+				<span class="chartTitle">focus selection #2</span>
+				<br>
+				<p class="description">
+					Hover over a format to highlight.
+					Drag side slider to rescale.
+					Click on title to toggle the data view.
+				</p>
+			</div>
+			<div class="col-xs-5 text-center" id="rankingVis2">
+				<span class="chartTitle">rankings #2</span>
+				<br>
+			</div>
+		</div>
 
-        <div class="row" id="paraView" style="position:relative;bottom:330px">
-            <br>
-            <div class="col-xs-12 text-center">
-                <span class="chartTitle">parallel coordinates chart</span>
-                <p class="description">
-                    Brush or reorder the axes.
-                </p>
-            </div>
-            <div id="paraVis" class="col-xs-12 parcoords" style="height:270px;">
-            </div>
-        </div>
-    </div>
-    <footer>
-        <div style="position:absolute;top:900px;width:1400px;">
-            <div class="col-xs-12">
-                <hr>
-                <ul>
-                    <li>Kiosk includes Singles and Albums</li>
-                    <li>SoundExchange Distributions are estimated payments
-                        in dollars to performers and copyright holders for
-                        digital radio services under statutory licenses</li>
-                    <li>Subscription includes streaming, tethered, and other
-                        paid subscription services not operating under
-                        statutory licenses.</li>
-                    <li>Subscription volume is annual average number of
-                        subscribers for subscription services.</li>
-                    <li>On-Demand Streaming includes ad-supported audio and
-                        music video services not operating under statutory
-                        licenses</li>
-                    <li>Synchronization Royalties include fees and royalties
-                        from synchronization of sound recordings with other
-                        media</li>
-                    <li>Inflation adjustments based on US Bureau of Labor
-                        Statistics annual CPI</li>
-                </ul>
-                <br>
-                <p>
-                    <i>Data Sources:</i>
-                    <br>
-                    Recording Industry Association of America (RIAA):
-                    <a href="https://riaa.com/keystatistics.php?content_selector=research-shipment-database-overview">
-                        Shipment Database
-                    </a>
-                    <br>
-                    Pearson Education:
-                    <a href="http://www.infoplease.com/ipea/A0151192.html">
-                        Music Timeline
-                    </a>
-                </p>
-                <br>
-                <p>
-                    This page was generated by
-                    <a href="https://pages.github.com">GitHub Pages</a>
-                    using the Architect theme by
-                    <a href="https://twitter.com/jasonlong">Jason Long</a>.
-                </p>
-            </div>
-        </div>
-    </footer>
-    <script>
-        // this function is called after the HTML document is fully loaded
-        $(function() {
+		<div class="row" id="paraView" style="position:relative;bottom:330px">
+			<br>
+			<div class="col-xs-12 text-center">
+				<span class="chartTitle">parallel coordinates chart</span>
+				<p class="description">
+					Brush or reorder the axes.
+				</p>
+			</div>
+			<div id="paraVis" class="col-xs-12 parcoords" style="height:270px;">
+			</div>
+		</div>
+	</div>
+	<footer>
+		<div style="position:absolute;top:900px;width:1400px;">
+			<div class="col-xs-12">
+				<hr>
+				<ul>
+					<li>Kiosk includes Singles and Albums</li>
+					<li>SoundExchange Distributions are estimated payments
+						in dollars to performers and copyright holders for
+						digital radio services under statutory licenses</li>
+					<li>Subscription includes streaming, tethered, and other
+						paid subscription services not operating under
+						statutory licenses.</li>
+					<li>Subscription volume is annual average number of
+						subscribers for subscription services.</li>
+					<li>On-Demand Streaming includes ad-supported audio and
+						music video services not operating under statutory
+						licenses</li>
+					<li>Synchronization Royalties include fees and royalties
+						from synchronization of sound recordings with other
+						media</li>
+					<li>Inflation adjustments based on US Bureau of Labor
+						Statistics annual CPI</li>
+				</ul>
+				<br>
+				<p>
+					<i>Data Sources:</i>
+					<br>
+					Recording Industry Association of America (RIAA):
+					<a href="https://riaa.com/keystatistics.php?content_selector=research-shipment-database-overview">
+						Shipment Database
+					</a>
+					<br>
+					Pearson Education:
+					<a href="http://www.infoplease.com/ipea/A0151192.html">
+						Music Timeline
+					</a>
+				</p>
+				<br>
+				<p>
+					This page was generated by
+					<a href="https://pages.github.com">GitHub Pages</a>
+					using the Architect theme by
+					<a href="https://twitter.com/jasonlong">Jason Long</a>.
+				</p>
+			</div>
+		</div>
+	</footer>
+	<script>
+		// this function is called after the HTML document is fully loaded
+		$(function() {
 
-            // keeps global knowledge of the data types in the dataset
-            var dataset;
+			// keeps global knowledge of the data types in the dataset
+			var dataset;
 
-            // keeps metadata about the dataset
-            var metadata;
+			// keeps metadata about the dataset
+			var metadata;
 			
 			// keeps parallel data
 			var pardata;
 
-            var bindControlsComparison = function(controlElement,
-                controlTitle, shownElements, hiddenElements) {
+			var bindControlsComparison = function(controlElement,
+				controlTitle, shownElements, hiddenElements) {
 
-                controlElement.append("label")
-                    .attr("class", "control")
-                    .text(controlTitle + " ")
-                    .append("input").attr({
-                        type: "checkbox",
-                        name: "comparison",
-                        value: "enabled"
-                    }).on("click", function() {
-                        shownElements.transition().duration(500)
-                            .style("opacity", this.checked ? 1 : 0)
-                            .style("z-index", this.checked ? 1 : -1);
-                        hiddenElements.transition().duration(500)
-                            .style("opacity", this.checked ? 0 : 1)
-                            .style("z-index", this.checked ? -1 : 1);
-                    });
+				controlElement.append("label")
+					.attr("class", "control")
+					.text(controlTitle + " ")
+					.append("input").attr({
+						type: "checkbox",
+						name: "comparison",
+						value: "enabled"
+					}).on("click", function() {
+						shownElements.transition().duration(500)
+							.style("opacity", this.checked ? 1 : 0)
+							.style("z-index", this.checked ? 1 : -1);
+						hiddenElements.transition().duration(500)
+							.style("opacity", this.checked ? 0 : 1)
+							.style("z-index", this.checked ? -1 : 1);
+					});
 
-                // set default display properties
-                shownElements.style("opacity", 0);
-                hiddenElements.style("opacity", 1);
-            };
+				// set default display properties
+				shownElements.style("opacity", 0);
+				hiddenElements.style("opacity", 1);
+			};
 
-            var bindControlsFormat = function(controlElement, controlTitle,
-                eventHandler, eventName) {
+			var bindControlsFormat = function(controlElement, controlTitle,
+				eventHandler, eventName) {
 
-                var form = controlElement
-                    .classed("control", true)
-                    .text(controlTitle);
-                form.append("br");
+				var form = controlElement
+					.classed("control", true)
+					.text(controlTitle);
+				form.append("br");
 
-                var dropdown = form.append("select")
-                    .attr("class", "option")
-                    .attr("name", "format")
-                    .attr("multiple", "")
-                    .style("height", "350px")
-                    .style("width", getInnerWidth(controlElement) + "px" )
-                    .on("change", function() {
-                        $(eventHandler).trigger(eventName, [$(this).val()]);
-                    });
+				var dropdown = form.append("select")
+					.attr("class", "option")
+					.attr("name", "format")
+					.attr("multiple", "")
+					.style("height", "350px")
+					.style("width", getInnerWidth(controlElement) + "px" )
+					.on("change", function() {
+						$(eventHandler).trigger(eventName, [$(this).val()]);
+					});
 
-                // generate an array of unique formats nested by medium type
-                var media = d3.nest().key(function(d) {
-                    return d.medium;
-                }).rollup(function(leaves) {
-                    return Object.keys(d3.nest().key(function(e) {
-                        return e.format;
-                    }).map(leaves));
-                }).map(dataset.dollars.data);
+				// generate an array of unique formats nested by medium type
+				var media = d3.nest().key(function(d) {
+					return d.medium;
+				}).rollup(function(leaves) {
+					return Object.keys(d3.nest().key(function(e) {
+						return e.format;
+					}).map(leaves));
+				}).map(dataset.dollars.data);
 
-                // create a dropdown menu option for each format
-                dropdown.append("option")
-                    .attr("value", "")
-                    .attr("selected", "")
-                    .text("[ALL SELECTED]");
-                for (var medium in media) {
-                    var optgroup = dropdown.append("optgroup")
-                        .attr("label", medium);
-                    media[medium].forEach(function(format) {
-                        optgroup.append("option")
-                        .attr("value", format)
-                        .style("color", metadata.colorMap[format])
-                        // add text outline
-                        .style("text-shadow", "-1px -1px black,"
-                            + "1px -1px black, -1px 1px black, 1px 1px black")
-                        .text(format);
-                    });
-                };
+				// create a dropdown menu option for each format
+				dropdown.append("option")
+					.attr("value", "")
+					.attr("selected", "")
+					.text("[ALL SELECTED]");
+				for (var medium in media) {
+					var optgroup = dropdown.append("optgroup")
+						.attr("label", medium);
+					media[medium].forEach(function(format) {
+						optgroup.append("option")
+						.attr("value", format)
+						.style("color", metadata.colorMap[format])
+						// add text outline
+						.style("text-shadow", "-1px -1px black,"
+							+ "1px -1px black, -1px 1px black, 1px 1px black")
+						.text(format);
+					});
+				};
 
-                // transform dropdown menu into a dropdown checklist
-                $(dropdown).dropdownchecklist({
-                    emptyText: "[NONE SELECTED]",
-                    firstItemChecksAll: true,
-                    icon: {
-                        placement: 'right',
-                        toClose: 'ui-icon-triangle-1-n',
-                        toOpen: 'ui-icon-triangle-1-s'
-                    },
-                    width: getInnerWidth(controlElement),
-                    onItemClick: function(checkbox, selector) {
-                        var value = checkbox.val();
-                        var selections = $(selector).val() ?
-                            $(selector).val(): [];
-                        var index = selections.indexOf(value);
+				// transform dropdown menu into a dropdown checklist
+				$(dropdown).dropdownchecklist({
+					emptyText: "[NONE SELECTED]",
+					firstItemChecksAll: true,
+					icon: {
+						placement: 'right',
+						toClose: 'ui-icon-triangle-1-n',
+						toOpen: 'ui-icon-triangle-1-s'
+					},
+					width: getInnerWidth(controlElement),
+					onItemClick: function(checkbox, selector) {
+						var value = checkbox.val();
+						var selections = $(selector).val() ?
+							$(selector).val(): [];
+						var index = selections.indexOf(value);
 
-                        // if value is not in current selections,
-                        // then it was checked, otherwise it was unchecked
-                        if (index < 0) {
-                            if (value) {
-                                // add checked value to current selections
-                                selections.push(value);
-                            }
-                            else {
-                                // clear current selections if value is empty
-                                selections.length = 0;
-                            }
-                        }
-                        else {
-                            // remove unchecked value from current selections
-                            selections.splice(index, 1);
-                        }
-                        $(eventHandler).trigger(eventName, [selections]);
-                    }
-                });
-            };
+						// if value is not in current selections,
+						// then it was checked, otherwise it was unchecked
+						if (index < 0) {
+							if (value) {
+								// add checked value to current selections
+								selections.push(value);
+							}
+							else {
+								// clear current selections if value is empty
+								selections.length = 0;
+							}
+						}
+						else {
+							// remove unchecked value from current selections
+							selections.splice(index, 1);
+						}
+						$(eventHandler).trigger(eventName, [selections]);
+					}
+				});
+			};
 
-            var bindControlsMetric = function(controlElement, controlTitle,
-                defaultCheckedIndex, eventHandler, eventName) {
+			var bindControlsMetric = function(controlElement, controlTitle,
+				defaultCheckedIndex, eventHandler, eventName) {
 
-                var form = controlElement
-                    .classed("control", true)
-                    .text(controlTitle);
-                form.append("br");
+				var form = controlElement
+					.classed("control", true)
+					.text(controlTitle);
+				form.append("br");
 
-                var dropdown = form.append("select")
-                    .attr("class", "option")
-                    .attr("name", "metric")
-                    .on("change", function() {
-                        $(eventHandler).trigger(eventName, dataset[this.value]);
-                    });
+				var dropdown = form.append("select")
+					.attr("class", "option")
+					.attr("name", "metric")
+					.on("change", function() {
+						$(eventHandler).trigger(eventName, dataset[this.value]);
+					});
 
-                // create a dropdown menu option for each metric
-                Object.keys(dataset).forEach(function(metric, i) {
-                    dropdown.append("option")
-                        .attr("value", metric)
-                        .attr("selected", i === defaultCheckedIndex ? "" : null)
-                        .text(dataset[metric].name);
-                });
+				// create a dropdown menu option for each metric
+				Object.keys(dataset).forEach(function(metric, i) {
+					dropdown.append("option")
+						.attr("value", metric)
+						.attr("selected", i === defaultCheckedIndex ? "" : null)
+						.text(dataset[metric].name);
+				});
 
-                // transform dropdown menu into a dropdown radio list
-                $(dropdown).dropdownchecklist({
-                    icon: {
-                        placement: 'right',
-                        toClose: 'ui-icon-triangle-1-n',
-                        toOpen: 'ui-icon-triangle-1-s'
-                    },
-                    width: getInnerWidth(controlElement),
-                    onItemClick: function(checkbox) {
-                        // if checkbox is checked, then fire event,
-                        // otherwise keep checkbox checked
-                        if (checkbox.prop("checked")) {
-                            $(eventHandler).trigger(eventName,
-                                dataset[checkbox.val()]);
-                        }
-                        else {
-                            checkbox.prop("checked", true);
-                        }
-                    }
-                });
-            };
+				// transform dropdown menu into a dropdown radio list
+				$(dropdown).dropdownchecklist({
+					icon: {
+						placement: 'right',
+						toClose: 'ui-icon-triangle-1-n',
+						toOpen: 'ui-icon-triangle-1-s'
+					},
+					width: getInnerWidth(controlElement),
+					onItemClick: function(checkbox) {
+						// if checkbox is checked, then fire event,
+						// otherwise keep checkbox checked
+						if (checkbox.prop("checked")) {
+							$(eventHandler).trigger(eventName,
+								dataset[checkbox.val()]);
+						}
+						else {
+							checkbox.prop("checked", true);
+						}
+					}
+				});
+			};
 
-            var bindControlsMilestone = function(controlElement,
-                controlHtmlText, controlFunction) {
+			var bindControlsMilestone = function(controlElement,
+				controlHtmlText, controlFunction) {
 
-                controlElement.append("button")
-                    .attr("class", "btn-primary")
-                    .html(controlHtmlText)
-                    .on("click", controlFunction);
-            };
+				controlElement.append("button")
+					.attr("class", "btn-primary")
+					.html(controlHtmlText)
+					.on("click", controlFunction);
+			};
 
-            // call this function after data is loaded,
-            // reformatted and bound to the variables
-            var initVis = function() {
+			// call this function after data is loaded,
+			// reformatted and bound to the variables
+			var initVis = function() {
 
-                var myEventHandler = new Object();
-                var milestoneVis = new MilestoneVis(d3.select("#milestoneVis"),
-                    metadata.milestones, myEventHandler, "images/");
-                var contextVis = new ContextVis(d3.select("#contextVis"),
-                    [dataset.units], [dataset.dollars], myEventHandler);
-                var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
-                var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
-                    dataset.dollars.data, metadata.colorMap, myEventHandler);
-                var rankingVis1 = new RankingVis(1, d3.select("#rankingVis1"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
-                var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
-                    dataset.dollars.data, metadata.colorMap, myEventHandler);
-                var paraVis = new ParaVis(d3.select("#paraVis"),
-				    pardata,metadata.colorMap, myEventHandler);
+				var myEventHandler = new Object();
+				var milestoneVis = new MilestoneVis(d3.select("#milestoneVis"),
+					metadata.milestones, myEventHandler, "images/");
+				var contextVis = new ContextVis(d3.select("#contextVis"),
+					[dataset.units], [dataset.dollars], myEventHandler);
+				var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
+					dataset.units.data, metadata.colorMap, myEventHandler);
+				var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
+					dataset.dollars.data, metadata.colorMap, myEventHandler);
+				var rankingVis1 = new RankingVis(1, d3.select("#rankingVis1"),
+					dataset.units.data, metadata.colorMap, myEventHandler);
+				var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
+					dataset.dollars.data, metadata.colorMap, myEventHandler);
+				var paraVis = new ParaVis(d3.select("#paraVis"),
+					pardata,metadata.colorMap, myEventHandler);
 
-                // bind sales metric controls
-                bindControlsMetric(d3.select("#metricControl1"),
-                    "Sales Metric #1:", 0, myEventHandler, "dataChanged1");
-                bindControlsMetric(d3.select("#metricControl2"),
-                    "Sales Metric #2:", 1, myEventHandler, "dataChanged2");
+				// bind sales metric controls
+				bindControlsMetric(d3.select("#metricControl1"),
+					"Sales Metric #1:", 0, myEventHandler, "dataChanged1");
+				bindControlsMetric(d3.select("#metricControl2"),
+					"Sales Metric #2:", 1, myEventHandler, "dataChanged2");
 
-                // bind music format control
-                bindControlsFormat(d3.select("#formatControl"),
-                    "Music Format Filter:", myEventHandler, "formatsChanged");
+				// bind music format control
+				bindControlsFormat(d3.select("#formatControl"),
+					"Music Format Filter:", myEventHandler, "formatsChanged");
 
-                // bind comparison mode toggle control
-                bindControlsComparison(d3.select("#comparisonControl"),
-                    "Comparison Mode:", d3.selectAll("#secondaryView, " +
-                    "#metricControl2, .metric2, .y.axis.right"),
-                    d3.select("#paraView"));
+				// bind comparison mode toggle control
+				bindControlsComparison(d3.select("#comparisonControl"),
+					"Comparison Mode:", d3.selectAll("#secondaryView, " +
+					"#metricControl2, .metric2, .y.axis.right"),
+					d3.select("#paraView"));
 
-                // bind milestone controls
-                bindControlsMilestone(d3.select("#milestoneControl"), "&laquo",
-                    milestoneVis.decrementMilestone(milestoneVis));
-                bindControlsMilestone(d3.select("#milestoneControl"), "&raquo",
-                    milestoneVis.incrementMilestone(milestoneVis));
-            };
+				// bind milestone controls
+				bindControlsMilestone(d3.select("#milestoneControl"), "&laquo",
+					milestoneVis.decrementMilestone(milestoneVis));
+				bindControlsMilestone(d3.select("#milestoneControl"), "&raquo",
+					milestoneVis.incrementMilestone(milestoneVis));
+			};
 
-            var startHere = function() {
+			var startHere = function() {
 
-                // load data here and call parseData() afterwards
-                queue()
-                    .defer(d3.csv, "data/RIAADATA_units.csv")
-                    .defer(d3.csv, "data/RIAADATA_value.csv")
-                    .defer(d3.csv, "data/RIAADATA_value_inflation_adjusted.csv")
-                    .defer(d3.csv, "data/milestones.csv")
+				// load data here and call parseData() afterwards
+				queue()
+					.defer(d3.csv, "data/RIAADATA_units.csv")
+					.defer(d3.csv, "data/RIAADATA_value.csv")
+					.defer(d3.csv, "data/RIAADATA_value_inflation_adjusted.csv")
+					.defer(d3.csv, "data/milestones.csv")
 					.defer(d3.csv, "data/paradata.csv")
-                    .await(function(error, rows1, rows2, rows3, rows4, rows5) {
-                        // process data if no error occurs
-                        if (!error) {
-                            dataset = new Dataset(rows1, rows2, rows3);
-                            metadata = new Metadata(dataset.dollars.data,
-                                rows4);
+					.await(function(error, rows1, rows2, rows3, rows4, rows5) {
+						// process data if no error occurs
+						if (!error) {
+							dataset = new Dataset(rows1, rows2, rows3);
+							metadata = new Metadata(dataset.dollars.data,
+								rows4);
 							pardata = rows5;
-                            initVis();
-                        }
-                    });
-            };
+							initVis();
+						}
+					});
+			};
 
-            startHere();
-        });
+			startHere();
+		});
 
-        /**
-         * Helper function that gets the width of a DOM element
-         * @param {object} element
-         */
-        var getInnerWidth = function(element) {
-            var style = window.getComputedStyle(element.node(), null);
+		/**
+		 * Helper function that gets the width of a DOM element
+		 * @param {object} element
+		 */
+		var getInnerWidth = function(element) {
+			var style = window.getComputedStyle(element.node(), null);
 
-            return parseInt(style.getPropertyValue('width'));
-        };
-    </script>
+			return parseInt(style.getPropertyValue('width'));
+		};
+	</script>
 </body>
 </html>
