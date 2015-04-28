@@ -8,15 +8,16 @@
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {FocusVis}
  */
-ParaVis = function(_parentElement, _colorMap, _eventHandler) {
+ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.parentElement = _parentElement;
     this.colorMap = _colorMap;
     this.eventHandler = _eventHandler;
+    this.dataset = _dataset;
     this.displayData = [];
-	this.selectStart = null;
+    this.selectStart = null;
     this.selectEnd = null;
-	this.previousStart = null;
-	this.previousEnd = null;
+    this.previousStart = null;
+    this.previousEnd = null;
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -24,7 +25,7 @@ ParaVis = function(_parentElement, _colorMap, _eventHandler) {
     this.height = 350 - this.margin.top - this.margin.bottom;
 
     this.initVis();
-	
+    
 };
 
 /**
@@ -33,8 +34,7 @@ ParaVis = function(_parentElement, _colorMap, _eventHandler) {
 ParaVis.prototype.initVis = function() {
 
     var that = this;
-
-	
+    
 
     // bind to the eventHandler
     $(this.eventHandler).bind("dataChanged",
@@ -67,33 +67,33 @@ ParaVis.prototype.initVis = function() {
  * @param {object} _options -- update option parameters
  */
 ParaVis.prototype.updateVis = function(_options){
-	selectStart = this.selectStart;
-	selectEnd = this.selectEnd;
+    selectStart = this.selectStart;
+    selectEnd = this.selectEnd;
 
-	
-	// Loads data and creates the parallel coordinates chart
-				var colormap = this.colorMap;
+    
+    // Loads data and creates the parallel coordinates chart
+                var colormap = this.colorMap;
                 var colors = function(d){return colormap[d];};
-                d3.csv('data/paradata.csv', function(data) {				
-					var DisplayData = data;
-					
-					if (selectStart != null){
-					// Filtering for Display Data
-			
-					var filterFunction = function(d,i) {
-					// filter for data within range and contained in formats
-					if ((selectEnd >= d.year) & (selectStart<= d.year)){
-							return d};
-					};
+                 
+                    var DisplayData = this.dataset;
+                    
+                    if (selectStart != null){
+                    // Filtering for Display Data
+            
+                    var filterFunction = function(d,i) {
+                    // filter for data within range and contained in formats
+                    if ((selectEnd >= d.year) & (selectStart<= d.year)){
+                            return d};
+                    };
 
-					DisplayData = DisplayData.filter(filterFunction);
-					};
+                    DisplayData = DisplayData.filter(filterFunction);
+                    };
 
-					// Attempting to fix fast brushing bug
-					if ((selectStart != this.previousStart) || (selectEnd != this.previousEnd) || (selectStart == null)){
-					this.previousStart = selectStart;
-					this.previousEnd = selectEnd;
-					d3.select("#paraVis").select("svg").remove();
+                    // Attempting to fix fast brushing bug
+                    if ((selectStart != this.previousStart) || (selectEnd != this.previousEnd) || (selectStart == null)){
+                    this.previousStart = selectStart;
+                    this.previousEnd = selectEnd;
+                    d3.select("#paraVis").select("svg").remove();
                     var color = function(d) {return colors(d.format);};
                     var parcoords = d3.parcoords()("#paraVis")
                             .data(DisplayData)
@@ -108,8 +108,8 @@ ParaVis.prototype.updateVis = function(_options){
 
                     parcoords.svg.selectAll("text")
                             .style("font", "10px sans-serif");
-							
-                }});   
+                            
+                };   
 };
 
 /**
@@ -144,12 +144,12 @@ ParaVis.prototype.onDataChange = function(newData) {
  */
 ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 
-	
+    
     this.selectStart = selectStart;
     this.selectEnd = selectEnd;
-	
+    
     this.updateVis();
-	
+    
 };
 
 
