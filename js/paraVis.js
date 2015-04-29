@@ -18,6 +18,7 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.selectEnd = null;
     this.previousStart = null;
     this.previousEnd = null;
+	this.parcoords = null;
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -34,14 +35,6 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
 ParaVis.prototype.initVis = function() {
 
     var that = this;
-    
-
-    // bind to the eventHandler
-    $(this.eventHandler).bind("dataChanged",
-        function(event, newData) {
-            that.onDataChange(newData);
-        }
-    );
 
     // bind to the eventHandler
     $(this.eventHandler).bind("selectionChanged",
@@ -49,6 +42,29 @@ ParaVis.prototype.initVis = function() {
             that.onSelectionChange(selectStart, selectEnd);
         }
     );
+	
+	// Loads data and creates the parallel coordinates chart
+                var colormap = this.colorMap;
+                var colors = function(d){return colormap[d];};
+                 
+                    var DisplayData = this.dataset;
+                    
+                    var color = function(d) {return colors(d.format);};
+                    this.parcoords = d3.parcoords()("#paraVis")
+                            .data(DisplayData)
+                            .color(color)
+                            .alpha(0.25)
+                            .composite("darken")
+                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
+                            .mode("queue")
+                            .render()
+                            .brushMode("1D-axes")
+                            .reorderable()
+
+                    this.parcoords.svg.selectAll("text")
+                            .style("font", "10px sans-serif");
+                            
+                 
             
 
 
@@ -90,26 +106,16 @@ ParaVis.prototype.updateVis = function(_options){
                     };
 
                     // Attempting to fix fast brushing bug
-                    if ((selectStart != this.previousStart) || (selectEnd != this.previousEnd) || (selectStart == null)){
-                    this.previousStart = selectStart;
-                    this.previousEnd = selectEnd;
-                    d3.select("#paraVis").select("svg").remove();
                     var color = function(d) {return colors(d.format);};
-                    var parcoords = d3.parcoords()("#paraVis")
-                            .data(DisplayData)
+                    this.parcoords.data(DisplayData)
                             .color(color)
-                            .alpha(0.25)
-                            .composite("darken")
-                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                            .mode("queue")
                             .render()
-                            .brushMode("1D-axes")
-                            .reorderable()
 
-                    parcoords.svg.selectAll("text")
+
+                    this.parcoords.svg.selectAll("text")
                             .style("font", "10px sans-serif");
                             
-                };   
+                   
 };
 
 /**
