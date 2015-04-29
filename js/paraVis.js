@@ -16,9 +16,8 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.displayData = [];
     this.selectStart = null;
     this.selectEnd = null;
-    this.previousStart = null;
-    this.previousEnd = null;
 	this.parcoords = null;
+	this.formats = null;
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -43,39 +42,57 @@ ParaVis.prototype.initVis = function() {
         }
     );
 	
+	// bind to the eventHandler
+    $(this.eventHandler).bind("formatsChanged",
+        function(event, formats) {
+            that.onformatsChange(formats);
+        }
+    );
+	
 	// Loads data and creates the parallel coordinates chart
-                var colormap = this.colorMap;
-                var colors = function(d){return colormap[d];};
-                 
-                    var DisplayData = this.dataset;
-                    
-                    var color = function(d) {return colors(d.format);};
-                    this.parcoords = d3.parcoords()("#paraVis")
-                            .data(DisplayData)
-                            .color(color)
-                            .alpha(0.25)
-                            .composite("darken")
-                            .margin({ top: 24, left: 50, bottom: 12, right: 0 })
-                            .mode("queue")
-                            .render()
-                            .brushMode("1D-axes")
-                            .reorderable()
+    var colormap = this.colorMap;
+    var colors = function(d){return colormap[d];};
+    this.displayData = this.dataset;
+    var color = function(d) {return colors(d.format);};
+	
+	this.parcoords = d3.parcoords()("#paraVis")
+		.data(this.displayData)
+        .color(color)
+        .alpha(0.25)
+        .composite("darken")
+        .margin({ top: 24, left: 50, bottom: 12, right: 0 })
+        .mode("queue")
+        .render()
+        .brushMode("1D-axes")
+        .reorderable()
 
-                    this.parcoords.svg.selectAll("text")
-                            .style("font", "10px sans-serif");
+    this.parcoords.svg.selectAll("text")
+        .style("font", "10px sans-serif");
                             
                  
-            
-
-
     // call the update method
     this.updateVis();
 };
 
 /**
  * Method to wrangle the data.
- * @param {function} _filterFunction -- filter function to apply on the data
  */
+ ParaVis.prototype.wrangleData = function() {
+
+    // generate filter function based on filter options
+    var selectStart = this.selectStart;
+    var selectEnd = this.selectEnd;
+    var formats = this.formats;
+    var filterFunction = function(d) {
+        // filter for data within range and contained in formats
+        return (selectStart ? selectStart <= d.year : true) &&
+            (selectEnd ? d.year <= selectEnd : true) &&
+            (formats && formats.length ? formats.indexOf(d.format) >= 0 : true);
+    };
+	
+    // displayData holds the data which is visualized
+    this.displayData = this.filterAndAggregate(filterFunction);
+};
 
 
 /**
@@ -86,60 +103,43 @@ ParaVis.prototype.updateVis = function(_options){
     selectStart = this.selectStart;
     selectEnd = this.selectEnd;
 
-    
-    // Loads data and creates the parallel coordinates chart
-                var colormap = this.colorMap;
-                var colors = function(d){return colormap[d];};
-                 
-                    var DisplayData = this.dataset;
-                    
-                    if (selectStart != null){
-                    // Filtering for Display Data
-            
-                    var filterFunction = function(d,i) {
-                    // filter for data within range and contained in formats
-                    if ((selectEnd >= d.year) & (selectStart<= d.year)){
-                            return d};
-                    };
+    this.parcoords
+		.data(this.displayData)
+        .render()
 
-                    DisplayData = DisplayData.filter(filterFunction);
-                    };
-
-                    // Attempting to fix fast brushing bug
-                    var color = function(d) {return colors(d.format);};
-                    this.parcoords.data(DisplayData)
-                            .color(color)
-                            .render()
-
-
-                    this.parcoords.svg.selectAll("text")
-                            .style("font", "10px sans-serif");
-                            
-                   
+	this.parcoords.svg.selectAll("text")
+        .style("font", "10px sans-serif");                   
 };
 
 /**
  * Filters the data based on the specified _filter and returns an array of
- * aggregated data.
- * @param {function} _filterFunction -- filter function to apply on the data
- * @returns {array}
  */
+ ParaVis.prototype.filterAndAggregate = function(_filterFunction) {
+
+    // set filterFunction to a function that accepts all items
+    // ONLY if the parameter _filterFunction is null
+    var filterFunction = _filterFunction || function() { return true; };
+
+    // filter the data
+    var filteredData = this.dataset.filter(filterFunction);
+
+    // return an array of filtered and aggregated data
+    return filteredData;
+};
 
 
 /**
- * Gets called by the Event Handler on a "dataChanged" event,
- * re-wrangles the data, and updates the visualization.
- * @param {array} newData
+ * Gets called by the Event Handler on a "formatsChanged" event,
+ * and updates the visualization.
+ * @param {array} formats
  */
-ParaVis.prototype.onDataChange = function(newData) {
+ParaVis.prototype.onformatsChange = function(formats) {
 
-    this.data = newData;
+    this.formats = formats;
 
-    var selectStart = this.selectStart;
-    var selectEnd = this.selectEnd;
-
-
-
+	this.wrangleData();
+	
+	this.updateVis();
 };
 
 /**
@@ -149,13 +149,11 @@ ParaVis.prototype.onDataChange = function(newData) {
  * @param {number} selectEnd
  */
 ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
-
-    
+ 
     this.selectStart = selectStart;
     this.selectEnd = selectEnd;
+	
+	this.wrangleData();
     
-    this.updateVis();
-    
+    this.updateVis();    
 };
-
-
