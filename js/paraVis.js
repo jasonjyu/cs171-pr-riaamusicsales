@@ -177,8 +177,8 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
  */
 ParaVis.prototype.onHighlightChange = function(highlight) {
 
-    if (highlight == 'undefined'){
-		this.parcoords.clear("highlight");
+    if (!highlight) {
+    this.parcoords.unhighlight();
 	}
 	else{
 		this.highlight = highlight;
