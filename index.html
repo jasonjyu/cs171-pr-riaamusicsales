@@ -181,6 +181,9 @@
 
             // keeps metadata about the dataset
             var metadata;
+            
+            // keeps parallel data
+            var pardata;
 
             var bindControlsComparison = function(controlElement,
                 controlTitle, shownElements, hiddenElements) {
@@ -361,7 +364,7 @@
                 var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
                     dataset.dollars.data, metadata.colorMap, myEventHandler);
                 var paraVis = new ParaVis(d3.select("#paraVis"),
-                    metadata.colorMap, myEventHandler);
+                    pardata,metadata.colorMap, myEventHandler);
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
@@ -394,12 +397,14 @@
                     .defer(d3.csv, "data/RIAADATA_value.csv")
                     .defer(d3.csv, "data/RIAADATA_value_inflation_adjusted.csv")
                     .defer(d3.csv, "data/milestones.csv")
-                    .await(function(error, rows1, rows2, rows3, rows4) {
+                    .defer(d3.csv, "data/paradata.csv")
+                    .await(function(error, rows1, rows2, rows3, rows4, rows5) {
                         // process data if no error occurs
                         if (!error) {
                             dataset = new Dataset(rows1, rows2, rows3);
                             metadata = new Metadata(dataset.dollars.data,
                                 rows4);
+                            pardata = rows5;
                             initVis();
                         }
                     });
