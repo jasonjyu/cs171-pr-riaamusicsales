@@ -18,6 +18,8 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.selectEnd = null;
 	this.parcoords = null;
 	this.formats = null;
+	this.highlight = null;
+	this.highlightArray = null;
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -35,17 +37,24 @@ ParaVis.prototype.initVis = function() {
 
     var that = this;
 
-    // bind to the eventHandler
+    // bind to the eventHandler selection changed
     $(this.eventHandler).bind("selectionChanged",
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
         }
     );
 	
-	// bind to the eventHandler
+	// bind to the eventHandler formats changed
     $(this.eventHandler).bind("formatsChanged",
         function(event, formats) {
             that.onformatsChange(formats);
+        }
+    );
+	
+	// bind to the eventHandler highlight changed	
+	$(this.eventHandler).bind("highlightChanged",
+        function(event, highlight) {
+            that.onHighlightChange(highlight);
         }
     );
 	
@@ -102,10 +111,13 @@ ParaVis.prototype.initVis = function() {
 ParaVis.prototype.updateVis = function(_options){
     selectStart = this.selectStart;
     selectEnd = this.selectEnd;
+	
 
     this.parcoords
 		.data(this.displayData)
         .render()
+		
+
 
 	this.parcoords.svg.selectAll("text")
         .style("font", "10px sans-serif");                   
@@ -156,4 +168,26 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 	this.wrangleData();
     
     this.updateVis();    
+};
+
+/**
+ * Gets called by the Event Handler on a "highlightChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ * @param {number} highlight
+ */
+ParaVis.prototype.onHighlightChange = function(highlight) {
+
+    if (highlight == 'undefined'){
+		this.parcoords.clear("highlight");
+	}
+	else{
+		this.highlight = highlight;
+		this.highlightArray = this.dataset.filter(function(d){
+			if (d.format == highlight){
+					return d
+			}
+	    });
+	
+	this.parcoords.highlight(this.highlightArray);
+    };   
 };
