@@ -9,6 +9,7 @@
  * @returns {ContextVis}
  */
 ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
+
     this.parentElement = _parentElement;
     this.data = _data;
     this.data2 = _data2;
@@ -18,9 +19,12 @@ ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
 
     // define all "constants" here
     this.margin = {top: 20, right: 80, bottom: 30, left: 80};
+    this.margin2 = {top: 69, right: 0, bottom: 1, left: 80},
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
     this.height = 100 - this.margin.top - this.margin.bottom;
+    this.height2 = 100 - this.margin.top - this.margin2.top -
+        this.margin2.bottom;
 
     this.initVis();
 };
@@ -48,8 +52,13 @@ ContextVis.prototype.initVis = function() {
             that.onMilestoneChange(year);
         }
     );
+    $(this.eventHandler).bind("selectionChanged2",
+        function(event, selectStart, selectEnd) {
+            that.onSelectionChange(selectStart, selectEnd);
+        }
+    );
 
-    // create scales and axis
+    // create scales and axes
     this.xScale = d3.time.scale()
         .range([0, this.width]);
 
@@ -75,7 +84,7 @@ ContextVis.prototype.initVis = function() {
         .tickFormat(d3.format("s"))
         .ticks(5);
 
-    // create line chart object
+    // create line chart objects
     this.line = d3.svg.line()
         .interpolate("monotone")
         .x(function(d) { return that.xScale(d.year); })
@@ -85,9 +94,13 @@ ContextVis.prototype.initVis = function() {
         .x(function(d) { return that.xScale(d.year); })
         .y(function(d) { return that.yScale2(d.value); });
 
-    // create chart brush object
-    this.brush = d3.svg.brush()
-        .on("brush", this.brushed(this));
+    // create chart brush objects
+    this.brush = d3.svg.brush();
+    this.brush.on("brush", this.brushed(this.brush, this.eventHandler,
+        "selectionChanged1"));
+    this.brush2 = d3.svg.brush();
+    this.brush2.on("brush", this.brushed(this.brush2, this.eventHandler,
+        "selectionChanged2"));
 
     // append an SVG and group element
     this.svg = this.parentElement
@@ -108,20 +121,39 @@ ContextVis.prototype.initVis = function() {
         .attr("class", "y axis left")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(0," + -this.margin.top/2 + ")")
-        .append("text");
+        .append("text")
+        .attr("dy", "-.35em");
 
     this.svg.append("g")
-        .attr("class", "y axis right")
+        .attr("class", "y axis right comparison")
         .attr("transform", "translate(" + this.width + ",0)")
         .append("g")
         .attr("class", "label")
-        .attr("transform", "translate(0," + -this.margin.top/2 + ")")
-        .append("text");
+        .append("text")
+        .attr("dy", "-.35em");
 
-    // add brush element
+    // add brush elements
     this.svg.append("g")
-        .attr("class", "brush");
+        .attr("class", "brush")
+        .append("rect")
+        .attr("class", "extent2 comparison");
+    this.svg.append("g")
+        .attr("class", "brush2 comparison")
+        .attr("transform", "translate(0" + "," + this.margin2.top + ")")
+        .append("rect")
+        .attr("class", "brush-region")
+        .attr("width", this.width)
+        .attr("height", this.height2);
+    var brushLabel = this.svg.append("g")
+        .attr("class", "label comparison")
+        .attr("transform", "translate(" + -this.margin2.left/2 + "," +
+            this.margin2.top + ")");
+    brushLabel.append("text")
+        .attr("dy", "-.35em")
+        .text("brush");
+    brushLabel.append("text")
+        .attr("dy", ".7em")
+        .text("(comparison)");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -201,7 +233,7 @@ ContextVis.prototype.updateVis = function(_options){
         )
     ]);
 
-    // update axis
+    // update axes
     this.svg.select(".x.axis")
         .call(this.xAxis);
 
@@ -230,7 +262,7 @@ ContextVis.prototype.updateVis = function(_options){
     var metricsEnter = metrics.enter().insert("g", ".brush")
         .attr("class", "metric");
     var metricsEnter2 = metrics2.enter().insert("g", ".brush")
-        .attr("class", "metric2");
+        .attr("class", "metric2 comparison");
 
     // append a path for the Enter set (new g)
     metricsEnter.append("path");
@@ -254,12 +286,18 @@ ContextVis.prototype.updateVis = function(_options){
     metrics.exit().remove();
     metrics2.exit().remove();
 
-    // update brush element
+    // update brush elements
     this.brush.x(this.xScale);
     this.svg.select(".brush")
         .call(this.brush)
         .selectAll("rect")
         .attr("height", this.height);
+
+    this.brush2.x(this.xScale);
+    this.svg.select(".brush2")
+        .call(this.brush2)
+        .selectAll("rect")
+        .attr("height", this.height2);
 };
 
 /**
@@ -322,23 +360,41 @@ ContextVis.prototype.onMilestoneChange = function(year) {
 
     // update the visualization and trigger the brushing event
     this.updateVis();
-    $(this.eventHandler).trigger("selectionChanged",
+    $(this.eventHandler).trigger("selectionChanged1",
         [startYear, endYear, true]);
 };
 
 /**
+ * Gets called by the Event Handler on a "selectionChanged" event
+ * and updates the secondary brush extent.
+ * @param {number} selectStart
+ * @param {number} selectEnd
+ */
+ContextVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+
+    var extent = this.svg.select(".brush2 .extent");
+    var extent2 = this.svg.select(".extent2");
+
+    extent2.attr("width", extent.attr("width"))
+        .attr("x", extent.attr("x"));
+};
+
+/**
  * Returns a function that reacts to chart brushing event.
- * @param {type} that -- a reference to this ContextVis object
+ * @param {object} brush -- the object being brushed
+ * @param {object} eventHandler -- the Event Handling object to emit data to
+ * @param {string} eventName -- the name of the event to emit
  * @returns {Function}
  */
-ContextVis.prototype.brushed = function(that) {
+ContextVis.prototype.brushed = function(brush, eventHandler, eventName) {
+
     return function() {
         // determine year extent
         var startYear = null;
         var endYear = null;
-        if (!that.brush.empty()) {
-            startYear = that.brush.extent()[0].getFullYear();
-            endYear = that.brush.extent()[1].getFullYear();
+        if (!brush.empty()) {
+            startYear = brush.extent()[0].getFullYear();
+            endYear = brush.extent()[1].getFullYear();
 
             // ensure a minimum extent of 1 year
             if (endYear - startYear < 1) {
@@ -346,7 +402,7 @@ ContextVis.prototype.brushed = function(that) {
             }
         }
 
-        // trigger selectionChanged event
-        $(that.eventHandler).trigger("selectionChanged", [startYear, endYear]);
+        // trigger event
+        $(eventHandler).trigger(eventName, [startYear, endYear]);
     };
 };

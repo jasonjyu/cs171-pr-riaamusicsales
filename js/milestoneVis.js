@@ -9,6 +9,7 @@
  * @returns {MilestoneVis}
  */
 MilestoneVis = function(_parentElement, _data, _eventHandler, _imageDir) {
+
     this.parentElement = _parentElement;
     this.data = _data;
     this.eventHandler = _eventHandler;
@@ -26,7 +27,7 @@ MilestoneVis.prototype.initVis = function() {
     var that = this;
 
     // bind to the eventHandler
-    $(this.eventHandler).bind("selectionChanged",
+    $(this.eventHandler).bind("selectionChanged1",
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
         }

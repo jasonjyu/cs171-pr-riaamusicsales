@@ -83,6 +83,10 @@ button.toggle {
     shape-rendering: crispEdges;
 }
 
+.x_axis line{
+    stroke-width: 1.1;
+}
+
 .y.axis .label text {
     font-size: 12px;
     font-weight: bolder;
@@ -121,11 +125,34 @@ button.toggle {
     font: 8px sans-serif;
 }
 
-.brush {
+.brush, .brush2 {
+    pointer-events: none;
+}
+.brush .extent {
     fill: gray;
     fill-opacity: .2;
     stroke: black;
-    pointer-events: none;
+}
+.brush .extent2 {
+    fill: gray;
+    fill-opacity: .5;
+    stroke: black;
+    stroke-dasharray: 5,5;
+}
+.brush2 .extent {
+    fill: black;
+}
+.brush2 .brush-region {
+    fill: gray;
+    fill-opacity: .1;
+    shape-rendering: crispEdges;
+    stroke: black;
+}
+.label.comparison text {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bolder;
+    text-anchor: middle;
 }
 
 /* style the highlighted chart elements */
