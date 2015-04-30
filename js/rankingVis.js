@@ -20,7 +20,7 @@ RankingVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
     this.displayData = [];
 
     // define all "constants" here
-    this.margin = {top: 20, right: 90, bottom: 30, left: 80};
+    this.margin = {top: 20, right: 90, bottom: 100, left: 80};
     this.width = 487 - this.margin.left -this.margin.right;
     this.height = 276 - this.margin.top - this.margin.bottom;
 
@@ -57,7 +57,6 @@ RankingVis.prototype.initVis = function() {
         .attr("height", this.height+ this.margin.top +this.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-
     // creates axis and scales
     this.yScale = d3.scale.linear()
       .range([this.height,0]);
@@ -68,16 +67,17 @@ RankingVis.prototype.initVis = function() {
 
     this.xAxis = d3.svg.axis()
       .scale(this.xScale)
-      .ticks(6)
+      // .ticks(6)
       .orient("bottom");
 
     this.yAxis = d3.svg.axis()
       .scale(this.yScale)
+      .tickFormat(d3.format("s")) 
       .orient("left");
 
     // Add axes visual elements
     this.svg.append("g")
-      .attr("class", "x axis")
+      .attr("class", "axis x_axis")
       .attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis)
 
@@ -92,55 +92,7 @@ RankingVis.prototype.initVis = function() {
     this.updateVis();
 }
 
-//     // create scales and axis
-//     this.xScale = d3.time.scale()
-//         .range([0, this.width]);
 
-//     this.yScale = d3.scale.pow()
-//         .range([this.height, 0]);
-
-//     this.xAxis = d3.svg.axis()
-//         .scale(this.xScale)
-//         .orient("bottom");
-
-//     this.yAxis = d3.svg.axis()
-//         .scale(this.yScale)
-//         .orient("left")
-//         .tickFormat(d3.format("s"));
-
-//     // create line chart object
-//     this.line = d3.svg.line()
-//         .interpolate("monotone")
-//         .x(function(d) { return that.xScale(d.year); })
-//         .y(function(d) { return that.yScale(d.value); });
-
-//     // append an SVG and group element
-//     this.svg = this.parentElement
-//         .append("svg")
-//             .attr("width", this.width + this.margin.left + this.margin.right)
-//             .attr("height", this.height + this.margin.top + this.margin.bottom)
-//         .append("g")
-//             .attr("class", "focus")
-//             .attr("transform", "translate(" + this.margin.left + "," +
-//                 this.margin.top + ")");
-
-//     // add axes visual elements
-//     this.svg.append("g")
-//         .attr("class", "x axis")
-//         .attr("transform", "translate(0," + this.height + ")");
-
-//     this.svg.append("g")
-//         .attr("class", "y axis");
-
-//     // implement the slider
-//     this.addSlider(this.svg);
-
-//     // filter, aggregate, modify data
-//     this.wrangleData();
-
-//     // call the update method
-//     this.updateVis();
-// };
 
 /**
  * Method to wrangle the data.
@@ -162,12 +114,14 @@ RankingVis.prototype.updateVis = function(_options){
 
     var that = this;
     // update scales
-    if(this.visId == 1){
-        this.xScale.domain(d3.range(this.displayData.length))  
+    {
+        this.xScale.domain(this.displayData.map(function(d){
+            return d.key
+        }))
     }
-    else{
-        this.xScale.domain(d3.keys(this.colorMap2))
-        } 
+    // else{
+    //     this.xScale.domain(d3.keys(this.colorMap2))
+    //     } 
     yMin = d3.min(this.displayData, function(d){
         return d.value;
        })
@@ -180,10 +134,16 @@ RankingVis.prototype.updateVis = function(_options){
     this.yScale.domain([yMin, yMax]);
 
     // update axis
-    this.svg.select(".x.axis")
+    this.svg.select(".x_axis")
         .transition().duration(tDuration)
-        .call(this.xAxis);
-
+        .call(this.xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+         .attr("transform", function(d) {
+         return "rotate(-60)" 
+         })
+         .attr("dy", -1)
+         .attr("dx", -8)
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
         .call(this.yAxis);
@@ -208,12 +168,12 @@ bar.enter().append("g")
  
 // Update all inner rects and texts (both update and enter sets)
   .attr("x", function(d,i){
-    if (that.visId == 1) {
-        x = that.xScale(i);
-    }
-    else {
-        x = that.xScale(d.key)
-    }
+    // if (that.visId == 1) {
+        x = that.xScale(d.key);
+    // }
+    // else {
+    //     x = that.xScale(d.key)
+    // }
     return x;
   })
 
@@ -221,12 +181,12 @@ bar.enter().append("g")
  return that.yScale(d.value);})
  .attr("width", that.xScale.rangeBand())
  .style("fill", function(d,i) {
- if (that.visId == 1) {
+ // if (that.visId == 1) {
     color = that.colorMap[d.key]
- }
- else{
- color = that.colorMap2[d.key]
- }
+ // }
+ // else{
+ // color = that.colorMap2[d.key]
+ // }
  return color;
 })
 
@@ -235,7 +195,6 @@ bar.enter().append("g")
  return barheight;
  })
 
- debugger
 }
 
 RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
@@ -249,35 +208,35 @@ RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
 
     // aggregate the data
     var aggregatedData = {}
-    if(this.visId == 1)
+    // if(this.visId == 1)
         {filteredData.forEach(function(d){
         if (!(d.format in aggregatedData)){
             aggregatedData[d.format] = 0;
         }
         aggregatedData[d.format] += d.value;
     })}
-    else{
-     filteredData.forEach(function(d){
-        if (!(d.media in aggregatedData)){
-            aggregatedData[d.media] = 0;
-        }
-        aggregatedData[d.media] += d.value;
-    })   
-    }
+    // else{
+    //  filteredData.forEach(function(d){
+    //     if (!(d.media in aggregatedData)){
+    //         aggregatedData[d.media] = 0;
+    //     }
+    //     aggregatedData[d.media] += d.value;
+    // })   
+    // }
 
     aggregatedData = d3.entries(aggregatedData);
     
-    if(this.visId ==1 ){
+    // if(this.visId ==1 ){
     aggregatedData.sort(function(a,b){
-        if(a.value > b.value){
+        if(b.value > a.value){
             return 1;
         }
-        if(a.value < b.value){
+        if(b.value < a.value){
             return -1;
         }
         return 0;
     })
-    }
+    // }
     // return an array of filtered and aggregated data
     return (aggregatedData);
 };
@@ -323,12 +282,19 @@ RankingVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 
 RankingVis.prototype.onHighlightChange = function(highlight) {
 
-    var formats = this.svg.selectAll(".format");
+    var formats = this.svg.selectAll(".bar");
     formats.classed("faded", function(d) {
-        return highlight && d.format !== highlight;
+        return highlight && d.key !== highlight;
     });
     formats.classed("highlighted", function(d) {
-        return highlight && d.format === highlight;
+        return highlight && d.key === highlight;
     });
 };
+
+// .on("highlightChanged", function() {
+//     d3.select(this).classed("highlight", true);
+// })
+// .on("highlightChanged", function() {
+//     d3.select(this).classed("highlight", false);
+// });
 

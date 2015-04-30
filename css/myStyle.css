@@ -83,6 +83,10 @@ button.toggle {
     shape-rendering: crispEdges;
 }
 
+.x_axis line{
+    stroke-width: 1.1;
+}
+
 .y.axis .label text {
     font-size: 12px;
     font-weight: bolder;
@@ -97,6 +101,7 @@ button.toggle {
 .y0.axis line {
     stroke-dasharray: 5,5;
 }
+
 
 .metric path {
     fill: none;
@@ -115,7 +120,7 @@ button.toggle {
 }
 .format path {
     fill: none;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
 }
 .format text {
     font: 8px sans-serif;
