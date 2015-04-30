@@ -57,7 +57,7 @@ FocusVis.prototype.initVis = function() {
             that.onDataViewChange();
         }
     );
-    $(this.eventHandler).bind("selectionChanged",
+    $(this.eventHandler).bind("selectionChanged" + this.visId,
         function(event, selectStart, selectEnd, transition) {
             that.onSelectionChange(selectStart, selectEnd, transition);
         }

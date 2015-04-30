@@ -82,7 +82,7 @@
         <div class="row" id="primaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis1">
-                <span class="chartTitle">focus selection #1</span>
+                <span class="chartTitle">focus selection</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
@@ -92,7 +92,7 @@
                 <div id="dataViewControl1"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis1">
-                <span class="chartTitle">rankings #1</span>
+                <span class="chartTitle">rankings</span>
                 <br>
             </div>
         </div>
@@ -100,7 +100,7 @@
         <div class="row" id="secondaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis2">
-                <span class="chartTitle">focus selection #2</span>
+                <span class="chartTitle">focus selection (comparison)</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
@@ -110,7 +110,7 @@
                 <div id="dataViewControl2"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis2">
-                <span class="chartTitle">rankings #2</span>
+                <span class="chartTitle">rankings (comparison)</span>
                 <br>
             </div>
         </div>
@@ -382,9 +382,10 @@
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
-                    "Sales Metric #1:", 0, myEventHandler, "dataChanged1");
+                    "Sales Metric:", 0, myEventHandler, "dataChanged1");
                 bindControlsMetric(d3.select("#metricControl2"),
-                    "Sales Metric #2:", 1, myEventHandler, "dataChanged2");
+                    "Sales Metric (comparison):", 1, myEventHandler,
+                    "dataChanged2");
 
                 // bind music format control
                 bindControlsFormat(d3.select("#formatControl"),
@@ -393,8 +394,7 @@
                 // bind comparison mode toggle control
                 bindControlsComparison(d3.select("#comparisonControl"),
                     "Comparison Mode:", d3.selectAll("#secondaryView, " +
-                    "#metricControl2, .metric2, .y.axis.right"),
-                    d3.select("#paraView"));
+                    "#metricControl2, .comparison"), d3.select("#paraView"));
 
                 // bind milestone controls
                 bindControlsMilestone(d3.select("#milestoneControl"), "&laquo",

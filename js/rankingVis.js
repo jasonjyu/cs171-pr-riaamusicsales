@@ -40,7 +40,7 @@ RankingVis.prototype.initVis = function() {
             that.onDataChange(dataObject.data);
         }
     );
-    $(this.eventHandler).bind("selectionChanged",
+    $(this.eventHandler).bind("selectionChanged" + this.visId,
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
         }
