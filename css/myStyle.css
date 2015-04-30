@@ -54,9 +54,16 @@ a.button {
 #metricControl1 .ui-dropdownchecklist-item {
     color: gray;
 }
-
 #metricControl2 .ui-dropdownchecklist-item {
     color: black;
+}
+
+button.toggle {
+    float: right;
+    font: 10px sans-serif;
+}
+.toggle span {
+    line-height: .5;
 }
 
 /* style the chart elements */
@@ -66,14 +73,9 @@ a.button {
     text-decoration: underline;
 }
 
-.focus .title {
-    cursor: pointer;
-}
-
 .axis text {
     font: 10px sans-serif;
 }
-
 .axis line,
 .axis path {
     fill: none;
@@ -92,7 +94,6 @@ a.button {
 .y.axis.right text {
     fill: black;
 }
-
 .y0.axis line {
     stroke-dasharray: 5,5;
 }
@@ -102,7 +103,6 @@ a.button {
     stroke: gray;
     stroke-width: 3px;
 }
-
 .metric2 path {
     fill: none;
     stroke: black;
@@ -113,12 +113,10 @@ a.button {
 .format {
     cursor: pointer;
 }
-
 .format path {
     fill: none;
     stroke-width: 1.5px;
 }
-
 .format text {
     font: 8px sans-serif;
 }
