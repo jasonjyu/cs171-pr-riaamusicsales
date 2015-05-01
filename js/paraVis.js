@@ -165,6 +165,7 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
     this.selectStart = selectStart;
     this.selectEnd = selectEnd;
 	
+	this.parcoords.brushReset();
 	this.wrangleData();
     
     this.updateVis();    
