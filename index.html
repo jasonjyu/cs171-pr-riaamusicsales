@@ -70,10 +70,10 @@
     <div class="container" style="position:absolute;left:270px;width:1130px;">
         <div class="row" id="overview">
             <div class="col-xs-12 text-center" id="contextVis">
-                <span class="chartTitle">context overview</span>
+                <span class="chartTitle">sales overview</span>
                 <br>
                 <p class="description">
-                    Brush the chart to select a time interval,
+                    Brush the chart to select a time interval to focus on,
                     then drag the selection.
                 </p>
             </div>
@@ -82,7 +82,7 @@
         <div class="row" id="primaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis1">
-                <span class="chartTitle">focus selection</span>
+                <span class="chartTitle">sales trends</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
@@ -92,7 +92,7 @@
                 <div id="dataViewControl1"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis1">
-                <span class="chartTitle">rankings</span>
+                <span class="chartTitle">sales rankings</span>
                 <br>
             </div>
         </div>
@@ -100,7 +100,7 @@
         <div class="row" id="secondaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis2">
-                <span class="chartTitle">focus selection (comparison)</span>
+                <span class="chartTitle">sales trends (comparison)</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
@@ -110,7 +110,7 @@
                 <div id="dataViewControl2"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis2">
-                <span class="chartTitle">rankings (comparison)</span>
+                <span class="chartTitle">sales rankings (comparison)</span>
                 <br>
             </div>
         </div>
@@ -118,7 +118,7 @@
         <div class="row" id="paraView" style="position:relative;bottom:330px">
             <br>
             <div class="col-xs-12 text-center">
-                <span class="chartTitle">parallel coordinates chart</span>
+                <span class="chartTitle">sales metric relationships</span>
                 <p class="description">
                     Brush or reorder the axes.
                 </p>
@@ -368,7 +368,7 @@
                 var milestoneVis = new MilestoneVis(d3.select("#milestoneVis"),
                     metadata.milestones, myEventHandler, "images/");
                 var contextVis = new ContextVis(d3.select("#contextVis"),
-                    [dataset.units], [dataset.dollars], myEventHandler);
+                    dataset.units, dataset.dollars, myEventHandler);
                 var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
                     dataset.units, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
