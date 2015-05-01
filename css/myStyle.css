@@ -65,6 +65,9 @@ button.toggle {
 .toggle span {
     line-height: .5;
 }
+.sliderHandle {
+    cursor: -webkit-grab;
+}
 
 /* style the chart elements */
 .title text {
@@ -83,8 +86,11 @@ button.toggle {
     shape-rendering: crispEdges;
 }
 
-.x_axis line{
+.x_axis line {
     stroke-width: 1.1;
+}
+.x_axis text {
+    font: 8px sans-serif;
 }
 
 .y.axis .label text {

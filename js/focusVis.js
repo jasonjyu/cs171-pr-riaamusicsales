@@ -62,6 +62,11 @@ FocusVis.prototype.initVis = function() {
             that.onSelectionChange(selectStart, selectEnd, transition);
         }
     );
+    $(this.eventHandler).bind("scaleChanged" + this.visId,
+        function(event, scale) {
+            that.onScaleChange(scale);
+        }
+    );
     $(this.eventHandler).bind("formatsChanged",
         function(event, formats) {
             that.onFormatsChange(formats);
@@ -70,11 +75,6 @@ FocusVis.prototype.initVis = function() {
     $(this.eventHandler).bind("highlightChanged",
         function(event, highlight) {
             that.onHighlightChange(highlight);
-        }
-    );
-    $(this.eventHandler).bind("scaleChanged",
-        function(event, scale) {
-            that.onScaleChange(scale);
         }
     );
 
@@ -142,7 +142,8 @@ FocusVis.prototype.initVis = function() {
         .append("text");
 
     // implement the slider
-    this.addSlider(this.height, this.svg, this.eventHandler);
+    this.addSlider(this.height, this.svg, this.eventHandler, "scaleChanged" +
+        this.visId);
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -436,8 +437,9 @@ FocusVis.prototype.onScaleChange = function(scale) {
  * @param {object} height -- the height of the slider
  * @param {object} svg -- the svg element
  * @param {object} eventHandler -- the Event Handling object to emit data to
+ * @param {string} eventName -- the name of the event to emit
  */
-FocusVis.prototype.addSlider = function(height, svg, eventHandler) {
+FocusVis.prototype.addSlider = function(height, svg, eventHandler, eventName) {
 
     // the domain is the exponent value for the power scale
     var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, height]);
@@ -449,7 +451,7 @@ FocusVis.prototype.addSlider = function(height, svg, eventHandler) {
         // update the slider position
         d3.select(this).attr("y", value);
 
-        $(eventHandler).trigger("scaleChanged", sliderScale.invert(value));
+        $(eventHandler).trigger(eventName, sliderScale.invert(value));
     };
 
     var sliderDragBehaviour = d3.behavior.drag().on("drag", sliderDragged);
