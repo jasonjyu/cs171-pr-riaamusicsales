@@ -3,16 +3,17 @@
  * @constructor
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
- * @param {array} _data -- the primary array of data
- * @param {array} _data2 -- the secondary array of data
+ * @param {object} _dataObject -- the object containing the primary data
+ * @param {object} _dataObject2 -- the object containing the secondary data
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {ContextVis}
  */
-ContextVis = function(_parentElement, _data, _data2, _eventHandler) {
+ContextVis = function(_parentElement, _dataObject, _dataObject2,
+    _eventHandler) {
 
     this.parentElement = _parentElement;
-    this.data = _data;
-    this.data2 = _data2;
+    this.dataObject = _dataObject;
+    this.dataObject2 = _dataObject2;
     this.eventHandler = _eventHandler;
     this.displayData = [];
     this.displayData2 = [];
@@ -39,12 +40,12 @@ ContextVis.prototype.initVis = function() {
     // bind to the eventHandler
     $(this.eventHandler).bind("dataChanged1",
         function(event, dataObject) {
-            that.onDataChange([dataObject], that.data2);
+            that.onDataChange(dataObject, that.dataObject2);
         }
     );
     $(this.eventHandler).bind("dataChanged2",
         function(event, dataObject) {
-            that.onDataChange(that.data, [dataObject]);
+            that.onDataChange(that.dataObject, dataObject);
         }
     );
     $(this.eventHandler).bind("milestoneChanged",
@@ -171,18 +172,10 @@ ContextVis.prototype.wrangleData = function(_filterFunction) {
     var that = this;
 
     // displayData holds the data which is visualized
-    this.displayData = this.data.map(function(d) {
-        return {
-            metric: d.name,
-            sales: that.filterAndAggregate(d.data, _filterFunction)
-        };
-    });
-    this.displayData2 = this.data2.map(function(d) {
-        return {
-            metric: d.name,
-            sales: that.filterAndAggregate(d.data, _filterFunction)
-        };
-    });
+    this.displayData = this.filterAndAggregate(this.dataObject.data,
+        _filterFunction);
+    this.displayData2 = this.filterAndAggregate(this.dataObject2.data,
+        _filterFunction);
 };
 
 /**
@@ -196,39 +189,32 @@ ContextVis.prototype.updateVis = function(_options){
     var that = this;
 
     // update scales
-    this.xScale.domain([
-        d3.min(this.displayData,
-            function(d) {
-                return d3.min(d.sales, function(s) { return s.year; });
-            }
-        ),
-        d3.max(this.displayData,
-            function(d) {
-                return d3.max(d.sales, function(s) { return s.year; });
-            }
-        )
-    ]);
+    this.xScale.domain(d3.extent(this.displayData,
+        function(d) {
+            return d.year;
+        }
+    ));
     this.yScale.domain([
         Math.min(0, d3.min(this.displayData,
             function(d) {
-                return d3.min(d.sales, function(s) { return s.value; });
+                return d.value;
             }
         )),
         d3.max(this.displayData,
             function(d) {
-                return d3.max(d.sales, function(s) { return s.value; });
+                return d.value;
             }
         )
     ]);
     this.yScale2.domain([
         Math.min(0, d3.min(this.displayData2,
             function(d) {
-                return d3.min(d.sales, function(s) { return s.value; });
+                return d.value;
             }
         )),
         d3.max(this.displayData2,
             function(d) {
-                return d3.max(d.sales, function(s) { return s.value; });
+                return d.value;
             }
         )
     ]);
@@ -241,19 +227,19 @@ ContextVis.prototype.updateVis = function(_options){
         .transition().duration(tDuration)
         .call(this.yAxis)
         .select(".label text")
-        .text(this.displayData[0].metric);
+        .text(this.dataObject.name);
 
     this.svg.select(".y.axis.right")
         .transition().duration(tDuration)
         .call(this.yAxis2)
         .select(".label text")
-        .text(this.displayData2[0].metric);
+        .text(this.dataObject2.name);
 
     // bind data
     var metrics = this.svg.selectAll(".metric")
-        .data(this.displayData);
+        .data([this.displayData]);
     var metrics2 = this.svg.selectAll(".metric2")
-        .data(this.displayData2);
+        .data([this.displayData2]);
 
     /*
      * DATA ENTER
@@ -274,10 +260,10 @@ ContextVis.prototype.updateVis = function(_options){
     // update all inner paths (both update and enter sets)
     metrics.select("path")
         .transition().duration(tDuration)
-        .attr("d", function(d) { return that.line(d.sales); });
+        .attr("d", function(d) { return that.line(d); });
     metrics2.select("path")
         .transition().duration(tDuration)
-        .attr("d", function(d) { return that.line2(d.sales); });
+        .attr("d", function(d) { return that.line2(d); });
 
     /*
      * DATA EXIT
@@ -335,13 +321,13 @@ ContextVis.prototype.filterAndAggregate = function(_data, _filterFunction) {
 /**
  * Gets called by the Event Handler on a "dataChanged" event,
  * re-wrangles the data, and updates the visualization.
- * @param {array} newData
- * @param {array} newData2
+ * @param {array} newDataObject
+ * @param {array} newDataObject2
  */
-ContextVis.prototype.onDataChange = function(newData, newData2) {
+ContextVis.prototype.onDataChange = function(newDataObject, newDataObject2) {
 
-    this.data = newData;
-    this.data2 = newData2;
+    this.dataObject = newDataObject;
+    this.dataObject2 = newDataObject2;
     this.wrangleData();
     this.updateVis({tDuration: 500});
 };
