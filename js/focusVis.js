@@ -4,15 +4,17 @@
  * @param {number} _visId -- the ID for this visualization instantiation
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
- * @param {array} _data -- the array of data
+ * @param {object} _dataObject -- the object containing the data
  * @param {object} _colorMap -- map of music formats to colors
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {FocusVis}
  */
-FocusVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
+FocusVis = function(_visId, _parentElement, _dataObject, _colorMap,
+    _eventHandler) {
+
     this.visId = _visId;
     this.parentElement = _parentElement;
-    this.data = _data;
+    this.dataObject = _dataObject;
     this.colorMap = _colorMap;
     this.eventHandler = _eventHandler;
     this.displayData = [];
@@ -29,7 +31,7 @@ FocusVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
     this.filterOptions = {};
 
     // define all "constants" here
-    this.margin = {top: 20, right: 90, bottom: 30, left: 60};
+    this.margin = {top: 20, right: 90, bottom: 30, left: 80};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
     this.height = 250 - this.margin.top - this.margin.bottom;
@@ -47,10 +49,15 @@ FocusVis.prototype.initVis = function() {
     // bind to the eventHandler
     $(this.eventHandler).bind("dataChanged" + this.visId,
         function(event, dataObject) {
-            that.onDataChange(dataObject.data);
+            that.onDataChange(dataObject);
         }
     );
-    $(this.eventHandler).bind("selectionChanged",
+    $(this.eventHandler).bind("dataViewChanged" + this.visId,
+        function() {
+            that.onDataViewChange();
+        }
+    );
+    $(this.eventHandler).bind("selectionChanged" + this.visId,
         function(event, selectStart, selectEnd, transition) {
             that.onSelectionChange(selectStart, selectEnd, transition);
         }
@@ -63,6 +70,11 @@ FocusVis.prototype.initVis = function() {
     $(this.eventHandler).bind("highlightChanged",
         function(event, highlight) {
             that.onHighlightChange(highlight);
+        }
+    );
+    $(this.eventHandler).bind("scaleChanged",
+        function(event, scale) {
+            that.onScaleChange(scale);
         }
     );
 
@@ -110,7 +122,11 @@ FocusVis.prototype.initVis = function() {
         .attr("transform", "translate(0," + this.height + ")");
 
     this.svg.append("g")
-        .attr("class", "y axis");
+        .attr("class", "y axis")
+        .append("g")
+        .attr("class", "label")
+        .append("text")
+        .attr("dy", "-.35em");
 
      // add zero line
     this.svg.append("g")
@@ -123,17 +139,10 @@ FocusVis.prototype.initVis = function() {
         .attr("class", "title")
         .attr("transform", "translate(" + this.width/2 + "," +
             -this.margin.top/2 + ")")
-        // add mouse click control to toggle the y-value encoding key
-        .on("mousedown", function(d) {
-            if (++that.chartDataIndex >= that.chartData.length) {
-                that.chartDataIndex = 0;
-            }
-            that.updateVis({tDuration: 500});
-        })
         .append("text");
 
     // implement the slider
-    this.addSlider(this.svg);
+    this.addSlider(this.height, this.svg, this.eventHandler);
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -159,7 +168,8 @@ FocusVis.prototype.wrangleData = function() {
     };
 
     // displayData holds the data which is visualized
-    this.displayData = this.filterAndAggregate(filterFunction);
+    this.displayData = this.filterAndAggregate(this.dataObject.data,
+        filterFunction);
 };
 
 /**
@@ -209,7 +219,9 @@ FocusVis.prototype.updateVis = function(_options){
 
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
-        .call(this.yAxis);
+        .call(this.yAxis)
+        .select(".label text")
+        .text(this.dataObject.name);
 
     this.svg.select(".y0.axis line")
         .transition().duration(tDuration)
@@ -299,17 +311,18 @@ FocusVis.prototype.updateVis = function(_options){
 /**
  * Filters the data based on the specified _filter and returns an array of
  * aggregated data.
+ * @param {array} _data -- the data to process
  * @param {function} _filterFunction -- filter function to apply on the data
  * @returns {array}
  */
-FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
+FocusVis.prototype.filterAndAggregate = function(_data, _filterFunction) {
 
     // set filterFunction to a function that accepts all items
     // ONLY if the parameter _filterFunction is null
     var filterFunction = _filterFunction || function() { return true; };
 
     // filter the data
-    var filteredData = this.data.filter(filterFunction);
+    var filteredData = _data.filter(filterFunction);
 
     // aggregate the data
     var aggregatedDataMap = d3.nest().key(function(d) {
@@ -335,12 +348,25 @@ FocusVis.prototype.filterAndAggregate = function(_filterFunction) {
 /**
  * Gets called by the Event Handler on a "dataChanged" event,
  * re-wrangles the data, and updates the visualization.
- * @param {array} newData
+ * @param {object} newDataObject
  */
-FocusVis.prototype.onDataChange = function(newData) {
+FocusVis.prototype.onDataChange = function(newDataObject) {
 
-    this.data = newData;
+    this.dataObject = newDataObject;
     this.wrangleData();
+    this.updateVis({tDuration: 500});
+};
+
+/**
+ * Gets called by the Event Handler on a "dataViewChanged" event,
+ * re-wrangles the data, and updates the visualization.
+ */
+FocusVis.prototype.onDataViewChange = function() {
+
+    // toggle the y-value encoding key
+    if (++this.chartDataIndex >= this.chartData.length) {
+        this.chartDataIndex = 0;
+    }
     this.updateVis({tDuration: 500});
 };
 
@@ -393,28 +419,37 @@ FocusVis.prototype.onHighlightChange = function(highlight) {
 };
 
 /**
- * Creates the y-axis slider
- * @param {object} svg -- the svg element
+ * Gets called by the Event Handler on a "scaleChanged" event,
+ * then updates the y-scale and visualization.
+ * @param {number} scale -- the new scale value
  */
-FocusVis.prototype.addSlider = function(svg) {
+FocusVis.prototype.onScaleChange = function(scale) {
 
-    var that = this;
+    // deform the y scale
+    this.yScale.exponent(scale);
+
+    this.updateVis();
+};
+
+/**
+ * Creates the y-axis slider
+ * @param {object} height -- the height of the slider
+ * @param {object} svg -- the svg element
+ * @param {object} eventHandler -- the Event Handling object to emit data to
+ */
+FocusVis.prototype.addSlider = function(height, svg, eventHandler) {
 
     // the domain is the exponent value for the power scale
-    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, this.height]);
+    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, height]);
 
     var sliderDragged = function() {
 
-        var value = Math.max(0, Math.min(that.height, d3.event.y));
-        var sliderValue = sliderScale.invert(value);
+        var value = Math.max(0, Math.min(height, d3.event.y));
 
         // update the slider position
         d3.select(this).attr("y", value);
 
-        // deform the y scale
-        that.yScale.exponent(sliderValue);
-
-        that.updateVis();
+        $(eventHandler).trigger("scaleChanged", sliderScale.invert(value));
     };
 
     var sliderDragBehaviour = d3.behavior.drag().on("drag", sliderDragged);

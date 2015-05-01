@@ -54,9 +54,16 @@ a.button {
 #metricControl1 .ui-dropdownchecklist-item {
     color: gray;
 }
-
 #metricControl2 .ui-dropdownchecklist-item {
     color: black;
+}
+
+button.toggle {
+    float: right;
+    font: 10px sans-serif;
+}
+.toggle span {
+    line-height: .5;
 }
 
 /* style the chart elements */
@@ -66,19 +73,18 @@ a.button {
     text-decoration: underline;
 }
 
-.focus .title {
-    cursor: pointer;
-}
-
 .axis text {
     font: 10px sans-serif;
 }
-
 .axis line,
 .axis path {
     fill: none;
     stroke: black;
     shape-rendering: crispEdges;
+}
+
+.x_axis line{
+    stroke-width: 1.1;
 }
 
 .y.axis .label text {
@@ -92,7 +98,6 @@ a.button {
 .y.axis.right text {
     fill: black;
 }
-
 .y0.axis line {
     stroke-dasharray: 5,5;
 }
@@ -102,7 +107,6 @@ a.button {
     stroke: gray;
     stroke-width: 3px;
 }
-
 .metric2 path {
     fill: none;
     stroke: black;
@@ -113,21 +117,42 @@ a.button {
 .format {
     cursor: pointer;
 }
-
 .format path {
     fill: none;
     stroke-width: 1.5px;
 }
-
 .format text {
     font: 8px sans-serif;
 }
 
-.brush {
+.brush, .brush2 {
+    pointer-events: none;
+}
+.brush .extent {
     fill: gray;
     fill-opacity: .2;
     stroke: black;
-    pointer-events: none;
+}
+.brush .extent2 {
+    fill: gray;
+    fill-opacity: .5;
+    stroke: black;
+    stroke-dasharray: 5,5;
+}
+.brush2 .extent {
+    fill: black;
+}
+.brush2 .brush-region {
+    fill: gray;
+    fill-opacity: .1;
+    shape-rendering: crispEdges;
+    stroke: black;
+}
+.label.comparison text {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bolder;
+    text-anchor: middle;
 }
 
 /* style the highlighted chart elements */

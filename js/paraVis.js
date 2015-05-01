@@ -16,10 +16,10 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.displayData = [];
     this.selectStart = null;
     this.selectEnd = null;
-	this.parcoords = null;
-	this.formats = null;
-	this.highlight = null;
-	this.highlightArray = null;
+    this.parcoords = null;
+    this.formats = null;
+    this.highlight = null;
+    this.highlightArray = null;
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
@@ -27,7 +27,7 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.height = 350 - this.margin.top - this.margin.bottom;
 
     this.initVis();
-    
+
 };
 
 /**
@@ -38,34 +38,34 @@ ParaVis.prototype.initVis = function() {
     var that = this;
 
     // bind to the eventHandler selection changed
-    $(this.eventHandler).bind("selectionChanged",
+    $(this.eventHandler).bind("selectionChanged1",
         function(event, selectStart, selectEnd) {
             that.onSelectionChange(selectStart, selectEnd);
         }
     );
-	
-	// bind to the eventHandler formats changed
+
+    // bind to the eventHandler formats changed
     $(this.eventHandler).bind("formatsChanged",
         function(event, formats) {
             that.onformatsChange(formats);
         }
     );
-	
-	// bind to the eventHandler highlight changed	
-	$(this.eventHandler).bind("highlightChanged",
+
+    // bind to the eventHandler highlight changed
+    $(this.eventHandler).bind("highlightChanged",
         function(event, highlight) {
             that.onHighlightChange(highlight);
         }
     );
-	
-	// Loads data and creates the parallel coordinates chart
+
+    // Loads data and creates the parallel coordinates chart
     var colormap = this.colorMap;
     var colors = function(d){return colormap[d];};
     this.displayData = this.dataset;
     var color = function(d) {return colors(d.format);};
-	
-	this.parcoords = d3.parcoords()("#paraVis")
-		.data(this.displayData)
+
+    this.parcoords = d3.parcoords()("#paraVis")
+        .data(this.displayData)
         .color(color)
         .alpha(0.25)
         .composite("darken")
@@ -77,8 +77,8 @@ ParaVis.prototype.initVis = function() {
 
     this.parcoords.svg.selectAll("text")
         .style("font", "10px sans-serif");
-                            
-                 
+
+
     // call the update method
     this.updateVis();
 };
@@ -98,7 +98,7 @@ ParaVis.prototype.initVis = function() {
             (selectEnd ? d.year <= selectEnd : true) &&
             (formats && formats.length ? formats.indexOf(d.format) >= 0 : true);
     };
-	
+
     // displayData holds the data which is visualized
     this.displayData = this.filterAndAggregate(filterFunction);
 };
@@ -111,16 +111,16 @@ ParaVis.prototype.initVis = function() {
 ParaVis.prototype.updateVis = function(_options){
     selectStart = this.selectStart;
     selectEnd = this.selectEnd;
-	
+
 
     this.parcoords
-		.data(this.displayData)
+        .data(this.displayData)
         .render()
-		
 
 
-	this.parcoords.svg.selectAll("text")
-        .style("font", "10px sans-serif");                   
+
+    this.parcoords.svg.selectAll("text")
+        .style("font", "10px sans-serif");
 };
 
 /**
@@ -149,9 +149,9 @@ ParaVis.prototype.onformatsChange = function(formats) {
 
     this.formats = formats;
 
-	this.wrangleData();
-	
-	this.updateVis();
+    this.wrangleData();
+
+    this.updateVis();
 };
 
 /**
@@ -161,14 +161,16 @@ ParaVis.prototype.onformatsChange = function(formats) {
  * @param {number} selectEnd
  */
 ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
- 
+
     this.selectStart = selectStart;
     this.selectEnd = selectEnd;
 	
 	this.parcoords.brushReset();
-	this.wrangleData();
-    
-    this.updateVis();    
+
+    this.wrangleData();
+
+    this.updateVis();
+
 };
 
 /**
@@ -179,16 +181,17 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 ParaVis.prototype.onHighlightChange = function(highlight) {
 
     if (!highlight) {
-    this.parcoords.unhighlight();
-	}
-	else{
-		this.highlight = highlight;
-		this.highlightArray = this.dataset.filter(function(d){
-			if (d.format == highlight){
-					return d
-			}
-	    });
-	
-	this.parcoords.highlight(this.highlightArray);
-    };   
+        this.parcoords.unhighlight();
+    }
+    else{
+        this.highlight = highlight;
+        this.highlightArray = this.dataset.filter(function(d){
+            if (d.format == highlight){
+                    return d
+            }
+        });
+
+    this.parcoords.highlight(this.highlightArray);
+    };
 };
+

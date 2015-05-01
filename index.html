@@ -82,16 +82,17 @@
         <div class="row" id="primaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis1">
-                <span class="chartTitle">focus selection #1</span>
+                <span class="chartTitle">focus selection</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
                     Drag side slider to rescale.
-                    Click on title to toggle the data view.
+                    Click on button to toggle data view.
                 </p>
+                <div id="dataViewControl1"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis1">
-                <span class="chartTitle">rankings #1</span>
+                <span class="chartTitle">rankings</span>
                 <br>
             </div>
         </div>
@@ -99,16 +100,17 @@
         <div class="row" id="secondaryView">
             <br>
             <div class="col-xs-7 text-center" id="focusVis2">
-                <span class="chartTitle">focus selection #2</span>
+                <span class="chartTitle">focus selection (comparison)</span>
                 <br>
                 <p class="description">
                     Hover over a format to highlight.
                     Drag side slider to rescale.
-                    Click on title to toggle the data view.
+                    Click on button to toggle data view.
                 </p>
+                <div id="dataViewControl2"></div>
             </div>
             <div class="col-xs-5 text-center" id="rankingVis2">
-                <span class="chartTitle">rankings #2</span>
+                <span class="chartTitle">rankings (comparison)</span>
                 <br>
             </div>
         </div>
@@ -239,7 +241,6 @@
                 // create a dropdown menu option for each format
                 dropdown.append("option")
                     .attr("value", "")
-                    .attr("selected", "")
                     .text("[ALL SELECTED]");
                 for (var medium in media) {
                     var optgroup = dropdown.append("optgroup")
@@ -290,6 +291,19 @@
                         $(eventHandler).trigger(eventName, [selections]);
                     }
                 });
+            };
+
+            var bindControlsDataView = function(controlElement, controlText,
+                eventHandler, eventName) {
+
+                controlElement.append("button")
+                    .attr("class", "btn-primary toggle")
+                    .text(controlText + " ")
+                    .on("click", function() {
+                        $(eventHandler).trigger(eventName);
+                    })
+                    .append("span")
+                    .attr("class", "glyphicon glyphicon-refresh");
             };
 
             var bindControlsMetric = function(controlElement, controlTitle,
@@ -356,9 +370,9 @@
                 var contextVis = new ContextVis(d3.select("#contextVis"),
                     [dataset.units], [dataset.dollars], myEventHandler);
                 var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
+                    dataset.units, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
-                    dataset.dollars.data, metadata.colorMap, myEventHandler);
+                    dataset.dollars, metadata.colorMap, myEventHandler);
                 var rankingVis1 = new RankingVis(1, d3.select("#rankingVis1"),
                     dataset.units.data, metadata.colorMap, myEventHandler);
                 var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
@@ -368,9 +382,10 @@
 
                 // bind sales metric controls
                 bindControlsMetric(d3.select("#metricControl1"),
-                    "Sales Metric #1:", 0, myEventHandler, "dataChanged1");
+                    "Sales Metric:", 0, myEventHandler, "dataChanged1");
                 bindControlsMetric(d3.select("#metricControl2"),
-                    "Sales Metric #2:", 1, myEventHandler, "dataChanged2");
+                    "Sales Metric (comparison):", 1, myEventHandler,
+                    "dataChanged2");
 
                 // bind music format control
                 bindControlsFormat(d3.select("#formatControl"),
@@ -379,14 +394,19 @@
                 // bind comparison mode toggle control
                 bindControlsComparison(d3.select("#comparisonControl"),
                     "Comparison Mode:", d3.selectAll("#secondaryView, " +
-                    "#metricControl2, .metric2, .y.axis.right"),
-                    d3.select("#paraView"));
+                    "#metricControl2, .comparison"), d3.select("#paraView"));
 
                 // bind milestone controls
                 bindControlsMilestone(d3.select("#milestoneControl"), "&laquo",
                     milestoneVis.decrementMilestone(milestoneVis));
                 bindControlsMilestone(d3.select("#milestoneControl"), "&raquo",
                     milestoneVis.incrementMilestone(milestoneVis));
+
+                // bind data view toggle controls
+                bindControlsDataView(d3.select("#dataViewControl1"),
+                    "Toggle Data View", myEventHandler, "dataViewChanged1");
+                bindControlsDataView(d3.select("#dataViewControl2"),
+                    "Toggle Data View", myEventHandler, "dataViewChanged2");
             };
 
             var startHere = function() {
