@@ -183,7 +183,7 @@
 
             // keeps metadata about the dataset
             var metadata;
-            
+
             // keeps parallel data
             var pardata;
 
@@ -212,7 +212,7 @@
             };
 
             var bindControlsFormat = function(controlElement, controlTitle,
-                eventHandler, eventName) {
+                defaultSelections, eventHandler, eventName) {
 
                 var form = controlElement
                     .classed("control", true)
@@ -241,6 +241,9 @@
                 // create a dropdown menu option for each format
                 dropdown.append("option")
                     .attr("value", "")
+                    .attr("selected",
+                        defaultSelections.indexOf("[ALL SELECTED]") < 0 ?
+                            null : "")
                     .text("[ALL SELECTED]");
                 for (var medium in media) {
                     var optgroup = dropdown.append("optgroup")
@@ -248,6 +251,8 @@
                     media[medium].forEach(function(format) {
                         optgroup.append("option")
                         .attr("value", format)
+                        .attr("selected", defaultSelections.indexOf(format) < 0
+                            ? null : "")
                         .style("color", metadata.colorMap[format])
                         // add text outline
                         .style("text-shadow", "-1px -1px black,"
@@ -265,6 +270,7 @@
                         toClose: 'ui-icon-triangle-1-n',
                         toOpen: 'ui-icon-triangle-1-s'
                     },
+                    maxDropHeight: 375,
                     width: getInnerWidth(controlElement),
                     onItemClick: function(checkbox, selector) {
                         var value = checkbox.val();
@@ -291,6 +297,9 @@
                         $(eventHandler).trigger(eventName, [selections]);
                     }
                 });
+
+                // trigger default format selections
+                $(eventHandler).trigger(eventName, [defaultSelections]);
             };
 
             var bindControlsDataView = function(controlElement, controlText,
@@ -389,7 +398,9 @@
 
                 // bind music format control
                 bindControlsFormat(d3.select("#formatControl"),
-                    "Music Format Filter:", myEventHandler, "formatsChanged");
+                    "Music Format Filter:", ["CD", "Cassette", "Vinyl",
+                    "Music Video", "Download Single"], myEventHandler,
+                    "formatsChanged");
 
                 // bind comparison mode toggle control
                 bindControlsComparison(d3.select("#comparisonControl"),
