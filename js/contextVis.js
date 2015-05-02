@@ -106,14 +106,25 @@ ContextVis.prototype.initVis = function() {
         "selectionChanged2"));
 
     // append an SVG and group element
-    this.svg = this.parentElement
-        .append("svg")
+    var svgTemp = this.parentElement.append("svg")
             .attr("width", this.width + this.margin.left + this.margin.right)
-            .attr("height", this.height + this.margin.top + this.margin.bottom)
-        .append("g")
+            .attr("height", this.height + this.margin.top + this.margin.bottom);
+    this.svg = svgTemp.append("g")
             .attr("class", "context")
             .attr("transform", "translate(" + this.margin.left + "," +
                 this.margin.top + ")");
+
+    // add chart clipping definition with some outer padding
+    svgTemp.append("defs")
+        .append("clipPath")
+        .attr("id", "clip-chart")
+        .append("rect")
+        .attr({
+            x: -5,
+            y: -5,
+            width: this.width + 10,
+            height: this.height + 10
+        });
 
     // add axes visual elements
     this.svg.append("g")
@@ -135,8 +146,11 @@ ContextVis.prototype.initVis = function() {
         .append("text")
         .attr("dy", "-.35em");
 
-    // add brush elements
+    // add clip-path and brush elements
     this.svg.append("g")
+        .attr("class", "chart")
+        .attr("clip-path", "url(#clip-chart)")
+        .append("g")
         .attr("class", "brush")
         .append("rect")
         .attr("class", "extent2 comparison");
@@ -152,11 +166,11 @@ ContextVis.prototype.initVis = function() {
         .attr("transform", "translate(" + -this.margin2.left/2 + "," +
             this.margin2.top + ")");
     brushLabel.append("text")
-        .attr("dy", "-.35em")
-        .text("brush");
+        .attr("dy", "-.1em")
+        .text("comparison");
     brushLabel.append("text")
-        .attr("dy", ".7em")
-        .text("(comparison)");
+        .attr("dy", ".9em")
+        .text("brush");
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -224,9 +238,9 @@ ContextVis.prototype.updateVis = function(_options) {
         .text(this.dataObject2.name);
 
     // bind data
-    var metrics = this.svg.selectAll(".metric")
+    var metrics = this.svg.select(".chart").selectAll(".metric")
         .data([this.displayData]);
-    var metrics2 = this.svg.selectAll(".metric2")
+    var metrics2 = this.svg.select(".chart").selectAll(".metric2")
         .data([this.displayData2]);
 
     /*
@@ -322,7 +336,7 @@ ContextVis.prototype.onDataChange = function(newDataObject, newDataObject2) {
 
 /**
  * Gets called by the Event Handler on a "milestoneChanged" event,
- * re-wrangles the data, and updates the visualization.
+ * sets the brush extent accordingly, and updates the visualization.
  * @param {number} year - the year of the milestone currently set
  */
 ContextVis.prototype.onMilestoneChange = function(year) {
@@ -342,16 +356,15 @@ ContextVis.prototype.onMilestoneChange = function(year) {
 
     // determine year extent for milestone and update the brush selection
     var yearRange = Math.max(2, currEndYear - currStartYear);
-    var newStartYear = Math.max(this.xScale.domain()[0].getFullYear(),
-        year - yearRange/2);
-    var newEndYear = Math.min(this.xScale.domain()[1].getFullYear(),
-        year + yearRange/2);
+    var newStartYear = Math.round(year - yearRange/2);
+    var newEndYear = Math.round(year + yearRange/2);
     this.brush.extent([new Date(newStartYear, 0), new Date(newEndYear, 0)]);
 
     // update the visualization and trigger the brushing event
     this.updateVis();
     $(this.eventHandler).trigger("selectionChanged1",
-        [newStartYear, newEndYear, true]);
+        [Math.max(this.xScale.domain()[0].getFullYear(), newStartYear),
+         Math.min(this.xScale.domain()[1].getFullYear(), newEndYear), true]);
 };
 
 /**
@@ -446,8 +459,8 @@ ContextVis.prototype.addMilestoneMarkers = function() {
         .attr({
             x: -markerWidth,
             y: -markerWidth,
-            height: markerWidth*2,
-            width: markerWidth*2
+            width: markerWidth*2,
+            height: markerWidth*2
         })
         .style("opacity", 0);
 
