@@ -126,7 +126,7 @@ button.toggle {
     stroke: black;
     stroke-width: 1px;
 }
-.marker:hover, .marker.selected {
+.marker.selected {
     fill: black;
 }
 

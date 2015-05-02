@@ -327,24 +327,31 @@ ContextVis.prototype.onDataChange = function(newDataObject, newDataObject2) {
  */
 ContextVis.prototype.onMilestoneChange = function(year) {
 
-    // check if year is valid
-    if (year) {
-        // determine year extent for milestone
-        var startYear = Math.max(this.xScale.domain()[0].getFullYear(),
-            year - 2);
-        var endYear = Math.min(this.xScale.domain()[1].getFullYear(),
-            year + 2);
-        this.brush.extent([new Date(startYear, 0), new Date(endYear, 0)]);
-
-        // update the visualization and trigger the brushing event
-        this.updateVis();
-        $(this.eventHandler).trigger("selectionChanged1",
-            [startYear, endYear, true]);
-    }
-
     // tag selected milestone marker
     d3.selectAll(".marker").classed("selected",
         function(d) { return d.year === year; });
+
+    // do not process any further if year is undefined
+    if (!year) {
+        return;
+    }
+
+    // get current brush selection range
+    var currStartYear = this.brush.extent()[0].getFullYear();
+    var currEndYear = this.brush.extent()[1].getFullYear();
+
+    // determine year extent for milestone and update the brush selection
+    var yearRange = Math.max(2, currEndYear - currStartYear);
+    var newStartYear = Math.max(this.xScale.domain()[0].getFullYear(),
+        year - yearRange/2);
+    var newEndYear = Math.min(this.xScale.domain()[1].getFullYear(),
+        year + yearRange/2);
+    this.brush.extent([new Date(newStartYear, 0), new Date(newEndYear, 0)]);
+
+    // update the visualization and trigger the brushing event
+    this.updateVis();
+    $(this.eventHandler).trigger("selectionChanged1",
+        [newStartYear, newEndYear, true]);
 };
 
 /**
@@ -353,7 +360,7 @@ ContextVis.prototype.onMilestoneChange = function(year) {
  * @param {number} selectStart
  * @param {number} selectEnd
  */
-ContextVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+ContextVis.prototype.onSelectionChange = function() {
 
     var extent = this.svg.select(".brush2 .extent");
     var extent2 = this.svg.select(".extent2");
@@ -397,6 +404,14 @@ ContextVis.prototype.addMilestoneMarkers = function() {
 
     var that = this;
 
+    var markerWidth = 10;
+
+    var markerMouseovered = function() {
+        // trigger milestoneChanged event
+        $(that.eventHandler).trigger("milestoneChanged",
+            d3.select(this).datum().year);
+    };
+
     var markerClicked = function() {
         var element = d3.select(this);
         var wasSelected = element.classed("selected");
@@ -415,14 +430,31 @@ ContextVis.prototype.addMilestoneMarkers = function() {
         .attr("class", "milestone")
         .attr("transform", "translate(0," + this.height + ")");
 
-    var markers = milestoneGroup.selectAll(".marker")
-        .data(this.milestoneData);
-
-    markers.enter().append("circle")
+    // bind data to milestone markers
+    var markerGroup = milestoneGroup.selectAll(".marker")
+        .data(this.milestoneData)
+        .enter().append("g")
         .attr("class", "marker")
-        .attr("r", 5)
-        .attr("cx", function(d) {
-            return that.xScale(new Date(d.year, 0));
+        .attr("transform", function(d) {
+            return "translate(" + that.xScale(new Date(d.year, 0)) + ",0)";
+        });
+
+    // add selection region
+    markerGroup.append("rect")
+        .attr({
+            x: -markerWidth/2,
+            y: -markerWidth,
+            height: 2*markerWidth,
+            width: markerWidth
         })
+        .style("opacity", 0);
+
+    // add markers
+    markerGroup.append("circle")
+        .attr("r", markerWidth/2);
+
+    // add actions
+    markerGroup
+        .on("mouseover", markerMouseovered)
         .on("click", markerClicked);
 };
