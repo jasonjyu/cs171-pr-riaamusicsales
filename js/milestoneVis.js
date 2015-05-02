@@ -14,7 +14,7 @@ MilestoneVis = function(_parentElement, _data, _eventHandler, _imageDir) {
     this.data = _data;
     this.eventHandler = _eventHandler;
     this.imageDir = _imageDir;
-    this.displayDataIndex = -1;
+    this.dataIndex = -1;
 
     this.initVis();
 };
@@ -27,9 +27,9 @@ MilestoneVis.prototype.initVis = function() {
     var that = this;
 
     // bind to the eventHandler
-    $(this.eventHandler).bind("selectionChanged1",
-        function(event, selectStart, selectEnd) {
-            that.onSelectionChange(selectStart, selectEnd);
+    $(this.eventHandler).bind("milestoneChanged",
+        function(event, year) {
+            that.onMilestoneChange(year);
         }
     );
 
@@ -45,28 +45,17 @@ MilestoneVis.prototype.initVis = function() {
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
  */
-MilestoneVis.prototype.updateVis = function(_options){
+MilestoneVis.prototype.updateVis = function(_options) {
 
-    // update image and paragraph with data
-    var milestoneInfo = this.data[this.displayDataIndex];
-    this.img.attr("src", this.imageDir + "/" + milestoneInfo.image);
-    this.p.html("<b>" + milestoneInfo.year + ":</b> " +
-        milestoneInfo.milestone);
-
-    // trigger milestoneChanged event
-    $(this.eventHandler).trigger("milestoneChanged", milestoneInfo.year);
-};
-
-/**
- * Gets called by the Event Handler on a "selectionChanged" event and
- * clears the visualization if the selection is empty.
- * @param {number} selectStart
- * @param {number} selectEnd
- */
-MilestoneVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
-
-    // if selection is empty, then clear the image and paragraph and reset index
-    if(!selectStart && !selectStart) {
+    // if milestone exists, update image and paragraph with data
+    var milestoneInfo = this.data[this.dataIndex];
+    if (milestoneInfo) {
+        this.img.attr("src", this.imageDir + "/" + milestoneInfo.image);
+        this.p.html("<b>" + milestoneInfo.year + ":</b> " +
+            milestoneInfo.milestone);
+    }
+    // otherwise, clear the image and paragraph and reset index
+    else {
         this.img.remove();
         this.img = this.parentElement.append("img")
             .attr("height", 100);
@@ -74,10 +63,30 @@ MilestoneVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
         this.p.remove();
         this.p = this.parentElement.append("p");
 
-        this.displayDataIndex = -1;
+        this.dataIndex = -1;
     }
+
+    // trigger milestoneChanged event
+    $(this.eventHandler).trigger("milestoneChanged",
+        milestoneInfo ? milestoneInfo.year : undefined);
 };
 
+/**
+ * Gets called by the Event Handler on a "milestoneChanged" event and
+ * updates the visualization.
+ * @param {number} year - the year of the milestone currently set
+ */
+MilestoneVis.prototype.onMilestoneChange = function(year) {
+
+    // check if milestone year is in the data and has changed
+    var milestoneIndex = this.data.map(function(d) { return d.year; })
+        .indexOf(year);
+    if (milestoneIndex !== this.dataIndex) {
+        // set the milestone data index and update the visualization
+        this.dataIndex = milestoneIndex;
+        this.updateVis();
+    }
+};
 
 /**
  * Returns a function that increments to next milestone in the data.
@@ -85,8 +94,8 @@ MilestoneVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
 MilestoneVis.prototype.incrementMilestone = function(that) {
 
     return function() {
-        if (++that.displayDataIndex >= that.data.length) {
-            that.displayDataIndex = 0;
+        if (++that.dataIndex >= that.data.length) {
+            that.dataIndex = 0;
         }
         that.updateVis();
     };
@@ -98,8 +107,8 @@ MilestoneVis.prototype.incrementMilestone = function(that) {
 MilestoneVis.prototype.decrementMilestone = function(that) {
 
     return function() {
-        if (--that.displayDataIndex < 0) {
-            that.displayDataIndex = that.data.length - 1;
+        if (--that.dataIndex < 0) {
+            that.dataIndex = that.data.length - 1;
         }
         that.updateVis();
     };
