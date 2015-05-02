@@ -357,8 +357,6 @@ ContextVis.prototype.onMilestoneChange = function(year) {
 /**
  * Gets called by the Event Handler on a "selectionChanged" event
  * and updates the secondary brush extent.
- * @param {number} selectStart
- * @param {number} selectEnd
  */
 ContextVis.prototype.onSelectionChange = function() {
 
