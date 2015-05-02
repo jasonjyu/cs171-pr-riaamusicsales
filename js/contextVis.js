@@ -439,19 +439,19 @@ ContextVis.prototype.addMilestoneMarkers = function() {
             return "translate(" + that.xScale(new Date(d.year, 0)) + ",0)";
         });
 
-    // add selection region
-    markerGroup.append("rect")
-        .attr({
-            x: -markerWidth/2,
-            y: -markerWidth,
-            height: 2*markerWidth,
-            width: markerWidth
-        })
-        .style("opacity", 0);
-
     // add markers
     markerGroup.append("circle")
         .attr("r", markerWidth/2);
+
+    // add selection region
+    markerGroup.append("rect")
+        .attr({
+            x: -markerWidth,
+            y: -markerWidth,
+            height: markerWidth*2,
+            width: markerWidth*2
+        })
+        .style("opacity", 0);
 
     // add actions
     markerGroup
