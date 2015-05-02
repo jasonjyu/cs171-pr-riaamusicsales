@@ -58,8 +58,8 @@ FocusVis.prototype.initVis = function() {
         }
     );
     $(this.eventHandler).bind("selectionChanged" + this.visId,
-        function(event, selectStart, selectEnd, transition) {
-            that.onSelectionChange(selectStart, selectEnd, transition);
+        function(event, selectStart, selectEnd, autoSelected) {
+            that.onSelectionChange(selectStart, selectEnd, autoSelected);
         }
     );
     $(this.eventHandler).bind("scaleChanged" + this.visId,
@@ -141,8 +141,8 @@ FocusVis.prototype.initVis = function() {
             -this.margin.top/2 + ")")
         .append("text");
 
-    // implement the slider
-    this.addSlider(this.height, this.svg, this.eventHandler, "scaleChanged" +
+    // add the slider
+    this.addSlider(this.svg, this.height, this.eventHandler, "scaleChanged" +
         this.visId);
 
     // filter, aggregate, modify data
@@ -177,7 +177,7 @@ FocusVis.prototype.wrangleData = function() {
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
  */
-FocusVis.prototype.updateVis = function(_options){
+FocusVis.prototype.updateVis = function(_options) {
 
     // transition duration
     var tDuration = _options && _options.tDuration ? _options.tDuration : 0;
@@ -376,17 +376,18 @@ FocusVis.prototype.onDataViewChange = function() {
  * re-wrangles the data, and updates the visualization.
  * @param {number} selectStart
  * @param {number} selectEnd
- * @param {boolean} transition -- indicates whether a transition should occur
+ * @param {boolean} autoSelected -- indicates whether the selection was
+ *                                  automatically selected
  */
 FocusVis.prototype.onSelectionChange = function(selectStart, selectEnd,
-    transition) {
+    autoSelected) {
 
     // set selection range filter options and wrangle data
     this.filterOptions.selectStart = selectStart;
     this.filterOptions.selectEnd = selectEnd;
     this.wrangleData();
 
-    this.updateVis(transition ? {tDuration: 500} : {});
+    this.updateVis(autoSelected ? {tDuration: 500} : {});
 };
 
 /**
@@ -433,20 +434,20 @@ FocusVis.prototype.onScaleChange = function(scale) {
 };
 
 /**
- * Creates the y-axis slider
- * @param {object} height -- the height of the slider
- * @param {object} svg -- the svg element
+ * Creates the y-axis slider.
+ * @param {object} svg -- the svg element to add the slider to
+ * @param {object} offset -- the offset position of the slider
  * @param {object} eventHandler -- the Event Handling object to emit data to
  * @param {string} eventName -- the name of the event to emit
  */
-FocusVis.prototype.addSlider = function(height, svg, eventHandler, eventName) {
+FocusVis.prototype.addSlider = function(svg, offset, eventHandler, eventName) {
 
     // the domain is the exponent value for the power scale
-    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, height]);
+    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, offset]);
 
     var sliderDragged = function() {
 
-        var value = Math.max(0, Math.min(height, d3.event.y));
+        var value = Math.max(0, Math.min(offset, d3.event.y));
 
         // update the slider position
         d3.select(this).attr("y", value);
@@ -466,7 +467,7 @@ FocusVis.prototype.addSlider = function(height, svg, eventHandler, eventName) {
             class: "sliderBg",
             x: 5,
             width: 10,
-            height: this.height
+            height: offset
         })
         .style({
             fill: "lightgray"
@@ -475,7 +476,7 @@ FocusVis.prototype.addSlider = function(height, svg, eventHandler, eventName) {
     sliderGroup.append("rect")
         .attr({
             class: "sliderHandle",
-            y: this.height,
+            y: offset,
             width: 20,
             height: 10,
             rx: 2,

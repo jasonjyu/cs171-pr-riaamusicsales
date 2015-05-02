@@ -120,15 +120,14 @@ button.toggle {
     stroke-width: 3px;
 }
 
-.format {
+.marker {
     cursor: pointer;
+    fill: white;
+    stroke: black;
+    stroke-width: 1px;
 }
-.format path {
-    fill: none;
-    stroke-width: 1.5px;
-}
-.format text {
-    font: 8px sans-serif;
+.marker:hover, .marker.selected {
+    fill: black;
 }
 
 .brush, .brush2 {
@@ -159,6 +158,17 @@ button.toggle {
     font-size: 12px;
     font-weight: bolder;
     text-anchor: middle;
+}
+
+.format {
+    cursor: pointer;
+}
+.format path {
+    fill: none;
+    stroke-width: 1.5px;
+}
+.format text {
+    font: 8px sans-serif;
 }
 
 /* style the highlighted chart elements */

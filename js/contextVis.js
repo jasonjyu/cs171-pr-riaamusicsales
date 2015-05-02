@@ -5,15 +5,17 @@
  *                                   this visualization object
  * @param {object} _dataObject -- the object containing the primary data
  * @param {object} _dataObject2 -- the object containing the secondary data
+ * @param {array} _milestoneData -- the array of milestone data
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {ContextVis}
  */
-ContextVis = function(_parentElement, _dataObject, _dataObject2,
+ContextVis = function(_parentElement, _dataObject, _dataObject2, _milestoneData,
     _eventHandler) {
 
     this.parentElement = _parentElement;
     this.dataObject = _dataObject;
     this.dataObject2 = _dataObject2;
+    this.milestoneData = _milestoneData;
     this.eventHandler = _eventHandler;
     this.displayData = [];
     this.displayData2 = [];
@@ -161,6 +163,10 @@ ContextVis.prototype.initVis = function() {
 
     // call the update method
     this.updateVis();
+
+    // add milestone markers to the chart
+    this.addMilestoneMarkers(this.milestoneData, this.xScale, this.svg,
+        this.height);
 };
 
 /**
@@ -182,41 +188,23 @@ ContextVis.prototype.wrangleData = function(_filterFunction) {
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
  */
-ContextVis.prototype.updateVis = function(_options){
+ContextVis.prototype.updateVis = function(_options) {
 
-    var tDuration = _options ? _options.tDuration : 0;
+    // transition duration
+    var tDuration = _options && _options.tDuration ? _options.tDuration : 0;
 
     var that = this;
 
     // update scales
     this.xScale.domain(d3.extent(this.displayData,
-        function(d) {
-            return d.year;
-        }
-    ));
+        function(d) { return d.year; }));
     this.yScale.domain([
-        Math.min(0, d3.min(this.displayData,
-            function(d) {
-                return d.value;
-            }
-        )),
-        d3.max(this.displayData,
-            function(d) {
-                return d.value;
-            }
-        )
+        Math.min(0, d3.min(this.displayData, function(d) { return d.value; })),
+        d3.max(this.displayData, function(d) { return d.value; })
     ]);
     this.yScale2.domain([
-        Math.min(0, d3.min(this.displayData2,
-            function(d) {
-                return d.value;
-            }
-        )),
-        d3.max(this.displayData2,
-            function(d) {
-                return d.value;
-            }
-        )
+        Math.min(0, d3.min(this.displayData2, function(d) { return d.value; })),
+        d3.max(this.displayData2, function(d) { return d.value; })
     ]);
 
     // update axes
@@ -339,15 +327,24 @@ ContextVis.prototype.onDataChange = function(newDataObject, newDataObject2) {
  */
 ContextVis.prototype.onMilestoneChange = function(year) {
 
-    // determine year extent for milestone
-    var startYear = Math.max(this.xScale.domain()[0].getFullYear(), year - 2);
-    var endYear = Math.min(this.xScale.domain()[1].getFullYear(), year + 2);
-    this.brush.extent([new Date(startYear, 0), new Date(endYear, 0)]);
+    // check if year is valid
+    if (year) {
+        // determine year extent for milestone
+        var startYear = Math.max(this.xScale.domain()[0].getFullYear(),
+            year - 2);
+        var endYear = Math.min(this.xScale.domain()[1].getFullYear(),
+            year + 2);
+        this.brush.extent([new Date(startYear, 0), new Date(endYear, 0)]);
 
-    // update the visualization and trigger the brushing event
-    this.updateVis();
-    $(this.eventHandler).trigger("selectionChanged1",
-        [startYear, endYear, true]);
+        // update the visualization and trigger the brushing event
+        this.updateVis();
+        $(this.eventHandler).trigger("selectionChanged1",
+            [startYear, endYear, true]);
+    }
+
+    // tag selected milestone marker
+    d3.selectAll(".marker").classed("selected",
+        function(d) { return d.year === year; });
 };
 
 /**
@@ -391,4 +388,41 @@ ContextVis.prototype.brushed = function(brush, eventHandler, eventName) {
         // trigger event
         $(eventHandler).trigger(eventName, [startYear, endYear]);
     };
+};
+
+/**
+ * Adds milestone markers to the chart.
+ */
+ContextVis.prototype.addMilestoneMarkers = function() {
+
+    var that = this;
+
+    var markerClicked = function() {
+        var element = d3.select(this);
+        var wasSelected = element.classed("selected");
+
+        // toggle selection
+        element.classed("selected", !wasSelected);
+
+        // trigger milestoneChanged event,
+        // if marker was selected, then clear milestone,
+        // otherwise set milestone to selected year
+        $(that.eventHandler).trigger("milestoneChanged", wasSelected ?
+            undefined : element.datum().year);
+    };
+
+    var milestoneGroup = this.svg.append("g")
+        .attr("class", "milestone")
+        .attr("transform", "translate(0," + this.height + ")");
+
+    var markers = milestoneGroup.selectAll(".marker")
+        .data(this.milestoneData);
+
+    markers.enter().append("circle")
+        .attr("class", "marker")
+        .attr("r", 5)
+        .attr("cx", function(d) {
+            return that.xScale(new Date(d.year, 0));
+        })
+        .on("click", markerClicked);
 };

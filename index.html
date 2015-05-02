@@ -75,6 +75,7 @@
                 <p class="description">
                     Brush the chart to select a time interval to focus on,
                     then drag the selection.
+                    Click a circle to select a music milestone.
                 </p>
             </div>
         </div>
@@ -87,7 +88,7 @@
                 <p class="description">
                     Hover over a format to highlight.
                     Drag side slider to rescale.
-                    Click on button to toggle data view.
+                    Click button to toggle data view.
                 </p>
                 <div id="dataViewControl1"></div>
             </div>
@@ -105,7 +106,7 @@
                 <p class="description">
                     Hover over a format to highlight.
                     Drag side slider to rescale.
-                    Click on button to toggle data view.
+                    Click button to toggle data view.
                 </p>
                 <div id="dataViewControl2"></div>
             </div>
@@ -377,7 +378,8 @@
                 var milestoneVis = new MilestoneVis(d3.select("#milestoneVis"),
                     metadata.milestones, myEventHandler, "images/");
                 var contextVis = new ContextVis(d3.select("#contextVis"),
-                    dataset.units, dataset.dollars, myEventHandler);
+                    dataset.units, dataset.dollars, metadata.milestones,
+                    myEventHandler);
                 var focusVis1 = new FocusVis(1, d3.select("#focusVis1"),
                     dataset.units, metadata.colorMap, myEventHandler);
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
