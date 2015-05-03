@@ -11,7 +11,7 @@ Project Website: [http://jasonjyu.github.io/cs171-pr-riaamusicsales/](http://jas
 * [data/](data/) - CSV data files
 * [images/](images/) - images
 * [js/](js/) - code
-* [libs/](lib/) - third party libraries
+* [libs/](libs/) - third party libraries
 * [index.html](index.html) - visualization page
 * [processbook_yu_franseen_fadaee.docx](processbook_yu_franseen_fadaee.docx) - Process Book document (Word version)
 * [processbook_yu_franseen_fadaee.pdf](processbook_yu_franseen_fadaee.pdf) - Process Book document (PDF version)
