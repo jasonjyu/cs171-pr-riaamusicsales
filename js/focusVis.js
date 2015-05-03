@@ -214,9 +214,11 @@ FocusVis.prototype.updateVis = function(_options) {
     ]);
 
     // update axis
+    var yearRange = this.xScale.domain()[1].getFullYear() -
+            this.xScale.domain()[0].getFullYear();
     this.svg.select(".x.axis")
         .transition().duration(tDuration)
-        .call(this.xAxis);
+        .call(this.xAxis.ticks(yearRange < 10 ? d3.time.year : 10));
 
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
