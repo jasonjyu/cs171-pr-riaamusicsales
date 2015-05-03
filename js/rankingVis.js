@@ -122,12 +122,15 @@ RankingVis.prototype.updateVis = function(_options){
     // else{
     //     this.xScale.domain(d3.keys(this.colorMap2))
     //     } 
-    yMin = Math.min(0, d3.min(this.displayData, function(d){
+    yMin = d3.min(this.displayData, function(d){
         return d.value;
-       }));
+       })
     yMax = d3.max(this.displayData, function(d){
         return d.value;
        });
+    if (yMin == yMax) {
+        yMin = 0
+    }
     this.yScale.domain([yMin, yMax]);
 
     // update axis
