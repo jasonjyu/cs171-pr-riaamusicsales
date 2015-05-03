@@ -122,9 +122,10 @@ RankingVis.prototype.updateVis = function(_options){
     // else{
     //     this.xScale.domain(d3.keys(this.colorMap2))
     //     } 
-    yMin = d3.min(this.displayData, function(d){
-        return d.value;
-       })
+    yMin = 0
+    // d3.min(this.displayData, function(d){
+    //     return d.value;
+    //    })
     yMax = d3.max(this.displayData, function(d){
         return d.value;
        });
@@ -146,7 +147,8 @@ RankingVis.prototype.updateVis = function(_options){
          .attr("dx", -8)
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
-        .call(this.yAxis);
+        .call(this.yAxis)
+        
 
 
 this.svg.selectAll(".bar").remove();
@@ -291,10 +293,52 @@ RankingVis.prototype.onHighlightChange = function(highlight) {
     });
 };
 
-// .on("highlightChanged", function() {
-//     d3.select(this).classed("highlight", true);
-// })
-// .on("highlightChanged", function() {
-//     d3.select(this).classed("highlight", false);
-// });
+RankingVis.prototype.addSlider = function(height, svg, eventHandler) {
+
+    // the domain is the exponent value for the power scale
+    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, height]);
+
+    var sliderDragged = function() {
+
+        var value = Math.max(0, Math.min(height, d3.event.y));
+
+        // update the slider position
+        d3.select(this).attr("y", value);
+
+        $(eventHandler).trigger("scaleChanged", sliderScale.invert(value));
+    };
+
+    var sliderDragBehaviour = d3.behavior.drag().on("drag", sliderDragged);
+
+    var sliderGroup = svg.append("g").attr({
+        class: "sliderGroup",
+        transform: "translate(" + -this.margin.left + ",0)"
+    });
+
+    sliderGroup.append("rect")
+        .attr({
+            class: "sliderBg",
+            x: 5,
+            width: 10,
+            height: this.height
+        })
+        .style({
+            fill: "lightgray"
+        });
+
+    sliderGroup.append("rect")
+        .attr({
+            class: "sliderHandle",
+            y: this.height,
+            width: 20,
+            height: 10,
+            rx: 2,
+            ry: 2
+        })
+        .style({
+            fill: "#333333"
+        })
+        .call(sliderDragBehaviour);
+};
+
 
