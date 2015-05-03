@@ -73,7 +73,8 @@ ContextVis.prototype.initVis = function() {
 
     this.xAxis = d3.svg.axis()
         .scale(this.xScale)
-        .orient("bottom");
+        .orient("bottom")
+        .ticks(d3.time.year, 2);
 
     this.yAxis = d3.svg.axis()
         .scale(this.yScale)
@@ -354,14 +355,25 @@ ContextVis.prototype.onMilestoneChange = function(year) {
     var currStartYear = this.brush.extent()[0].getFullYear();
     var currEndYear = this.brush.extent()[1].getFullYear();
 
-    // determine year extent for milestone and update the brush selection
+    // determine year extent for milestone
     var yearRange = Math.max(2, currEndYear - currStartYear);
     var newStartYear = Math.round(year - yearRange/2);
     var newEndYear = Math.round(year + yearRange/2);
-    this.brush.extent([new Date(newStartYear, 0), new Date(newEndYear, 0)]);
 
-    // update the visualization and trigger the brushing event
-    this.updateVis();
+    // do not process any further if extent has not changed
+    if (newStartYear === this.brush.prevExtent[0] &&
+        newEndYear === this.brush.prevExtent[1]) {
+        return;
+    }
+
+    // update brush extent and visualization
+    this.brush.extent([new Date(newStartYear, 0), new Date(newEndYear, 0)]);
+    this.svg.select(".brush").call(this.brush);
+
+    // save brush extent
+    this.brush.prevExtent = [newStartYear, newEndYear];
+
+    // trigger the brushing event capping the year extent at the boundaries
     $(this.eventHandler).trigger("selectionChanged1",
         [Math.max(this.xScale.domain()[0].getFullYear(), newStartYear),
          Math.min(this.xScale.domain()[1].getFullYear(), newEndYear), true]);
@@ -389,19 +401,33 @@ ContextVis.prototype.onSelectionChange = function() {
  */
 ContextVis.prototype.brushed = function(brush, eventHandler, eventName) {
 
+    brush.prevExtent = [null, null];
     return function() {
         // determine year extent
         var startYear = null;
         var endYear = null;
         if (!brush.empty()) {
-            startYear = brush.extent()[0].getFullYear();
-            endYear = brush.extent()[1].getFullYear();
+            startYear = d3.time.year.round(brush.extent()[0]).getFullYear();
+            endYear = d3.time.year.round(brush.extent()[1]).getFullYear();
 
             // ensure a minimum extent of 1 year
             if (endYear - startYear < 1) {
                 endYear = startYear + 1;
             }
         }
+
+        // update brush extent and visualization
+        brush.extent([new Date(startYear, 0), new Date(endYear, 0)]);
+        d3.select(this).call(brush);
+
+        // do not process any further if extent has not changed
+        if (startYear === brush.prevExtent[0] &&
+            endYear === brush.prevExtent[1]) {
+            return;
+        }
+
+        // save brush extent
+        brush.prevExtent = [startYear, endYear];
 
         // trigger event
         $(eventHandler).trigger(eventName, [startYear, endYear]);
