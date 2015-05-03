@@ -1,10 +1,10 @@
 year,milestone,image
-1978,"Sony introduces the Walkman, the first portable stereo.",walkman.jpg
-1981,"MTV goes on the air running around the clock music videos, debuting with 'Video Killed the Radio Star.'",mtv.png
-1983,"With the introduction of noise-free compact discs, the vinyl record begins a steep decline.",cds.jpg
-1988,"CDs outsell vinyl records for the first time.",cd_vinyl.jpg
-1992,"Compact discs surpass cassette tapes as the preferred medium for recorded music.",cd_cassette.jpg
-2000,"Napster transforms the music scene offering free music over the Internet without paying copyright fees. A court ruling prompts Napster to stop. Regardless, CDs sales begin a steep decline",napster.jpg
-2003,"Apple Computer introduces Apple iTunes Music Store, which allows people to download songs for 99 cents each.",itunes.jpg
-2008,"The Spotify application launched on 7 October 2008 opening paid subscriptions to everyone.",spotify.png
-2013,"Vinyl records continue to make a strong comeback while CD and digital sales decline. According to Nielsen SoundScan, for the sixth consecutive year, the music industry sees an increase in vinyl sales.",vinyl_cd.jpg
+1978,"Sony introduces the Walkman, the first portable stereo. And <b><i>CASSETTE</i></b> sales continue to rise.",walkman.jpg
+1983,"With the introduction of noise-free compact discs (<b><i>CDs</i></b>), the <b><i>VINYL</i></b> record begins a steep decline.",cds.jpg
+1988,"<b><i>CDs</i></b> outsell <b><i>VINYL</i></b> records for the first time.",cd_vinyl.jpg
+1989,"Eight years after MTV goes on the air running around the clock music videos, debuting with 'Video Killed the Radio Star' in 1981, RIAA begins tracking <b><i>MUSIC VIDEO</i></b> sales.",mtv.png
+1992,"<b><i>CDs</i></b> surpass <b><i>CASSETTE</i></b> tapes as the preferred medium for recorded music.",cd_cassette.jpg
+2000,"Napster transforms the music scene offering free music over the Internet without paying copyright fees. A court ruling prompts Napster to stop. Regardless, <b><i>CD</i></b> sales begin a steep decline.",napster.jpg
+2003,"Apple Computer introduces Apple iTunes Music Store, which allows people to <b><i>DOWNLOAD SINGLES</i></b> for 99 cents each.",itunes.jpg
+2008,"The Spotify application launched on 7 October 2008 opening <b><i>PAID SUBSCRIPTIONS</i></b> to everyone.",spotify.png
+2013,"<b><i>VINYL</i></b> records continue to make a strong comeback while <b><i>CD</i></b> and <i>digital</i> sales decline. According to Nielsen SoundScan, for the sixth consecutive year, the music industry sees an increase in <b><i>VINYL</i></b> sales.",vinyl_cd.jpg
