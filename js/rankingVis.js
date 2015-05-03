@@ -9,10 +9,10 @@
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {RankingVis}
  */
-RankingVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
+RankingVis = function(_visId, _parentElement, _dataObject, _colorMap, _eventHandler) {
     this.visId = _visId;
     this.parentElement = _parentElement;
-    this.data = _data;
+    this.dataObject = _dataObject;
     this.colorMap = _colorMap;
     var colors = d3.scale.category20();
     this.colorMap2 = {"physical": colors[0],"digital": colors[1], "streaming": colors[2]}
@@ -38,7 +38,7 @@ RankingVis.prototype.initVis = function() {
     // bind to the eventHandler
     $(this.eventHandler).bind("dataChanged" + this.visId,
         function(event, dataObject) {
-            that.onDataChange(dataObject.data);
+            that.onDataChange(dataObject);
         }
     );
      $(this.eventHandler).bind("selectionChanged" + this.visId,
@@ -88,11 +88,16 @@ RankingVis.prototype.initVis = function() {
     this.svg.append("g")
       .attr("class", "axis x_axis")
       .attr("transform", "translate(0," + this.height + ")")
-      .call(this.xAxis)
+      // .call(this.xAxis)
 
     this.svg.append("g")
         .attr("class", "y axis")
-        .call(this.yAxis)
+        .append("g")
+        .attr("class", "label")
+        .append("text")
+        .attr("dy", "-.35em");
+        // .call(this.yAxis)
+
 
     // filter, aggregate, modify data
     this.wrangleData();
@@ -120,13 +125,11 @@ var selectStart = this.filterOptions.selectStart;
     };
 
     // displayData holds the data which is visualized
-//     this.displayData = this.filterAndAggregate(this.dataObject.data,
-//         filterFunction);
-// };
-    // displayData holds the data which is visualized
-    this.displayData = this.filterAndAggregate(filterFunction);
-};
+    this.displayData = this.filterAndAggregate(this.dataObject.data,
+        filterFunction, this.dataObject.name);
 
+};
+ 
 /**
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
@@ -173,6 +176,8 @@ RankingVis.prototype.updateVis = function(_options){
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
         .call(this.yAxis)
+        .select(".label text")
+        .text(this.dataObject.name);
         
 
 
@@ -228,36 +233,35 @@ var bar_enter = bar.enter().append("g")
  bar.exit().remove();
 }
 
-RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
+RankingVis.prototype.filterAndAggregate = function(_data, _filterFunction, _metricname) {
 
     // set filterFunction to a function that accepts all items
     // ONLY if the parameter _filterFunction is null
     var filterFunction = _filterFunction || function() { return true; };
 
     // filter the data
-    var filteredData = this.data.filter(filterFunction);
+    var filteredData = _data.filter(filterFunction);
 
     // aggregate the data
     var aggregatedData = {}
-    // if(this.visId == 1)
+    var aggregatedData_count = {}
+    
         {filteredData.forEach(function(d){
         if (!(d.format in aggregatedData)){
             aggregatedData[d.format] = 0;
+            aggregatedData_count[d.format] = 0;
         }
         aggregatedData[d.format] += d.value;
+        aggregatedData_count[d.format] += 1;
     })}
-    // else{
-    //  filteredData.forEach(function(d){
-    //     if (!(d.media in aggregatedData)){
-    //         aggregatedData[d.media] = 0;
-    //     }
-    //     aggregatedData[d.media] += d.value;
-    // })   
-    // }
-
+        if(_metricname.match(/price/i)){
+            for(var format in aggregatedData){
+                aggregatedData[format] = aggregatedData[format]/aggregatedData_count[format]
+            }
+        
+        }
     aggregatedData = d3.entries(aggregatedData);
     
-    // if(this.visId ==1 ){
     aggregatedData.sort(function(a,b){
         if(b.value > a.value){
             return 1;
@@ -277,17 +281,10 @@ RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
  * re-wrangles the data, and updates the visualization.
  * @param {array} newData
  */
-RankingVis.prototype.onDataChange = function(newData) {
+RankingVis.prototype.onDataChange = function(newDataObject) {
 
-    this.data = newData;
-
-    var selectStart = this.selectStart;
-    var selectEnd = this.selectEnd;
-    this.wrangleData(selectStart && selectEnd ? function(d) {
-        // filter for data within range
-        return selectStart <= d.year && d.year <= selectEnd;
-    } : null);
-
+    this.dataObject = newDataObject;
+    this.wrangleData();
     this.updateVis({tDuration: 500});
 };
 
