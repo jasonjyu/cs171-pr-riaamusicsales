@@ -18,6 +18,7 @@ RankingVis = function(_visId, _parentElement, _data, _colorMap, _eventHandler) {
     this.colorMap2 = {"physical": colors[0],"digital": colors[1], "streaming": colors[2]}
     this.eventHandler = _eventHandler;
     this.displayData = [];
+    this.filterOptions = {};
 
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 100, left: 80};
@@ -40,14 +41,22 @@ RankingVis.prototype.initVis = function() {
             that.onDataChange(dataObject.data);
         }
     );
-    $(this.eventHandler).bind("selectionChanged" + this.visId,
-        function(event, selectStart, selectEnd) {
-            that.onSelectionChange(selectStart, selectEnd);
-        }
-    );
+     $(this.eventHandler).bind("selectionChanged" + this.visId,
+        function(event, selectStart, selectEnd, autoSelected) {
+            that.onSelectionChange(selectStart, selectEnd, autoSelected);
+        });
     $(this.eventHandler).bind("highlightChanged",
         function(event, highlight) {
             that.onHighlightChange(highlight);
+        }
+    );
+    $(this.eventHandler).bind("scaleChanged" + this.visId,
+        function(event, scale) {
+            that.onScaleChange(scale);
+        });
+    $(this.eventHandler).bind("formatsChanged",
+        function(event, formats) {
+            that.onFormatsChange(formats);
         }
     );
 
@@ -58,7 +67,7 @@ RankingVis.prototype.initVis = function() {
         .append("g")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     // creates axis and scales
-    this.yScale = d3.scale.linear()
+    this.yScale = d3.scale.pow()
       .range([this.height,0]);
 
     this.xScale = d3.scale.ordinal()
@@ -100,8 +109,22 @@ RankingVis.prototype.initVis = function() {
  */
 RankingVis.prototype.wrangleData = function(_filterFunction) {
 
+var selectStart = this.filterOptions.selectStart;
+    var selectEnd = this.filterOptions.selectEnd;
+    var formats = this.filterOptions.formats;
+    var filterFunction = function(d) {
+        // filter for data within range and contained in formats
+        return (selectStart ? selectStart <= d.year : true) &&
+            (selectEnd ? d.year <= selectEnd : true) &&
+            (formats && formats.length ? formats.indexOf(d.format) >= 0 : true);
+    };
+
     // displayData holds the data which is visualized
-    this.displayData = this.filterAndAggregate(_filterFunction);
+//     this.displayData = this.filterAndAggregate(this.dataObject.data,
+//         filterFunction);
+// };
+    // displayData holds the data which is visualized
+    this.displayData = this.filterAndAggregate(filterFunction);
 };
 
 /**
@@ -110,7 +133,7 @@ RankingVis.prototype.wrangleData = function(_filterFunction) {
  */
 RankingVis.prototype.updateVis = function(_options){
 
-    var tDuration = _options ? _options.tDuration : 0;
+    var tDuration = _options && _options.tDuration ? _options.tDuration : 0;
 
     var that = this;
     // update scales
@@ -122,16 +145,18 @@ RankingVis.prototype.updateVis = function(_options){
     // else{
     //     this.xScale.domain(d3.keys(this.colorMap2))
     //     } 
-    yMin = 0
+    yMin = Math.min(0, d3.min(this.displayData.map(function(d){
+        return d.value
+    })))
     // d3.min(this.displayData, function(d){
     //     return d.value;
     //    })
     yMax = d3.max(this.displayData, function(d){
         return d.value;
        });
-    if (yMin == yMax) {
-        yMin = 0
-    }
+    // if (yMin == yMax) {
+    //     yMin = 0
+    // }
     this.yScale.domain([yMin, yMax]);
 
     // update axis
@@ -151,52 +176,56 @@ RankingVis.prototype.updateVis = function(_options){
         
 
 
-this.svg.selectAll(".bar").remove();
+this.svg.selectAll(".bar")
  // Remove the extra bars
 // Data join
  var bar = that.svg.selectAll(".bar")
- .data(this.displayData); // BOUND COUNT DATA IS CORRECTLY FILTERED HERE AFTER BRUSH
+ .data(this.displayData, function(d) { return d.key; }); // BOUND COUNT DATA IS CORRECTLY FILTERED HERE AFTER BRUSH
  
 // Append new bar groups, if required
-bar.enter().append("g")
- .attr("class", "bar")
+var bar_enter = bar.enter().append("g")
+ .attr("class", "bar");
+
 // Append a rect and a text only for the Enter set (new g)
  
- .append("rect")
+ bar_enter.append("rect")
+ .style("fill", function(d,i) {
+    color = that.colorMap[d.key]
+ return color;
+});
+
+  bar_enter.on("mouseover", function(d) {
+        // trigger highlightChanged event
+        $(that.eventHandler).trigger("highlightChanged", d.key);
+    });
+    bar_enter.on("mouseout", function(d) {
+        // trigger highlightChanged event with no arguments to clear highlight
+        $(that.eventHandler).trigger("highlightChanged");
+    });
+
  // .transition()
  // .attr("transform", function(d, i) { return "translate(0," + that.yScale(d) + ")"; })
 
  // Add attributes (position) to all bars
  
 // Update all inner rects and texts (both update and enter sets)
-  .attr("x", function(d,i){
-    // if (that.visId == 1) {
-        x = that.xScale(d.key);
-    // }
-    // else {
-    //     x = that.xScale(d.key)
-    // }
-    return x;
-  })
+  bar.select("rect")
 
  .attr("y", function(d) {
  return that.yScale(d.value);})
  .attr("width", that.xScale.rangeBand())
- .style("fill", function(d,i) {
- // if (that.visId == 1) {
-    color = that.colorMap[d.key]
- // }
- // else{
- // color = that.colorMap2[d.key]
- // }
- return color;
-})
+ 
 
  .attr("height", function(d) {
  var barheight = that.height-that.yScale(d.value);
  return barheight;
  })
-
+  .transition().duration(tDuration)
+  .attr("x", function(d,i){
+        x = that.xScale(d.key);
+    return x;
+  })
+ bar.exit().remove();
 }
 
 RankingVis.prototype.filterAndAggregate = function(_filterFunction) {
@@ -268,18 +297,15 @@ RankingVis.prototype.onDataChange = function(newData) {
  * @param {number} selectStart
  * @param {number} selectEnd
  */
-RankingVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
+RankingVis.prototype.onSelectionChange = function(selectStart, selectEnd, autoSelected) {
 
     // save off selection range
-    this.selectStart = selectStart;
-    this.selectEnd = selectEnd;
+    
+    this.filterOptions.selectStart = selectStart;
+    this.filterOptions.selectEnd = selectEnd;
+     this.wrangleData();
 
-    this.wrangleData(selectStart && selectEnd ? function(d) {
-        // filter for data within range
-        return selectStart <= d.year && d.year <= selectEnd;
-    } : null);
-
-    this.updateVis();
+    this.updateVis(autoSelected ? {tDuration: 500} : {});
 };
 
 RankingVis.prototype.onHighlightChange = function(highlight) {
@@ -292,53 +318,19 @@ RankingVis.prototype.onHighlightChange = function(highlight) {
         return highlight && d.key === highlight;
     });
 };
+RankingVis.prototype.onScaleChange = function(scale) {
 
-RankingVis.prototype.addSlider = function(height, svg, eventHandler) {
+    // deform the y scale
+    this.yScale.exponent(scale);
 
-    // the domain is the exponent value for the power scale
-    var sliderScale = d3.scale.linear().domain([.1, 1]).range([0, height]);
-
-    var sliderDragged = function() {
-
-        var value = Math.max(0, Math.min(height, d3.event.y));
-
-        // update the slider position
-        d3.select(this).attr("y", value);
-
-        $(eventHandler).trigger("scaleChanged", sliderScale.invert(value));
-    };
-
-    var sliderDragBehaviour = d3.behavior.drag().on("drag", sliderDragged);
-
-    var sliderGroup = svg.append("g").attr({
-        class: "sliderGroup",
-        transform: "translate(" + -this.margin.left + ",0)"
-    });
-
-    sliderGroup.append("rect")
-        .attr({
-            class: "sliderBg",
-            x: 5,
-            width: 10,
-            height: this.height
-        })
-        .style({
-            fill: "lightgray"
-        });
-
-    sliderGroup.append("rect")
-        .attr({
-            class: "sliderHandle",
-            y: this.height,
-            width: 20,
-            height: 10,
-            rx: 2,
-            ry: 2
-        })
-        .style({
-            fill: "#333333"
-        })
-        .call(sliderDragBehaviour);
+    this.updateVis();
 };
 
+RankingVis.prototype.onFormatsChange = function(formats) {
 
+    // set format filter options and wrangle data
+    this.filterOptions.formats = formats;
+    this.wrangleData();
+
+    this.updateVis({tDuration: 500});
+};
