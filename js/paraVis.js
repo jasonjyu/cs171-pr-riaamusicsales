@@ -132,10 +132,8 @@ ParaVis.prototype.initVis = function() {
 			'millions of units': d3.sum(leaves, function(g) {
 				return g['millions of units'];
 				}),
-			'price per unit': (d3.sum(leaves, function(g) {
-				return g['millions of dollars'];
-				}) / d3.sum(leaves, function(g) {
-				return g['millions of units'];
+			'price per unit': (d3.mean(leaves, function(g) {
+				return g['price per unit'];
 				}))
 				
         };
@@ -143,11 +141,6 @@ ParaVis.prototype.initVis = function() {
 	
 	// return an array of filtered and aggregated data
     return d3.values(this.aggregatedDataMap);
-	
-
-	
-	
-
 };
 
 
