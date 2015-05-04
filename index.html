@@ -404,9 +404,9 @@
                 var focusVis2 = new FocusVis(2, d3.select("#focusVis2"),
                     dataset.dollars, metadata.colorMap, myEventHandler);
                 var rankingVis1 = new RankingVis(1, d3.select("#rankingVis1"),
-                    dataset.units.data, metadata.colorMap, myEventHandler);
+                    dataset.units, metadata.colorMap, myEventHandler);
                 var rankingVis2 = new RankingVis(2, d3.select("#rankingVis2"),
-                    dataset.dollars.data, metadata.colorMap, myEventHandler);
+                    dataset.dollars, metadata.colorMap, myEventHandler);
                 var paraVis = new ParaVis(d3.select("#paraVis"),
                     pardata,metadata.colorMap, myEventHandler);
 
