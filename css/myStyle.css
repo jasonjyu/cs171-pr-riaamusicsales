@@ -160,7 +160,7 @@ button.toggle {
     text-anchor: middle;
 }
 
-.format {
+.format, .bar {
     cursor: pointer;
 }
 .format path {
