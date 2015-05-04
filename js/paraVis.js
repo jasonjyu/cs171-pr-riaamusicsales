@@ -292,7 +292,8 @@ ParaVis.prototype.onHighlightChange = function(highlight) {
     }
     else{
         this.highlight = highlight;
-        this.highlightArray = this.dataset.filter(function(d){
+		
+        this.highlightArray = this.displayData.filter(function(d){
             if (d.format == highlight){
                     return d
             }
