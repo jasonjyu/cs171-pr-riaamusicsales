@@ -252,10 +252,6 @@ Super Audio CD,0.1,1.5,15,2011
 Super Audio CD,0.065,1.3,20,2012
 Super Audio CD,0.045,1,22.22222222,2013
 Super Audio CD,0.03,0.8,26.66666667,2014
-Other Tapes,2.2,15.6,7.090909091,1973
-Other Tapes,1.9,13.3,7,1974
-Other Tapes,1.5,10.2,6.8,1975
-Other Tapes,0.7,5.1,7.285714286,1976
 Download Single,139.4,138,0.989956958,2004
 Download Single,366.9,363.3,0.990188062,2005
 Download Single,586.4,580.6,0.990109141,2006
@@ -308,23 +304,34 @@ Ringtones & Ringbacks,115.4,276.2,2.393414211,2011
 Ringtones & Ringbacks,69.3,166.9,2.408369408,2012
 Ringtones & Ringbacks,39.4,98,2.487309645,2013
 Ringtones & Ringbacks,26.7,66.5,2.490636704,2014
-Paid Subscriptions,1.3,149.2,114.7692308,2005
-Paid Subscriptions,1.7,206.2,121.2941176,2006
-Paid Subscriptions,1.8,234,130,2007
-Paid Subscriptions,1.6,221.4,138.375,2008
-Paid Subscriptions,1.2,206.2,171.8333333,2009
-Paid Subscriptions,1.5,212.4,141.6,2010
-Paid Subscriptions,1.8,247.8,137.6666667,2011
-Paid Subscriptions,3.4,399.9,117.6176471,2012
-Paid Subscriptions,6.2,639.2,103.0967742,2013
-Paid Subscriptions,7.7,799.1,103.7792208,2014
-On-Demand Streaming,0,113.8,119.8,2011
-On-Demand Streaming,0,170.9,176.2,2012
-On-Demand Streaming,0,220,223.6,2013
-On-Demand Streaming,0,294.8,294.8,2014
-Synchronization,0,201.2,222,2009
-Synchronization,0,188.7,204.9,2010
-Synchronization,0,196.5,206.8,2011
-Synchronization,0,190.6,196.5,2012
-Synchronization,0,189.7,192.8,2013
-Synchronization,0,189.7,189.7,2014
+Paid Subscriptions,1.3,149.2,0,2005
+Paid Subscriptions,1.7,206.2,0,2006
+Paid Subscriptions,1.8,234,0,2007
+Paid Subscriptions,1.6,221.4,0,2008
+Paid Subscriptions,1.2,206.2,0,2009
+Paid Subscriptions,1.5,212.4,0,2010
+Paid Subscriptions,1.8,247.8,0,2011
+Paid Subscriptions,3.4,399.9,0,2012
+Paid Subscriptions,6.2,639.2,0,2013
+Paid Subscriptions,7.7,799.1,0,2014
+On-Demand Streaming,0,113.8,0,2011
+On-Demand Streaming,0,170.9,0,2012
+On-Demand Streaming,0,220,0,2013
+On-Demand Streaming,0,294.8,0,2014
+Synchronization,0,201.2,0,2009
+Synchronization,0,188.7,0,2010
+Synchronization,0,196.5,0,2011
+Synchronization,0,190.6,0,2012
+Synchronization,0,189.7,0,2013
+Synchronization,0,189.7,0,2014
+SoundExchange Distrib.,0,6.9,0,2004
+SoundExchange Distrib.,0,20.4,0,2005
+SoundExchange Distrib.,0,32.8,0,2006
+SoundExchange Distrib.,0,36.2,0,2007
+SoundExchange Distrib.,0,100,0,2008
+SoundExchange Distrib.,0,155.5,0,2009
+SoundExchange Distrib.,0,249.2,0,2010
+SoundExchange Distrib.,0,292,0,2011
+SoundExchange Distrib.,0,462,0,2012
+SoundExchange Distrib.,0,590.4,0,2013
+SoundExchange Distrib.,0,773.4,0,2014
