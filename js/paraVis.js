@@ -20,7 +20,8 @@ ParaVis = function(_parentElement, _dataset, _colorMap, _eventHandler) {
     this.formats = null;
     this.highlight = null;
     this.highlightArray = null;
-
+	this.aggregateData = null;
+	this.IsAggregate = false;
     // define all "constants" here
     this.margin = {top: 20, right: 90, bottom: 30, left: 60};
     this.width = 800 - this.margin.left - this.margin.right;
@@ -57,15 +58,24 @@ ParaVis.prototype.initVis = function() {
             that.onHighlightChange(highlight);
         }
     );
-
+	
+	// bind to the eventHandler highlight changed
+    $(this.eventHandler).bind("Aggregate",
+        function(event, highlight) {
+            that.onAggregate(highlight);
+        }
+    );
+	this.displayData = this.dataset;
+	this.parcoords = d3.parcoords()("#paraVis")
+        .data(this.displayData)
+	
     // Loads data and creates the parallel coordinates chart
+	
     var colormap = this.colorMap;
     var colors = function(d){return colormap[d];};
-    this.displayData = this.dataset;
     var color = function(d) {return colors(d.format);};
 
-    this.parcoords = d3.parcoords()("#paraVis")
-        .data(this.displayData)
+    this.parcoords
         .color(color)
         .alpha(0.25)
         .composite("darken")
@@ -79,6 +89,7 @@ ParaVis.prototype.initVis = function() {
         .style("font", "10px sans-serif");
 
 
+	this.wrangleData();	
     // call the update method
     this.updateVis();
 };
@@ -105,13 +116,46 @@ ParaVis.prototype.initVis = function() {
 
 
 /**
+ * Method to summate the data.
+ */
+ ParaVis.prototype.summationData = function() {
+	
+	// aggregate the data
+    this.aggregatedDataMap = d3.nest().key(function(d) {
+        return d.format;
+    }).rollup(function(leaves) {
+        return {
+            format: leaves[0].format,
+            'millions of dollars': d3.sum(leaves, function(g) {
+				return g['millions of dollars'];
+				}),
+			'millions of units': d3.sum(leaves, function(g) {
+				return g['millions of units'];
+				}),
+			'price per unit': (d3.sum(leaves, function(g) {
+				return g['millions of dollars'];
+				}) / d3.sum(leaves, function(g) {
+				return g['millions of units'];
+				}))
+				
+        };
+    }).map(this.displayData);
+	
+	// return an array of filtered and aggregated data
+    return d3.values(this.aggregatedDataMap);
+	
+
+	
+	
+
+};
+
+
+/**
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
  */
 ParaVis.prototype.updateVis = function(_options){
-    selectStart = this.selectStart;
-    selectEnd = this.selectEnd;
-
 
     this.parcoords
         .data(this.displayData)
@@ -152,6 +196,53 @@ ParaVis.prototype.onformatsChange = function(formats) {
     this.wrangleData();
 
     this.updateVis();
+};
+
+/**
+ * Gets called by the Event Handler on a "Aggregate" event,
+ * and updates the visualization.
+ * @param {array} formats
+ */
+ParaVis.prototype.onAggregate = function(funt) {
+	
+	if (this.IsAggregate == false){
+	this.displayData = this.summationData();
+	this.parcoords
+        .data(this.displayData)
+		.autoscale();
+		
+	this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit'])
+		.render()
+		.updateAxes()
+	
+	}
+	else{
+		
+		this.displayData = this.dataset;
+		this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit', 'year'])
+		this.parcoords
+        .data(this.displayData)
+		.autoscale()
+	    
+
+	this.wrangleData();	
+	
+	
+    // call the update method
+    this.updateVis();
+	
+	this.parcoords
+		.render()
+		.updateAxes()
+
+	}
+	
+	if (this.IsAggregate){
+		this.IsAggregate = false;
+	}
+	else{
+		this.IsAggregate = true;
+	}
 };
 
 /**

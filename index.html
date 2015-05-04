@@ -130,8 +130,9 @@
                 <p class="description">
                     Brush or reorder the axes.
                 </p>
+				<div id="dataViewControl3"></div>
             </div>
-            <div id="paraVis" class="col-xs-12 parcoords" style="height:270px;">
+            <div id="paraVis" class="col-xs-12 parcoords" style="height:260px;">
             </div>
         </div>
     </div>
@@ -438,6 +439,8 @@
                     "Toggle Data View", myEventHandler, "dataViewChanged1");
                 bindControlsDataView(d3.select("#dataViewControl2"),
                     "Toggle Data View", myEventHandler, "dataViewChanged2");
+				bindControlsDataView(d3.select("#dataViewControl3"),
+                    "Aggregate Media Types", myEventHandler, "Aggregate");
             };
 
             var startHere = function() {
