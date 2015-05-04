@@ -126,16 +126,16 @@ ParaVis.prototype.initVis = function() {
     }).rollup(function(leaves) {
         return {
             format: leaves[0].format,
-            dollars: d3.sum(leaves, function(g) {
-				return g.dollars;
+            'millions of dollars': d3.sum(leaves, function(g) {
+				return g['millions of dollars'];
 				}),
-			units: d3.sum(leaves, function(g) {
-				return g.units;
+			'millions of units': d3.sum(leaves, function(g) {
+				return g['millions of units'];
 				}),
 			'price per unit': (d3.sum(leaves, function(g) {
-				return g.dollars;
+				return g['millions of dollars'];
 				}) / d3.sum(leaves, function(g) {
-				return g.units;
+				return g['millions of units'];
 				}))
 				
         };
@@ -211,7 +211,7 @@ ParaVis.prototype.onAggregate = function(funt) {
         .data(this.displayData)
 		.autoscale();
 		
-	this.parcoords.dimensions(['format','units','dollars','price per unit'])
+	this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit'])
 		.render()
 		.updateAxes()
 	
@@ -219,7 +219,7 @@ ParaVis.prototype.onAggregate = function(funt) {
 	else{
 		
 		this.displayData = this.dataset;
-		this.parcoords.dimensions(['format','units','dollars','price per unit', 'year'])
+		this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit', 'year'])
 		this.parcoords
         .data(this.displayData)
 		.autoscale()
