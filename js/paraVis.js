@@ -183,12 +183,24 @@ ParaVis.prototype.updateVis = function(_options){
  * @param {array} formats
  */
 ParaVis.prototype.onformatsChange = function(formats) {
-
-    this.formats = formats;
+	this.formats = formats;
+	
+	if (this.IsAggregate == true) {
+		this.wrangleData();
+		this.displayData = this.summationData();
+	this.parcoords
+        .data(this.displayData)
+		.autoscale()
+		.render()
+		.updateAxes();
+		
+	}
+    else{
 
     this.wrangleData();
 
     this.updateVis();
+	}
 };
 
 /**
