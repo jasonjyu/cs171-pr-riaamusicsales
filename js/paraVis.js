@@ -262,11 +262,22 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
     this.selectEnd = selectEnd;
 	
 	this.parcoords.brushReset();
-
+	
+	if (this.IsAggregate == true) {
+		this.wrangleData();
+		this.displayData = this.summationData();
+	this.parcoords
+        .data(this.displayData)
+		.autoscale()
+		.render()
+		.updateAxes();
+		
+	}
+	else {
     this.wrangleData();
 
     this.updateVis();
-
+	}
 };
 
 /**
