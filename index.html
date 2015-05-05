@@ -79,7 +79,6 @@
         <div class="row" id="overview">
             <div class="col-xs-12 text-center" id="contextVis">
                 <span class="chartTitle">sales overview</span>
-                <br>
                 <p class="description">
                     Brush the chart to select a time interval to focus on,
                     then drag the selection.
@@ -90,7 +89,6 @@
         </div>
 
         <div class="row" id="primaryView">
-            <br>
             <div class="col-xs-7 text-center" id="focusVis1">
                 <span class="chartTitle">sales trends</span>
                 <br>
@@ -111,10 +109,8 @@
         </div>
 
         <div class="row" id="secondaryView">
-            <br>
             <div class="col-xs-7 text-center" id="focusVis2">
                 <span class="chartTitle">sales trends (comparison)</span>
-                <br>
                 <p class="description">
                     Hover over a format to highlight.
                     Drag side slider to rescale.
@@ -131,16 +127,17 @@
             </div>
         </div>
 
-        <div class="row" id="paraView" style="position:relative;bottom:350px">
-            <br>
-            <div class="col-xs-12 text-center">
+        <div class="row" id="paraView" style="position:relative;bottom:325px">
+            <div class="col-xs-12 text-center" style="height:40px;">
                 <span class="chartTitle">sales metric relationships</span>
                 <p class="description">
                     Brush or reorder the axes.
                 </p>
-                <div id="dataViewControl3"></div>
+                <div id="dataViewControl3"
+                    style="position:relative;bottom:30px">
+                </div>
             </div>
-            <div id="paraVis" class="col-xs-12 parcoords" style="height:260px;">
+            <div id="paraVis" class="col-xs-12 parcoords" style="height:280px;">
             </div>
         </div>
     </div>
