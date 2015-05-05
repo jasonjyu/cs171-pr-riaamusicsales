@@ -132,10 +132,8 @@ ParaVis.prototype.initVis = function() {
 			'millions of units': d3.sum(leaves, function(g) {
 				return g['millions of units'];
 				}),
-			'price per unit': (d3.sum(leaves, function(g) {
-				return g['millions of dollars'];
-				}) / d3.sum(leaves, function(g) {
-				return g['millions of units'];
+			'price per unit': (d3.mean(leaves, function(g) {
+				return g['price per unit'];
 				}))
 				
         };
@@ -143,11 +141,6 @@ ParaVis.prototype.initVis = function() {
 	
 	// return an array of filtered and aggregated data
     return d3.values(this.aggregatedDataMap);
-	
-
-	
-	
-
 };
 
 
@@ -190,12 +183,24 @@ ParaVis.prototype.updateVis = function(_options){
  * @param {array} formats
  */
 ParaVis.prototype.onformatsChange = function(formats) {
-
-    this.formats = formats;
+	this.formats = formats;
+	
+	if (this.IsAggregate == true) {
+		this.wrangleData();
+		this.displayData = this.summationData();
+	this.parcoords
+        .data(this.displayData)
+		.autoscale()
+		.render()
+		.updateAxes();
+		
+	}
+    else{
 
     this.wrangleData();
 
     this.updateVis();
+	}
 };
 
 /**
@@ -257,11 +262,22 @@ ParaVis.prototype.onSelectionChange = function(selectStart, selectEnd) {
     this.selectEnd = selectEnd;
 	
 	this.parcoords.brushReset();
-
+	
+	if (this.IsAggregate == true) {
+		this.wrangleData();
+		this.displayData = this.summationData();
+	this.parcoords
+        .data(this.displayData)
+		.autoscale()
+		.render()
+		.updateAxes();
+		
+	}
+	else {
     this.wrangleData();
 
     this.updateVis();
-
+	}
 };
 
 /**
@@ -276,7 +292,8 @@ ParaVis.prototype.onHighlightChange = function(highlight) {
     }
     else{
         this.highlight = highlight;
-        this.highlightArray = this.dataset.filter(function(d){
+		
+        this.highlightArray = this.displayData.filter(function(d){
             if (d.format == highlight){
                     return d
             }
