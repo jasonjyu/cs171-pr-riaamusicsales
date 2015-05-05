@@ -25,7 +25,7 @@ FocusVis = function(_visId, _parentElement, _dataObject, _colorMap,
         title: "Value Change vs Time",
         yKey: "valueChange"
     }, {
-        title: "Value Change (normalized) vs Time",
+        title: "Value Change (percentage) vs Time",
         yKey: "valueChangeNorm"
     }];
     this.filterOptions = {};
@@ -96,9 +96,34 @@ FocusVis.prototype.initVis = function() {
         .scale(this.yScale)
         .orient("left")
         .tickFormat(function(d) {
+            // determine formatting string
+            var formatting = "";
             var d_abs = Math.abs(d);
-            return 0 < d_abs && d_abs < 1 ?
-                d3.format(".2f")(d) : d3.format(".2s")(d);
+
+            // check if dollar formatting is needed
+            if (that.dataObject.name.indexOf("Price") >= 0 ||
+                that.dataObject.name.indexOf("Dollar") >= 0) {
+                formatting = "$";
+                if (0 < d_abs && d_abs < .05) {
+                    formatting = formatting + ".3f";
+                }
+            }
+
+            // check if percentage formatting is needed
+            if (that.chartData[that.chartDataIndex].yKey.indexOf("Norm") >= 0) {
+                formatting = "%";
+                if (0 < d_abs && d_abs < .05) {
+                    formatting = ".1" + formatting;
+                }
+            }
+
+            // check if SI/metric formmating is needed
+            if (1e3 <= d_abs) {
+                formatting = formatting + "s";
+            }
+
+            // replace 'G' with 'B' for billions for SI/metric formatting
+            return d3.format(formatting)(d).replace("G", "B");
         });
 
     // create line chart object
@@ -126,7 +151,7 @@ FocusVis.prototype.initVis = function() {
         .append("g")
         .attr("class", "label")
         .append("text")
-        .attr("dy", "-.35em");
+        .attr("dy", "-.7em");
 
      // add zero line
     this.svg.append("g")

@@ -87,6 +87,10 @@ Dataset.prototype.derivePricesData = function(unitsData, dollarsData) {
         if (dollarsDatum) {
             var deriviedDatum = that.cloneObject(unitsDatum);
             deriviedDatum.value = dollarsDatum.value/unitsDatum.value;
+            // derive monthly price for 'Paid Subscriptions' instead of annual
+            if (deriviedDatum.format === "Paid Subscriptions") {
+                deriviedDatum.value /= 12;
+            }
             result.push(deriviedDatum);
         }
     });

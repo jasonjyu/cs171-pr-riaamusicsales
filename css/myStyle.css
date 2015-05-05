@@ -90,6 +90,7 @@ button.toggle {
     stroke-width: 1.1;
 }
 .x_axis text {
+    cursor: pointer;
     font: 8px sans-serif;
 }
 
