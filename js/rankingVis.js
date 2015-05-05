@@ -4,7 +4,7 @@
  * @param {number} _visId -- the ID for this visualization instantiation
  * @param {object} _parentElement -- the HTML or SVG element to which to attach
  *                                   this visualization object
- * @param {array} _data -- the array of data
+ * @param {object} _dataObject -- the object containing the data
  * @param {object} _colorMap -- map of music formats to colors
  * @param {object} _eventHandler -- the Event Handling object to emit data to
  * @returns {RankingVis}
@@ -14,14 +14,12 @@ RankingVis = function(_visId, _parentElement, _dataObject, _colorMap, _eventHand
     this.parentElement = _parentElement;
     this.dataObject = _dataObject;
     this.colorMap = _colorMap;
-    var colors = d3.scale.category20();
-    this.colorMap2 = {"physical": colors[0],"digital": colors[1], "streaming": colors[2]}
     this.eventHandler = _eventHandler;
     this.displayData = [];
     this.filterOptions = {};
 
     // define all "constants" here
-    this.margin = {top: 20, right: 70, bottom: 80, left: 80};
+    this.margin = {top: 20, right: 70, bottom: 85, left: 80};
     this.width = getInnerWidth(this.parentElement) - this.margin.left -
         this.margin.right;
     this.height = 265 - this.margin.top - this.margin.bottom;
@@ -190,20 +188,28 @@ RankingVis.prototype.updateVis = function(_options){
         .call(this.xAxis)
         .selectAll("text")
         .style("text-anchor", "end")
-         .attr("transform", function(d) {
-         return "rotate(-60)"
-         })
-         .attr("dy", -1)
-         .attr("dx", -8)
+        .attr("transform", function(d) {
+            return "rotate(-60)";
+        })
+        .attr("dy", -1)
+        .attr("dx", -8);
     this.svg.select(".y.axis")
         .transition().duration(tDuration)
         .call(this.yAxis)
         .select(".label text")
         .text(this.dataObject.name);
+    this.svg.select(".x_axis")
+        .call(this.xAxis)
+        .selectAll("text")
+        .on("mouseover", function(d) {
+            // trigger highlightChanged event
+            $(that.eventHandler).trigger("highlightChanged", d);
+        })
+        .on("mouseout", function(d) {
+            // trigger highlightChanged event with no arguments to clear highlight
+            $(that.eventHandler).trigger("highlightChanged");
+        });
 
-
-
-this.svg.selectAll(".bar")
  // Remove the extra bars
 // Data join
  var bar = that.svg.selectAll(".bar")
@@ -221,7 +227,7 @@ var bar_enter = bar.enter().append("g")
  return color;
 });
 
-  bar_enter.on("mouseover", function(d) {
+    bar_enter.on("mouseover", function(d) {
         // trigger highlightChanged event
         $(that.eventHandler).trigger("highlightChanged", d.key);
     });
