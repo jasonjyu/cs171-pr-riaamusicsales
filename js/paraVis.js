@@ -214,6 +214,7 @@ ParaVis.prototype.onAggregate = function(funt) {
 	this.displayData = this.summationData();
 	this.parcoords
         .data(this.displayData)
+		.alpha(1)
 		.autoscale();
 		
 	this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit'])
@@ -227,6 +228,7 @@ ParaVis.prototype.onAggregate = function(funt) {
 		this.parcoords.dimensions(['format','millions of units','millions of dollars','price per unit', 'year'])
 		this.parcoords
         .data(this.displayData)
+		.alpha(0.25)
 		.autoscale()
 	    
 
