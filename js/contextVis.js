@@ -79,13 +79,55 @@ ContextVis.prototype.initVis = function() {
     this.yAxis = d3.svg.axis()
         .scale(this.yScale)
         .orient("left")
-        .tickFormat(d3.format("s"))
+        .tickFormat(function(d) {
+            // determine formatting string
+            var formatting = "";
+            var d_abs = Math.abs(d);
+
+            // check if dollar formatting is needed
+            if (that.dataObject.name.indexOf("Price") >= 0 ||
+                that.dataObject.name.indexOf("Dollar") >= 0) {
+                formatting = "$" + formatting;
+                if (0 < d_abs && d_abs < .05) {
+                    formatting = formatting + ".3f";
+                }
+            }
+
+            // check if SI/metric formmating is needed
+            if (1e3 <= d_abs) {
+                formatting = formatting + "s";
+            }
+
+            // replace 'G' with 'B' for billions for SI/metric formatting
+            return d3.format(formatting)(d).replace("G", "B");
+        })
         .ticks(5);
 
     this.yAxis2 = d3.svg.axis()
         .scale(this.yScale2)
         .orient("right")
-        .tickFormat(d3.format("s"))
+        .tickFormat(function(d) {
+            // determine formatting string
+            var formatting = "";
+            var d_abs = Math.abs(d);
+
+            // check if dollar formatting is needed
+            if (that.dataObject2.name.indexOf("Price") >= 0 ||
+                that.dataObject2.name.indexOf("Dollar") >= 0) {
+                formatting = "$" + formatting;
+                if (0 < d_abs && d_abs < .05) {
+                    formatting = formatting + ".3f";
+                }
+            }
+
+            // check if SI/metric formmating is needed
+            if (1e3 <= d_abs) {
+                formatting = formatting + "s";
+            }
+
+            // replace 'G' with 'B' for billions for SI/metric formatting
+            return d3.format(formatting)(d).replace("G", "B");
+        })
         .ticks(5);
 
     // create line chart objects

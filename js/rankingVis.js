@@ -21,9 +21,10 @@ RankingVis = function(_visId, _parentElement, _dataObject, _colorMap, _eventHand
     this.filterOptions = {};
 
     // define all "constants" here
-    this.margin = {top: 20, right: 90, bottom: 100, left: 80};
-    this.width = 487 - this.margin.left -this.margin.right;
-    this.height = 276 - this.margin.top - this.margin.bottom;
+    this.margin = {top: 20, right: 70, bottom: 80, left: 80};
+    this.width = getInnerWidth(this.parentElement) - this.margin.left -
+        this.margin.right;
+    this.height = 265 - this.margin.top - this.margin.bottom;
 
     this.initVis();
 };
@@ -81,7 +82,28 @@ RankingVis.prototype.initVis = function() {
 
     this.yAxis = d3.svg.axis()
       .scale(this.yScale)
-      .tickFormat(d3.format("s")) 
+      .tickFormat(function(d) {
+         // determine formatting string
+         var formatting = "";
+         var d_abs = Math.abs(d);
+
+         // check if dollar formatting is needed
+         if (that.dataObject.name.indexOf("Price") >= 0 ||
+             that.dataObject.name.indexOf("Dollar") >= 0) {
+             formatting = "$" + formatting;
+             if (0 < d_abs && d_abs < .05) {
+                 formatting = formatting + ".3f";
+             }
+         }
+
+         // check if SI/metric formmating is needed
+         if (1e3 <= d_abs) {
+             formatting = formatting + "s";
+         }
+
+         // replace 'G' with 'B' for billions for SI/metric formatting
+         return d3.format(formatting)(d).replace("G", "B");
+      })
       .orient("left");
 
     // Add axes visual elements
@@ -95,7 +117,7 @@ RankingVis.prototype.initVis = function() {
         .append("g")
         .attr("class", "label")
         .append("text")
-        .attr("dy", "-.35em");
+        .attr("dy", "-.7em");
         // .call(this.yAxis)
 
 
@@ -129,7 +151,7 @@ var selectStart = this.filterOptions.selectStart;
         filterFunction, this.dataObject.name);
 
 };
- 
+
 /**
  * Method to update the visualization.
  * @param {object} _options -- update option parameters
@@ -147,7 +169,7 @@ RankingVis.prototype.updateVis = function(_options){
     }
     // else{
     //     this.xScale.domain(d3.keys(this.colorMap2))
-    //     } 
+    //     }
     yMin = Math.min(0, d3.min(this.displayData.map(function(d){
         return d.value
     })))
@@ -169,7 +191,7 @@ RankingVis.prototype.updateVis = function(_options){
         .selectAll("text")
         .style("text-anchor", "end")
          .attr("transform", function(d) {
-         return "rotate(-60)" 
+         return "rotate(-60)"
          })
          .attr("dy", -1)
          .attr("dx", -8)
@@ -178,7 +200,7 @@ RankingVis.prototype.updateVis = function(_options){
         .call(this.yAxis)
         .select(".label text")
         .text(this.dataObject.name);
-        
+
 
 
 this.svg.selectAll(".bar")
@@ -186,13 +208,13 @@ this.svg.selectAll(".bar")
 // Data join
  var bar = that.svg.selectAll(".bar")
  .data(this.displayData, function(d) { return d.key; }); // BOUND COUNT DATA IS CORRECTLY FILTERED HERE AFTER BRUSH
- 
+
 // Append new bar groups, if required
 var bar_enter = bar.enter().append("g")
  .attr("class", "bar");
 
 // Append a rect and a text only for the Enter set (new g)
- 
+
  bar_enter.append("rect")
  .style("fill", function(d,i) {
     color = that.colorMap[d.key]
@@ -212,14 +234,14 @@ var bar_enter = bar.enter().append("g")
  // .attr("transform", function(d, i) { return "translate(0," + that.yScale(d) + ")"; })
 
  // Add attributes (position) to all bars
- 
+
 // Update all inner rects and texts (both update and enter sets)
   bar.select("rect")
 
  .attr("y", function(d) {
  return that.yScale(d.value);})
  .attr("width", that.xScale.rangeBand())
- 
+
 
  .attr("height", function(d) {
  var barheight = that.height-that.yScale(d.value);
@@ -245,7 +267,7 @@ RankingVis.prototype.filterAndAggregate = function(_data, _filterFunction, _metr
     // aggregate the data
     var aggregatedData = {}
     var aggregatedData_count = {}
-    
+
         {filteredData.forEach(function(d){
         if (!(d.format in aggregatedData)){
             aggregatedData[d.format] = 0;
@@ -254,14 +276,14 @@ RankingVis.prototype.filterAndAggregate = function(_data, _filterFunction, _metr
         aggregatedData[d.format] += d.value;
         aggregatedData_count[d.format] += 1;
     })}
-        if(_metricname.match(/price/i)){
+        if(_metricname.indexOf("Price") >= 0){
             for(var format in aggregatedData){
                 aggregatedData[format] = aggregatedData[format]/aggregatedData_count[format]
             }
-        
+
         }
     aggregatedData = d3.entries(aggregatedData);
-    
+
     aggregatedData.sort(function(a,b){
         if(b.value > a.value){
             return 1;
@@ -297,7 +319,7 @@ RankingVis.prototype.onDataChange = function(newDataObject) {
 RankingVis.prototype.onSelectionChange = function(selectStart, selectEnd, autoSelected) {
 
     // save off selection range
-    
+
     this.filterOptions.selectStart = selectStart;
     this.filterOptions.selectEnd = selectEnd;
      this.wrangleData();
